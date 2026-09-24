@@ -1,0 +1,6 @@
+{
+  "name": "HIROKI - Editorial Portfolio & Blog",
+  "description": "Editorial personal portfolio, agency services, and digital marketing insights website with bilingual English and Vietnamese support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

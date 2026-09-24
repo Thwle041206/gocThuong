@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128;
+    }
+
+    // User profiles collection
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+
+    // Admin authorization collection
+    match /admins/{userId} {
+      allow read, write: if true;
+    }
+
+    // Posts Collection (Articles)
+    match /posts/{postId} {
+      allow read, write: if true;
+    }
+
+    // Projects Collection (Portfolio items)
+    match /projects/{projectId} {
+      allow read, write: if true;
+    }
+
+    // Categories Collection
+    match /categories/{catId} {
+      allow read, write: if true;
+    }
+
+    // Editorial Tags Collection
+    match /editorial_tags/{tagId} {
+      allow read, write: if true;
+    }
+
+    // Site Sections
+    match /site_sections/{sectionId} {
+      allow read, write: if true;
+    }
+
+    // Trash bin collection (Projects & Tags soft deleted, auto removed after 30 days)
+    match /trash/{trashId} {
+      allow read, write: if true;
+    }
+
+    // System connectivity test
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+  }
+}
