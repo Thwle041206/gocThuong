@@ -109,13 +109,13 @@ export function AuthModal({ isOpen, onClose, lang = 'vi' }: AuthModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-10 sm:pt-16 md:pt-24 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200 overflow-y-auto">
       <div
-        className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-zinc-200 overflow-hidden transform transition-all"
+        className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-zinc-200 overflow-hidden transform transition-all max-h-[85vh] flex flex-col my-auto sm:my-0"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Bar */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-zinc-100">
+        <div className="flex items-center justify-between px-5 pt-5 pb-3.5 border-b border-zinc-100 flex-shrink-0">
           <div>
             <div className="flex items-center gap-2">
               <span className="font-serif italic font-medium text-lg tracking-tight text-zinc-900">
@@ -125,7 +125,7 @@ export function AuthModal({ isOpen, onClose, lang = 'vi' }: AuthModalProps) {
                 Account
               </span>
             </div>
-            <p className="text-xs text-zinc-500 mt-1">
+            <p className="text-xs text-zinc-500 mt-0.5">
               {mode === 'login'
                 ? lang === 'en'
                   ? 'Sign in to access your space'
@@ -144,18 +144,14 @@ export function AuthModal({ isOpen, onClose, lang = 'vi' }: AuthModalProps) {
         </div>
 
         {/* Tab Toggle: Login vs Register */}
-        <div className="flex border-b border-zinc-200 bg-zinc-50/50">
+        <div className="flex border-b border-zinc-200 bg-zinc-50/50 flex-shrink-0">
           <button
             type="button"
             onClick={() => {
               setMode('login');
               setErrorMsg('');
             }}
-            className={`flex-1 py-3 text-xs uppercase tracking-wider font-semibold transition-colors cursor-pointer text-center relative ${
-              mode === 'login'
-                ? 'text-black bg-white font-bold'
-                : 'text-zinc-500 hover:text-zinc-800'
-            }`}
+            className="flex-1 py-2.5 text-xs uppercase tracking-wider font-semibold transition-colors cursor-pointer text-center relative text-black bg-white font-bold"
           >
             {lang === 'en' ? 'Sign In' : 'Đăng Nhập'}
             {mode === 'login' && (
@@ -168,11 +164,7 @@ export function AuthModal({ isOpen, onClose, lang = 'vi' }: AuthModalProps) {
               setMode('register');
               setErrorMsg('');
             }}
-            className={`flex-1 py-3 text-xs uppercase tracking-wider font-semibold transition-colors cursor-pointer text-center relative ${
-              mode === 'register'
-                ? 'text-black bg-white font-bold'
-                : 'text-zinc-500 hover:text-zinc-800'
-            }`}
+            className="flex-1 py-2.5 text-xs uppercase tracking-wider font-semibold transition-colors cursor-pointer text-center relative text-black bg-white font-bold"
           >
             {lang === 'en' ? 'Register' : 'Đăng Ký'}
             {mode === 'register' && (
@@ -182,18 +174,18 @@ export function AuthModal({ isOpen, onClose, lang = 'vi' }: AuthModalProps) {
         </div>
 
         {/* Body Content */}
-        <div className="p-6">
+        <div className="p-5 overflow-y-auto flex-1">
           {errorMsg && (
-            <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs flex items-start gap-2">
+            <div className="mb-3.5 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs flex items-start gap-2">
               <AlertCircle size={15} className="flex-shrink-0 mt-0.5 text-red-600" />
               <span>{errorMsg}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3.5">
             {mode === 'register' && (
               <div>
-                <label className="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-1">
                   {lang === 'en' ? 'Full Name' : 'Họ và Tên'}
                 </label>
                 <div className="relative">
@@ -207,14 +199,14 @@ export function AuthModal({ isOpen, onClose, lang = 'vi' }: AuthModalProps) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder={lang === 'en' ? 'Nguyen Van A' : 'Nguyễn Văn A'}
-                    className="w-full pl-10 pr-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-lg text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all"
+                    className="w-full pl-10 pr-3.5 py-2 bg-zinc-50 border border-zinc-200 rounded-lg text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all"
                   />
                 </div>
               </div>
             )}
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-1">
                 Email
               </label>
               <div className="relative">
@@ -228,13 +220,13 @@ export function AuthModal({ isOpen, onClose, lang = 'vi' }: AuthModalProps) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your-email@example.com"
-                  className="w-full pl-10 pr-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-lg text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all"
+                  className="w-full pl-10 pr-3.5 py-2 bg-zinc-50 border border-zinc-200 rounded-lg text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-1">
                 {lang === 'en' ? 'Password' : 'Mật Khẩu'}
               </label>
               <div className="relative">
@@ -248,7 +240,7 @@ export function AuthModal({ isOpen, onClose, lang = 'vi' }: AuthModalProps) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-lg text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all"
+                  className="w-full pl-10 pr-3.5 py-2 bg-zinc-50 border border-zinc-200 rounded-lg text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all"
                 />
               </div>
               {mode === 'register' && (
@@ -263,7 +255,7 @@ export function AuthModal({ isOpen, onClose, lang = 'vi' }: AuthModalProps) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full mt-2 bg-black text-white hover:bg-zinc-800 disabled:opacity-50 py-2.5 rounded-lg text-xs font-semibold tracking-wider uppercase transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+              className="w-full mt-1 bg-black text-white hover:bg-zinc-800 disabled:opacity-50 py-2 rounded-lg text-xs font-semibold tracking-wider uppercase transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
             >
               <span>
                 {isSubmitting
@@ -283,7 +275,7 @@ export function AuthModal({ isOpen, onClose, lang = 'vi' }: AuthModalProps) {
           </form>
 
           {/* Social Sign In Divider */}
-          <div className="relative my-5 text-center">
+          <div className="relative my-4 text-center">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-zinc-200" />
             </div>
@@ -297,7 +289,7 @@ export function AuthModal({ isOpen, onClose, lang = 'vi' }: AuthModalProps) {
             type="button"
             onClick={handleGoogleSignIn}
             disabled={isSubmitting}
-            className="w-full py-2.5 px-4 border border-zinc-300 rounded-lg text-xs font-semibold text-zinc-700 hover:bg-zinc-50 hover:border-black transition-all flex items-center justify-center gap-2.5 cursor-pointer bg-white"
+            className="w-full py-2 px-4 border border-zinc-300 rounded-lg text-xs font-semibold text-zinc-700 hover:bg-zinc-50 hover:border-black transition-all flex items-center justify-center gap-2.5 cursor-pointer bg-white"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path

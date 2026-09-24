@@ -229,18 +229,6 @@ export function Footer({
                     );
                   })}
                 </ul>
-
-                {/* Show CTA button in Column 1 (like original design) if configured */}
-                {colIdx === 0 && ctaBtn && ctaBtn.isVisible !== false && (
-                  <div className="pt-2">
-                    <button
-                      onClick={handleCtaClick}
-                      className="bg-white text-black px-4 py-2 rounded text-[10px] font-bold tracking-widest uppercase hover:bg-zinc-200 transition-colors cursor-pointer"
-                    >
-                      {ctaBtn.label?.[lang] || ctaBtn.label?.vi || ctaBtn.label?.en || 'MORE TEMPLATES'}
-                    </button>
-                  </div>
-                )}
               </div>
             );
           })}

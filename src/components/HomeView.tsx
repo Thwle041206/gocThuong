@@ -175,9 +175,9 @@ export function HomeView({
           <h1
             style={{
               fontFamily: typography.h1FontFamily,
-              fontSize: typography.h1CustomPx ? `clamp(32px, 6vw, ${typography.h1CustomPx}px)` : undefined,
+              fontSize: typography.h1CustomPx ? `clamp(34px, 7vw, ${typography.h1CustomPx}px)` : undefined,
             }}
-            className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[84px] text-zinc-900 leading-[1.05] tracking-tight font-normal"
+            className="font-serif text-[38px] leading-[1.1] xs:text-5xl sm:text-6xl md:text-7xl lg:text-[84px] text-zinc-900 sm:leading-[1.05] tracking-tight font-normal"
           >
             {isEn ? (
               siteSettings?.home?.heroTitle_en || (

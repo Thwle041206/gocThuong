@@ -75,9 +75,9 @@ export function HeroSection({
       <h1
         style={{
           fontFamily: typography.h1FontFamily,
-          fontSize: typography.h1CustomPx ? `clamp(32px, 6vw, ${typography.h1CustomPx}px)` : undefined,
+          fontSize: typography.h1CustomPx ? `clamp(36px, 8vw, ${typography.h1CustomPx}px)` : undefined,
         }}
-        className="font-serif text-6xl sm:text-7xl md:text-8xl font-normal text-zinc-900 tracking-tight leading-none mb-4"
+        className="font-serif text-[40px] leading-[1.1] xs:text-6xl sm:text-7xl md:text-8xl font-normal text-zinc-900 tracking-tight sm:leading-none mb-4"
       >
         {dynamicTitle}
       </h1>
