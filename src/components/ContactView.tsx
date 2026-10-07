@@ -20,6 +20,20 @@ export function ContactView({ lang }: ContactViewProps) {
   const [isSuccess, setIsSuccess] = useState(false);
 
   const t = UI_TEXT[lang].contactPage;
+  const isEn = lang === 'en';
+  const contact = siteSettings?.contact;
+  const text = {
+    title: isEn ? contact?.title_en || t.title : contact?.title_vi || t.title,
+    subtitle: isEn ? contact?.subtitle_en || t.subtitle : contact?.subtitle_vi || t.subtitle,
+    namePlaceholder: isEn ? contact?.namePlaceholder_en || t.namePlaceholder : contact?.namePlaceholder_vi || t.namePlaceholder,
+    emailPlaceholder: isEn ? contact?.emailPlaceholder_en || t.emailPlaceholder : contact?.emailPlaceholder_vi || t.emailPlaceholder,
+    messagePlaceholder: isEn ? contact?.messagePlaceholder_en || t.messagePlaceholder : contact?.messagePlaceholder_vi || t.messagePlaceholder,
+    sendBtn: isEn ? contact?.sendBtn_en || t.sendBtn : contact?.sendBtn_vi || t.sendBtn,
+    sendingBtn: isEn ? contact?.sendingBtn_en || t.sendingBtn : contact?.sendingBtn_vi || t.sendingBtn,
+    successTitle: isEn ? contact?.successTitle_en || t.successTitle : contact?.successTitle_vi || t.successTitle,
+    successSubtitle: isEn ? contact?.successSubtitle_en || t.successSubtitle : contact?.successSubtitle_vi || t.successSubtitle,
+    sendAnother: isEn ? contact?.sendAnother_en || t.sendAnother : contact?.sendAnother_vi || t.sendAnother,
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,10 +64,10 @@ export function ContactView({ lang }: ContactViewProps) {
           }}
           className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[76px] text-zinc-900 font-normal leading-[1.05] tracking-tight"
         >
-          {t.title}
+          {text.title}
         </h1>
         <p className="mt-4 sm:mt-5 text-zinc-600 text-sm sm:text-base max-w-md mx-auto leading-relaxed font-sans whitespace-pre-line text-balance">
-          {t.subtitle}
+          {text.subtitle}
         </p>
       </section>
 
@@ -65,17 +79,17 @@ export function ContactView({ lang }: ContactViewProps) {
               <CheckCircle2 size={30} />
             </div>
             <h3 className="font-serif text-2xl sm:text-3xl text-zinc-900 font-normal">
-              {t.successTitle}
+              {text.successTitle}
             </h3>
             <p className="text-zinc-600 text-sm max-w-md mx-auto leading-relaxed">
-              {t.successSubtitle}
+              {text.successSubtitle}
             </p>
             <div className="pt-4">
               <button
                 onClick={handleReset}
                 className="inline-flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-black hover:text-zinc-600 transition-colors pb-1 border-b border-black cursor-pointer"
               >
-                <span>{t.sendAnother}</span>
+                <span>{text.sendAnother}</span>
                 <ArrowRight size={13} />
               </button>
             </div>
@@ -94,7 +108,7 @@ export function ContactView({ lang }: ContactViewProps) {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder={t.namePlaceholder}
+                  placeholder={text.namePlaceholder}
                   className="w-full rounded-xl sm:rounded-2xl border border-zinc-200/90 bg-white px-4 py-3.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-hidden focus:border-zinc-900 transition-colors shadow-2xs"
                 />
               </div>
@@ -109,7 +123,7 @@ export function ContactView({ lang }: ContactViewProps) {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder={t.emailPlaceholder}
+                  placeholder={text.emailPlaceholder}
                   className="w-full rounded-xl sm:rounded-2xl border border-zinc-200/90 bg-white px-4 py-3.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-hidden focus:border-zinc-900 transition-colors shadow-2xs"
                 />
               </div>
@@ -126,7 +140,7 @@ export function ContactView({ lang }: ContactViewProps) {
                 rows={7}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                placeholder={t.messagePlaceholder}
+                placeholder={text.messagePlaceholder}
                 className="w-full rounded-xl sm:rounded-2xl border border-zinc-200/90 bg-white px-4 py-3.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-hidden focus:border-zinc-900 transition-colors shadow-2xs resize-y min-h-[170px]"
               />
             </div>
@@ -138,7 +152,7 @@ export function ContactView({ lang }: ContactViewProps) {
                 disabled={isSubmitting}
                 className="w-full bg-black hover:bg-zinc-800 disabled:bg-zinc-700 text-white font-medium text-xs tracking-[0.14em] uppercase py-3.5 sm:py-4 rounded-md sm:rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2 shadow-xs"
               >
-                {isSubmitting ? t.sendingBtn : t.sendBtn}
+                {isSubmitting ? text.sendingBtn : text.sendBtn}
               </button>
             </div>
           </form>

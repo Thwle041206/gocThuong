@@ -314,6 +314,28 @@ export interface CMSSiteSettings {
     missionTitle_en: string;
     missionTitle_vi: string;
   };
+  contact: {
+    title_en: string;
+    title_vi: string;
+    subtitle_en: string;
+    subtitle_vi: string;
+    namePlaceholder_en: string;
+    namePlaceholder_vi: string;
+    emailPlaceholder_en: string;
+    emailPlaceholder_vi: string;
+    messagePlaceholder_en: string;
+    messagePlaceholder_vi: string;
+    sendBtn_en: string;
+    sendBtn_vi: string;
+    sendingBtn_en: string;
+    sendingBtn_vi: string;
+    successTitle_en: string;
+    successTitle_vi: string;
+    successSubtitle_en: string;
+    successSubtitle_vi: string;
+    sendAnother_en: string;
+    sendAnother_vi: string;
+  };
   footer: CMSFooterSettings;
   typography?: CMSTypographySettings;
 }
@@ -619,6 +641,28 @@ export const DEFAULT_SITE_SETTINGS: CMSSiteSettings = {
     missionTitle_en: 'At our core, we believe in the transformative power of digital technology.',
     missionTitle_vi: 'Tại tâm điểm, chúng tôi tin tưởng sâu sắc vào sức mạnh biến đổi của công nghệ số.',
   },
+  contact: {
+    title_en: 'Contact',
+    title_vi: 'Liên hệ',
+    subtitle_en: "Get in touch with us today! We're here to answer your questions and discuss how we can help you.",
+    subtitle_vi: 'Liên hệ với chúng tôi ngay hôm nay! Chúng tôi luôn sẵn sàng giải đáp thắc mắc và cùng thảo luận cách hỗ trợ tốt nhất cho bạn.',
+    namePlaceholder_en: 'Name',
+    namePlaceholder_vi: 'Họ và tên',
+    emailPlaceholder_en: 'Email',
+    emailPlaceholder_vi: 'Email',
+    messagePlaceholder_en: 'Tell us about your project or question...',
+    messagePlaceholder_vi: 'Hãy chia sẻ về dự án hoặc câu hỏi của bạn...',
+    sendBtn_en: 'SEND MESSAGE',
+    sendBtn_vi: 'GỬI LỜI NHẮN',
+    sendingBtn_en: 'SENDING...',
+    sendingBtn_vi: 'ĐANG GỬI...',
+    successTitle_en: 'Message Sent Successfully',
+    successTitle_vi: 'Tin nhắn đã được gửi thành công',
+    successSubtitle_en: "Thank you for getting in touch! We're here to answer your questions and will respond promptly.",
+    successSubtitle_vi: 'Cảm ơn bạn đã liên hệ! Chúng tôi luôn sẵn sàng giải đáp và sẽ phản hồi sớm nhất.',
+    sendAnother_en: 'Send another message',
+    sendAnother_vi: 'Gửi tin nhắn khác',
+  },
   footer: DEFAULT_FOOTER_SETTINGS,
   typography: DEFAULT_TYPOGRAPHY_SETTINGS,
 };
@@ -888,13 +932,14 @@ export const CMSService = {
   },
 
   // -------------------------------------------------------------
-  // Site Sections & Headers (Trang chủ, Dự án, Dịch vụ, Bài viết, Kết nối)
+  // Site Sections & Headers (Trang chủ, Dự án, Dịch vụ, Bài viết, Kết nối, Liên hệ)
   // -------------------------------------------------------------
   async fetchSiteSettings(): Promise<CMSSiteSettings> {
     const rawLocal = getLocal<CMSSiteSettings>(LOCAL_STORAGE_SETTINGS, DEFAULT_SITE_SETTINGS);
     const local: CMSSiteSettings = {
       ...DEFAULT_SITE_SETTINGS,
       ...rawLocal,
+      contact: { ...DEFAULT_SITE_SETTINGS.contact, ...(rawLocal?.contact || {}) },
       footer: { ...DEFAULT_FOOTER_SETTINGS, ...(rawLocal?.footer || {}) },
     };
     try {

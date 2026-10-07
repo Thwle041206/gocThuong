@@ -13,11 +13,11 @@ import { ContactModal } from './components/ContactModal';
 import { UtilityModal } from './components/UtilityModal';
 import { AuthModal } from './components/AuthModal';
 import { Footer } from './components/Footer';
-import { AdminCMS } from './components/AdminCMS';
+import { AdminCMS, CMSSettingsSubTab } from './components/AdminCMS';
 import { CMSProvider, useCMS } from './context/CMSContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Article, ARTICLES, Language } from './data/content';
-import { Settings2 } from 'lucide-react';
+import { Pencil, Settings2 } from 'lucide-react';
 
 export type AppTab = 'home' | 'connect' | 'work' | 'blog' | 'services' | 'contact';
 
@@ -101,6 +101,7 @@ function MainApp() {
   };
   const [contactOpen, setContactOpen] = useState(false);
   const [preselectedService, setPreselectedService] = useState<string | undefined>();
+  const [cmsSettingsTarget, setCmsSettingsTarget] = useState<CMSSettingsSubTab | undefined>();
   const [utilityModal, setUtilityModal] = useState<{ isOpen: boolean; title: string; desc: string }>({
     isOpen: false,
     title: '',
@@ -109,6 +110,21 @@ function MainApp() {
 
   const { publishedPosts, isAdminOpen, setIsAdminOpen } = useCMS();
   const { isAdmin, isAuthModalOpen, setIsAuthModalOpen } = useAuth();
+
+  const cmsSectionLabels: Record<CMSSettingsSubTab, string> = {
+    home: '1. TRANG CHỦ',
+    work: '2. DỰ ÁN',
+    services: '3. DỊCH VỤ',
+    blog: '4. BÀI VIẾT',
+    connect: '5. KẾT NỐI',
+    contact: '6. LIÊN HỆ',
+    typography: 'KIỂU CHỮ',
+  };
+
+  const openCmsSection = (section: CMSSettingsSubTab) => {
+    setCmsSettingsTarget(section);
+    setIsAdminOpen(true);
+  };
 
   // Dynamic posts from CMS (or fallback to ARTICLES)
   const currentPosts = useMemo(() => {
@@ -491,6 +507,21 @@ function MainApp() {
         )}
       </main>
 
+      {/* Contextual CMS shortcut: visible only to an authenticated administrator. */}
+      {isAdmin && !isAdminOpen && !selectedArticle && (
+        <button
+          type="button"
+          onClick={() => openCmsSection(currentTab)}
+          className="fixed bottom-5 left-5 z-40 inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-400 px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-zinc-950 shadow-xl transition-all hover:scale-105 hover:bg-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+          title={`Chỉnh sửa ${cmsSectionLabels[currentTab]} trong CMS`}
+          aria-label={`Chỉnh sửa ${cmsSectionLabels[currentTab]} trong CMS`}
+        >
+          <Pencil size={15} />
+          <span className="hidden sm:inline">Sửa {cmsSectionLabels[currentTab]}</span>
+          <span className="sm:hidden">Sửa trang</span>
+        </button>
+      )}
+
       {/* Footer */}
       <Footer
         lang={lang}
@@ -516,7 +547,13 @@ function MainApp() {
 
       {/* Full-screen Admin CMS Studio Modal - Guarded for admin */}
       {isAdmin && isAdminOpen && (
-        <AdminCMS onClose={() => setIsAdminOpen(false)} />
+        <AdminCMS
+          initialSettingsSubTab={cmsSettingsTarget}
+          onClose={() => {
+            setIsAdminOpen(false);
+            setCmsSettingsTarget(undefined);
+          }}
+        />
       )}
 
       {/* Interactive Contact Drawer / Modal ("LET'S TALK") */}

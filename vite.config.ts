@@ -1,12 +1,14 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import { cloudflare } from '@cloudflare/vite-plugin';
+// Temporarily disabled for local development: the Windows workerd runtime crashes on startup.
+// Re-enable this import and the plugin below before Cloudflare Workers deployment.
+// import { cloudflare } from '@cloudflare/vite-plugin';
 import path from 'path';
 import { defineConfig } from 'vite';
 
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss(), cloudflare()],
+    plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
         '@': path.resolve(import.meta.dirname || '.', '.'),

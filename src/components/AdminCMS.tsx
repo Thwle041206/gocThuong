@@ -74,6 +74,8 @@ import { processImageUpload } from '../utils/imageUpload';
 import { HirokiLogo } from './HirokiLogo';
 import { FooterStudio } from './admin/FooterStudio';
 
+export type CMSSettingsSubTab = 'home' | 'work' | 'services' | 'blog' | 'connect' | 'contact' | 'typography';
+
 const SAMPLE_IMAGES = [
   { label: 'Work Kista', url: '/src/assets/images/work_kista_agency_1790135945749.jpg' },
   { label: 'Work Akito', url: '/src/assets/images/work_akito_portfolio_1790135960377.jpg' },
@@ -87,7 +89,13 @@ const SAMPLE_IMAGES = [
   { label: 'Speaker Stage', url: '/src/assets/images/blog_speaker_stage_1790133941051.jpg' },
 ];
 
-export function AdminCMS({ onClose }: { onClose: () => void }) {
+export function AdminCMS({
+  onClose,
+  initialSettingsSubTab,
+}: {
+  onClose: () => void;
+  initialSettingsSubTab?: CMSSettingsSubTab;
+}) {
   const {
     posts,
     projects,
@@ -118,10 +126,10 @@ export function AdminCMS({ onClose }: { onClose: () => void }) {
   } = useCMS();
   const { isAdmin, setIsAuthModalOpen } = useAuth();
 
-  // Navigation tab inside CMS: 'posts' | 'projects' | 'services' | 'taxonomies' | 'footer' | 'settings' | 'backup' | 'trash'
+  // Navigation tab inside CMS: 'home-management' | 'posts' | 'projects' | 'services' | 'taxonomies' | 'footer' | 'settings' | 'backup' | 'trash'
   const [activeTab, setActiveTab] = useState<
-    'posts' | 'projects' | 'services' | 'taxonomies' | 'footer' | 'settings' | 'backup' | 'trash'
-  >('posts');
+    'home-management' | 'posts' | 'projects' | 'services' | 'taxonomies' | 'footer' | 'settings' | 'backup' | 'trash'
+  >(initialSettingsSubTab ? 'settings' : 'posts');
 
   // Delete Confirmation Popup Modal State
   const [deleteModalState, setDeleteModalState] = useState<{
@@ -264,7 +272,7 @@ export function AdminCMS({ onClose }: { onClose: () => void }) {
 
   // Site Settings Form State
   const [settingsForm, setSettingsForm] = useState<CMSSiteSettings>(siteSettings);
-  const [settingsSubTab, setSettingsSubTab] = useState<'home' | 'work' | 'services' | 'blog' | 'connect' | 'typography'>('home');
+  const [settingsSubTab, setSettingsSubTab] = useState<CMSSettingsSubTab>(initialSettingsSubTab || 'home');
   const [notification, setNotification] = useState<string | null>(null);
 
   // Footer Studio State
@@ -319,7 +327,7 @@ export function AdminCMS({ onClose }: { onClose: () => void }) {
   const [isCreatingFooterSocial, setIsCreatingFooterSocial] = useState(false);
   const [footerSocialForm, setFooterSocialForm] = useState<{
     id: string;
-    platform: 'instagram' | 'twitter' | 'behance' | 'pinterest' | 'facebook' | 'linkedin' | 'youtube' | 'tiktok' | 'github' | 'dribbble' | 'custom';
+    platform: 'instagram' | 'twitter' | 'behance' | 'pinterest' | 'facebook' | 'linkedin' | 'youtube' | 'tiktok' | 'github' | 'dribbble' | 'gmail' | 'telegram' | 'custom';
     label: string;
     url: string;
     isVisible: boolean;
@@ -1351,6 +1359,26 @@ export function AdminCMS({ onClose }: { onClose: () => void }) {
     return matchesSearch && matchesStatus;
   });
 
+  // Project taxonomy choices are managed in the CMS Taxonomies section.
+  // Keep a project's existing value available as well, so older/custom data
+  // can be edited without being silently replaced.
+  const projectMainCategoryOptions = Array.from(
+    new Set([
+      ...categories
+        .filter((category) => category.target === 'work' || category.target === 'both')
+        .map((category) => category.name),
+      ...(editingProject?.filterTag ? [editingProject.filterTag] : []),
+    ])
+  );
+  const projectBadgeOptions = Array.from(
+    new Set([
+      ...editorialTags
+        .filter((tag) => tag.badgeType === 'project' || tag.badgeType === 'both')
+        .map((tag) => tag.name),
+      ...(editingProject?.categoryBadge ? [editingProject.categoryBadge] : []),
+    ])
+  );
+
   return (
     <div className="fixed inset-0 z-50 bg-zinc-950/80 backdrop-blur-md flex flex-col animate-in fade-in duration-200 text-zinc-900">
       {/* Toast Notification */}
@@ -1396,6 +1424,18 @@ export function AdminCMS({ onClose }: { onClose: () => void }) {
               <div className="text-[11px] font-bold tracking-wider text-zinc-400 uppercase px-3 py-2">
                 Quản lý nội dung
               </div>
+
+              <button
+                onClick={() => setActiveTab('home-management')}
+                className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors cursor-pointer ${
+                  activeTab === 'home-management'
+                    ? 'bg-zinc-900 text-white font-semibold'
+                    : 'text-zinc-600 hover:bg-zinc-200/60 hover:text-zinc-900'
+                }`}
+              >
+                <Layout size={16} />
+                <span>Quản lý Trang chủ</span>
+              </button>
 
               <button
                 onClick={() => {
@@ -1585,6 +1625,116 @@ export function AdminCMS({ onClose }: { onClose: () => void }) {
 
           {/* Right Main Content Panel */}
           <main className="flex-1 bg-white overflow-y-auto p-4 sm:p-8">
+            {/* ======================================================== */}
+            {/* TAB: HOMEPAGE MANAGEMENT                                  */}
+            {/* ======================================================== */}
+            {activeTab === 'home-management' && (
+              <div className="space-y-6 max-w-5xl mx-auto">
+                <div className="border-b border-zinc-100 pb-5">
+                  <h2 className="text-xl sm:text-2xl font-bold font-serif text-zinc-900">
+                    Quản lý Trang chủ
+                  </h2>
+                  <p className="text-zinc-500 text-xs sm:text-sm mt-1 leading-relaxed">
+                    Chọn khu vực bạn muốn cập nhật trên Trang chủ. Các nút dưới đây đưa bạn trực tiếp đến đúng phần quản lý, không cần tìm lại trong CMS.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSettingsSubTab('home');
+                      setActiveTab('settings');
+                    }}
+                    className="text-left rounded-xl border border-zinc-200 p-5 hover:border-zinc-900 hover:shadow-sm transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="flex items-center gap-2 text-zinc-900 font-semibold">
+                          <Layout size={18} />
+                          <span>Nội dung chung Trang chủ</span>
+                        </div>
+                        <p className="mt-2 text-xs text-zinc-500 leading-relaxed">
+                          Chỉnh Hero, tiêu đề phần Dịch vụ và Quy trình làm việc.
+                        </p>
+                      </div>
+                      <ExternalLink size={17} className="text-zinc-400 group-hover:text-zinc-900 shrink-0" />
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingProject(null);
+                      setActiveTab('projects');
+                    }}
+                    className="text-left rounded-xl border border-zinc-200 p-5 hover:border-zinc-900 hover:shadow-sm transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="flex items-center gap-2 text-zinc-900 font-semibold">
+                          <Briefcase size={18} />
+                          <span>Quản lý Dự án</span>
+                          <span className="text-[11px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">{projects.length}</span>
+                        </div>
+                        <p className="mt-2 text-xs text-zinc-500 leading-relaxed">
+                          Thêm, sửa hoặc xuất bản các dự án được hiển thị trên Trang chủ.
+                        </p>
+                      </div>
+                      <ExternalLink size={17} className="text-zinc-400 group-hover:text-zinc-900 shrink-0" />
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingService(null);
+                      setIsCreatingService(false);
+                      setActiveTab('services');
+                    }}
+                    className="text-left rounded-xl border border-zinc-200 p-5 hover:border-zinc-900 hover:shadow-sm transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="flex items-center gap-2 text-zinc-900 font-semibold">
+                          <Layers size={18} />
+                          <span>Quản lý Dịch vụ</span>
+                          <span className="text-[11px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">{services.length}</span>
+                        </div>
+                        <p className="mt-2 text-xs text-zinc-500 leading-relaxed">
+                          Cập nhật các dịch vụ trong khu vực “What We Do” trên Trang chủ.
+                        </p>
+                      </div>
+                      <ExternalLink size={17} className="text-zinc-400 group-hover:text-zinc-900 shrink-0" />
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingPost(null);
+                      setActiveTab('posts');
+                    }}
+                    className="text-left rounded-xl border border-zinc-200 p-5 hover:border-zinc-900 hover:shadow-sm transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="flex items-center gap-2 text-zinc-900 font-semibold">
+                          <FileText size={18} />
+                          <span>Quản lý Bài viết</span>
+                          <span className="text-[11px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">{posts.length}</span>
+                        </div>
+                        <p className="mt-2 text-xs text-zinc-500 leading-relaxed">
+                          Quản lý bài viết mới nhất đang xuất hiện trong khu vực Blog của Trang chủ.
+                        </p>
+                      </div>
+                      <ExternalLink size={17} className="text-zinc-400 group-hover:text-zinc-900 shrink-0" />
+                    </div>
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* ======================================================== */}
             {/* TAB 1: POSTS MANAGEMENT                                  */}
             {/* ======================================================== */}
@@ -3694,9 +3844,14 @@ export function AdminCMS({ onClose }: { onClose: () => void }) {
                           <span className="font-serif text-lg font-bold text-zinc-900">
                             {proj.name}
                           </span>
-                          <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase bg-zinc-100 px-2 py-0.5 rounded">
-                            {proj.categoryBadge}
-                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase bg-zinc-100 px-2 py-0.5 rounded">
+                              {proj.filterTag}
+                            </span>
+                            <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase bg-zinc-100 px-2 py-0.5 rounded">
+                              {proj.categoryBadge}
+                            </span>
+                          </div>
                         </div>
 
                         <p className="text-zinc-600 text-xs line-clamp-2 leading-relaxed">
@@ -3785,27 +3940,25 @@ export function AdminCMS({ onClose }: { onClose: () => void }) {
                       <input
                         type="text"
                         value={editingProject.name}
-                        onChange={(e) =>
-                          setEditingProject({ ...editingProject, name: e.target.value })
-                        }
-                        className="w-full bg-white border border-zinc-300 rounded-lg px-3 py-2 text-xs font-semibold"
-                        placeholder="VD: Kista, Akito..."
+                        onChange={(e) => setEditingProject({ ...editingProject, name: e.target.value })}
+                        className="w-full bg-white border border-zinc-300 rounded-lg px-3 py-2 text-xs"
                       />
                     </div>
 
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1.5">
-                        Phân loại Badge
+                        BADGE (Thẻ Nhãn)
                       </label>
-                      <input
-                        type="text"
+                      <select
                         value={editingProject.categoryBadge}
-                        onChange={(e) =>
-                          setEditingProject({ ...editingProject, categoryBadge: e.target.value })
-                        }
+                        onChange={(e) => setEditingProject({ ...editingProject, categoryBadge: e.target.value })}
                         className="w-full bg-white border border-zinc-300 rounded-lg px-3 py-2 text-xs uppercase"
-                        placeholder="AGENCY / PORTFOLIO / BUSINESS"
-                      />
+                      >
+                        {projectBadgeOptions.map((badge) => (
+                          <option key={badge} value={badge}>{badge}</option>
+                        ))}
+                      </select>
+                      <p className="mt-1 text-[10px] text-zinc-500">Chọn từ Quản lý BADGE dành cho Dự án.</p>
                     </div>
 
                     <div>
@@ -3814,18 +3967,14 @@ export function AdminCMS({ onClose }: { onClose: () => void }) {
                       </label>
                       <select
                         value={editingProject.filterTag}
-                        onChange={(e) =>
-                          setEditingProject({
-                            ...editingProject,
-                            filterTag: e.target.value as any,
-                          })
-                        }
-                        className="w-full bg-white border border-zinc-300 rounded-lg px-3 py-2 text-xs"
+                        onChange={(e) => setEditingProject({ ...editingProject, filterTag: e.target.value })}
+                        className="w-full bg-white border border-zinc-300 rounded-lg px-3 py-2 text-xs uppercase"
                       >
-                        <option value="BRANDING">BRANDING</option>
-                        <option value="WEB DESIGN">WEB DESIGN</option>
-                        <option value="WEB DEVELOPMENT">WEB DEVELOPMENT</option>
+                        {projectMainCategoryOptions.map((category) => (
+                          <option key={category} value={category}>{category}</option>
+                        ))}
                       </select>
+                      <p className="mt-1 text-[10px] text-zinc-500">Chọn Bộ Lọc Chính có phạm vi Dự án.</p>
                     </div>
                   </div>
 
@@ -5591,7 +5740,7 @@ export function AdminCMS({ onClose }: { onClose: () => void }) {
                       Nội dung các Header & Trang
                     </h2>
                     <p className="text-zinc-500 text-xs sm:text-sm mt-0.5">
-                      Tự do cập nhật tiêu đề, phụ đề và thông điệp cho 5 mục: TRANG CHỦ, DỰ ÁN, DỊCH VỤ, BÀI VIẾT, KẾT NỐI.
+                      Tự do cập nhật nội dung chữ cho: TRANG CHỦ, DỰ ÁN, DỊCH VỤ, BÀI VIẾT, KẾT NỐI và LIÊN HỆ.
                     </p>
                   </div>
 
@@ -5604,7 +5753,7 @@ export function AdminCMS({ onClose }: { onClose: () => void }) {
                   </button>
                 </div>
 
-                {/* Sub-tabs for the 5 Headers */}
+                {/* Sub-tabs for landing-page content */}
                 <div className="flex items-center gap-2 overflow-x-auto border-b border-zinc-200 pb-2">
                   {(
                     [
@@ -5613,7 +5762,8 @@ export function AdminCMS({ onClose }: { onClose: () => void }) {
                       { id: 'services', label: '3. DỊCH VỤ' },
                       { id: 'blog', label: '4. BÀI VIẾT' },
                       { id: 'connect', label: '5. KẾT NỐI' },
-                      { id: 'typography', label: '6. PHÔNG & CỠ CHỮ (H1 & NAV)' },
+                      { id: 'contact', label: '6. LIÊN HỆ' },
+                      { id: 'typography', label: '7. PHÔNG & CỠ CHỮ (H1 & NAV)' },
                     ] as const
                   ).map((item) => (
                     <button
@@ -5889,6 +6039,88 @@ export function AdminCMS({ onClose }: { onClose: () => void }) {
                           }
                           className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs"
                         />
+                      </div>
+                    </div>
+                  )}
+
+                  {settingsSubTab === 'contact' && (
+                    <div className="space-y-5">
+                      <div>
+                        <h3 className="font-semibold text-sm text-zinc-900">
+                          Cấu hình Trang LIÊN HỆ (Contact Page)
+                        </h3>
+                        <p className="text-xs text-zinc-500 mt-1">
+                          Nội dung này sẽ hiển thị tại đường dẫn <code>/lien-he</code> và <code>/contact</code>.
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">Tiêu đề (Tiếng Việt)</label>
+                          <input type="text" value={settingsForm.contact.title_vi} onChange={(e) => setSettingsForm({ ...settingsForm, contact: { ...settingsForm.contact, title_vi: e.target.value } })} className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs font-semibold" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">Title (English)</label>
+                          <input type="text" value={settingsForm.contact.title_en} onChange={(e) => setSettingsForm({ ...settingsForm, contact: { ...settingsForm.contact, title_en: e.target.value } })} className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs font-semibold" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">Phụ đề (Tiếng Việt)</label>
+                          <textarea rows={3} value={settingsForm.contact.subtitle_vi} onChange={(e) => setSettingsForm({ ...settingsForm, contact: { ...settingsForm.contact, subtitle_vi: e.target.value } })} className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">Subtitle (English)</label>
+                          <textarea rows={3} value={settingsForm.contact.subtitle_en} onChange={(e) => setSettingsForm({ ...settingsForm, contact: { ...settingsForm.contact, subtitle_en: e.target.value } })} className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs" />
+                        </div>
+                      </div>
+
+                      <div className="border-t border-zinc-200 pt-5">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-700 mb-3">Nhãn biểu mẫu</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {[
+                            ['namePlaceholder_vi', 'Tên trường Họ tên (Tiếng Việt)'],
+                            ['namePlaceholder_en', 'Name placeholder (English)'],
+                            ['emailPlaceholder_vi', 'Tên trường Email (Tiếng Việt)'],
+                            ['emailPlaceholder_en', 'Email placeholder (English)'],
+                            ['messagePlaceholder_vi', 'Tên trường Tin nhắn (Tiếng Việt)'],
+                            ['messagePlaceholder_en', 'Message placeholder (English)'],
+                            ['sendBtn_vi', 'Nút gửi (Tiếng Việt)'],
+                            ['sendBtn_en', 'Send button (English)'],
+                            ['sendingBtn_vi', 'Trạng thái đang gửi (Tiếng Việt)'],
+                            ['sendingBtn_en', 'Sending state (English)'],
+                          ].map(([field, label]) => (
+                            <div key={field}>
+                              <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">{label}</label>
+                              <input type="text" value={settingsForm.contact[field as keyof typeof settingsForm.contact]} onChange={(e) => setSettingsForm({ ...settingsForm, contact: { ...settingsForm.contact, [field]: e.target.value } })} className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="border-t border-zinc-200 pt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">Tiêu đề thành công (Tiếng Việt)</label>
+                          <input type="text" value={settingsForm.contact.successTitle_vi} onChange={(e) => setSettingsForm({ ...settingsForm, contact: { ...settingsForm.contact, successTitle_vi: e.target.value } })} className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">Success title (English)</label>
+                          <input type="text" value={settingsForm.contact.successTitle_en} onChange={(e) => setSettingsForm({ ...settingsForm, contact: { ...settingsForm.contact, successTitle_en: e.target.value } })} className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">Thông báo thành công (Tiếng Việt)</label>
+                          <textarea rows={3} value={settingsForm.contact.successSubtitle_vi} onChange={(e) => setSettingsForm({ ...settingsForm, contact: { ...settingsForm.contact, successSubtitle_vi: e.target.value } })} className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">Success message (English)</label>
+                          <textarea rows={3} value={settingsForm.contact.successSubtitle_en} onChange={(e) => setSettingsForm({ ...settingsForm, contact: { ...settingsForm.contact, successSubtitle_en: e.target.value } })} className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">Nút gửi tin nhắn khác (Tiếng Việt)</label>
+                          <input type="text" value={settingsForm.contact.sendAnother_vi} onChange={(e) => setSettingsForm({ ...settingsForm, contact: { ...settingsForm.contact, sendAnother_vi: e.target.value } })} className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">Send another button (English)</label>
+                          <input type="text" value={settingsForm.contact.sendAnother_en} onChange={(e) => setSettingsForm({ ...settingsForm, contact: { ...settingsForm.contact, sendAnother_en: e.target.value } })} className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs" />
+                        </div>
                       </div>
                     </div>
                   )}

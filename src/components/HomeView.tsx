@@ -1,5 +1,6 @@
 import { Language, WORK_PROJECTS, Article } from '../data/content';
 import { LogoIpsum } from './LogoIpsum';
+import { ArticleCard } from './ArticleCard';
 import { useCMS } from '../context/CMSContext';
 import { getBadgeColorClasses, DEFAULT_TYPOGRAPHY_SETTINGS } from '../services/cmsService';
 
@@ -13,10 +14,11 @@ interface HomeViewProps {
 export function HomeView({
   lang,
   onNavigate,
+  onSelectArticle,
   onOpenContact
 }: HomeViewProps) {
   const isEn = lang === 'en';
-  const { publishedProjects, publishedServices, siteSettings, categories, editorialTags } = useCMS();
+  const { publishedProjects, publishedPosts, publishedServices, siteSettings, categories, editorialTags } = useCMS();
 
   const typography = siteSettings?.typography || DEFAULT_TYPOGRAPHY_SETTINGS;
 
@@ -25,7 +27,11 @@ export function HomeView({
     ? publishedProjects
     : WORK_PROJECTS;
 
-  const showcaseProjects = projectsSource.slice(0, 6).map((p) => {
+  // CMS data is loaded asynchronously. Keep the homepage render-safe while
+  // the context is hydrating or when an older saved dataset omits a collection.
+  const latestPosts = (publishedPosts || []).slice(0, 3);
+
+  const showcaseProjects = (projectsSource || []).slice(0, 6).map((p) => {
     // Resolve category name (e.g. BRANDING, WEB DESIGN, WEB DEVELOPMENT or custom category)
     const matchingCategory = categories?.find(
       (c) =>
@@ -414,6 +420,47 @@ export function HomeView({
             </div>
           </div>
         </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 5. LATEST ARTICLES / BLOG                                   */}
+      {/* ============================================================ */}
+      <section className="py-16 sm:py-24 border-t border-zinc-100 max-w-[1100px] mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 mb-10 sm:mb-12">
+          <div>
+            <span className="text-[11px] sm:text-xs font-semibold tracking-[0.25em] text-zinc-500 uppercase">
+              {isEn ? 'LATEST STORIES' : 'BÀI VIẾT MỚI NHẤT'}
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-zinc-900 font-normal leading-[1.2] mt-3 max-w-2xl">
+              {isEn ? 'Ideas, insights, and creative perspectives.' : 'Góc nhìn, cảm hứng và những câu chuyện sáng tạo.'}
+            </h2>
+          </div>
+          <button
+            onClick={() => onNavigate('blog')}
+            className="shrink-0 text-[11px] font-bold tracking-widest text-zinc-900 uppercase underline underline-offset-4 hover:opacity-75 transition-opacity cursor-pointer"
+          >
+            {isEn ? 'VIEW ALL ARTICLES' : 'XEM TẤT CẢ BÀI VIẾT'}
+          </button>
+        </div>
+
+        {latestPosts.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+            {latestPosts.map((post) => (
+              <ArticleCard
+                key={post.id}
+                article={post}
+                lang={lang}
+                onRead={(article) => onSelectArticle?.(article)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-xl border border-dashed border-zinc-300 bg-zinc-50 px-6 py-10 text-center">
+            <p className="text-sm text-zinc-600">
+              {isEn ? 'New articles are being prepared.' : 'Các bài viết mới đang được cập nhật.'}
+            </p>
+          </div>
+        )}
       </section>
 
       {/* ============================================================ */}
