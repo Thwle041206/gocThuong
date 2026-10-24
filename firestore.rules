@@ -6,49 +6,71 @@ service cloud.firestore {
       return id is string && id.size() > 0 && id.size() <= 128;
     }
 
-    // User profiles collection
-    match /users/{userId} {
-      allow read, write: if true;
+    function isSignedIn() {
+      return request.auth != null;
     }
 
-    // Admin authorization collection
-    match /admins/{userId} {
-      allow read, write: if true;
+    // `admin` is a Firebase Auth custom claim, set only by a trusted server using
+    // the Firebase Admin SDK. Never use a client-writable Firestore field as a role.
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.admin == true;
+    }
+
+    // User profiles contain display information only. Their role is derived from
+    // the Firebase ID token and is deliberately not writable by browser clients.
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow create: if isSignedIn()
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly(['uid', 'email', 'displayName', 'photoURL', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid;
+      allow update: if isSignedIn()
+        && request.auth.uid == userId
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['email', 'displayName', 'photoURL', 'createdAt']);
+      allow delete: if false;
     }
 
     // Posts Collection (Articles)
     match /posts/{postId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     // Projects Collection (Portfolio items)
     match /projects/{projectId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     // Categories Collection
     match /categories/{catId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     // Editorial Tags Collection
     match /editorial_tags/{tagId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     // Site Sections
     match /site_sections/{sectionId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     // Trash bin collection (Projects & Tags soft deleted, auto removed after 30 days)
     match /trash/{trashId} {
-      allow read, write: if true;
+      allow read, write: if isAdmin();
     }
 
     // System connectivity test
     match /test/{docId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAdmin();
     }
   }
 }

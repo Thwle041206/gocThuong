@@ -2,24 +2,13 @@
   "entities": {
     "UserProfile": {
       "title": "UserProfile",
-      "description": "User profile with role-based access control for authentication",
+      "description": "Non-authoritative user display profile. Authorization comes from Firebase Auth custom claims.",
       "type": "object",
       "properties": {
         "uid": { "type": "string" },
         "email": { "type": "string" },
         "displayName": { "type": "string" },
-        "role": { "type": "string", "enum": ["user", "admin"] },
-        "createdAt": { "type": "string" }
-      },
-      "required": ["uid", "email", "role"]
-    },
-    "Admin": {
-      "title": "Admin",
-      "description": "Collection of trusted admin credentials",
-      "type": "object",
-      "properties": {
-        "uid": { "type": "string" },
-        "email": { "type": "string" },
+        "photoURL": { "type": "string" },
         "createdAt": { "type": "string" }
       },
       "required": ["uid", "email"]
@@ -113,11 +102,7 @@
   "firestore": {
     "/users/{userId}": {
       "schema": { "$ref": "#/entities/UserProfile" },
-      "description": "User profile with role definition (user or admin)"
-    },
-    "/admins/{userId}": {
-      "schema": { "$ref": "#/entities/Admin" },
-      "description": "Trusted admin documents"
+      "description": "User display profile; it is not an authorization source"
     },
     "/posts/{postId}": {
       "schema": { "$ref": "#/entities/Post" },
