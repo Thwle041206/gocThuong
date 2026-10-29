@@ -12,8 +12,6 @@ import {
   ARTICLES,
   WorkProject,
   WORK_PROJECTS,
-  ServiceItem,
-  SERVICES,
   UI_TEXT,
 } from '../data/content';
 
@@ -29,13 +27,6 @@ export interface CMSProject extends WorkProject {
   updatedAt?: string;
 }
 
-export interface CMSServiceItem extends ServiceItem {
-  status?: 'draft' | 'published';
-  order?: number;
-  linkText?: { en: string; vi: string };
-  createdAt?: string;
-  updatedAt?: string;
-}
 
 export interface CMSCategory {
   id: string;
@@ -91,7 +82,7 @@ export function getBadgeColorClasses(color?: string): string {
   }
 }
 
-export type TrashItemType = 'project' | 'tag' | 'category' | 'post' | 'service' | 'footer_link' | 'footer_column';
+export type TrashItemType = 'project' | 'tag' | 'category' | 'post' | 'footer_link' | 'footer_column';
 
 export interface CMSTrashItem {
   id: string;
@@ -215,7 +206,7 @@ export interface CMSFooterLinkItem {
   id: string;
   label: { vi: string; en: string };
   type: 'tab' | 'utility' | 'external' | 'admin';
-  target: string; // tab name e.g. 'home' | 'services' | 'connect' | 'work' | 'blog' | 'contact' or external URL or utility key
+  target: string; // tab name or external URL or utility key
   utilityContent?: {
     title: { vi: string; en: string };
     desc: { vi: string; en: string };
@@ -294,12 +285,6 @@ export interface CMSSiteSettings {
     subtitle_en: string;
     subtitle_vi: string;
   };
-  services: {
-    title_en: string;
-    title_vi: string;
-    subtitle_en: string;
-    subtitle_vi: string;
-  };
   blog: {
     heroTitle_en: string;
     heroTitle_vi: string;
@@ -335,6 +320,10 @@ export interface CMSSiteSettings {
     successSubtitle_vi: string;
     sendAnother_en: string;
     sendAnother_vi: string;
+    linkedinUrl: string;
+    youtubeUrl: string;
+    facebookUrl: string;
+    tiktokUrl: string;
   };
   footer: CMSFooterSettings;
   typography?: CMSTypographySettings;
@@ -491,7 +480,6 @@ export const DEFAULT_FOOTER_SETTINGS: CMSFooterSettings = {
       isVisible: true,
       links: [
         { id: 'lnk-home', label: { vi: 'TRANG CHỦ', en: 'HOME' }, type: 'tab', target: 'home', isVisible: true },
-        { id: 'lnk-services', label: { vi: 'DỊCH VỤ', en: 'SERVICES' }, type: 'tab', target: 'services', isVisible: true },
         { id: 'lnk-connect', label: { vi: 'CONNECT (KẾT NỐI)', en: 'CONNECT' }, type: 'tab', target: 'connect', isVisible: true },
         {
           id: 'lnk-career',
@@ -621,18 +609,6 @@ export const DEFAULT_SITE_SETTINGS: CMSSiteSettings = {
     subtitle_en: 'Dive into our curated collection of projects, highlighting our expertise.',
     subtitle_vi: 'Khám phá bộ sưu tập các dự án tiêu biểu, minh chứng cho chuyên môn và thẩm mỹ.',
   },
-  services: {
-    title_en: 'Services',
-    title_vi: 'Dịch vụ',
-    subtitle_en: 'Comprehensive digital and design solutions engineered for lasting brand impact.',
-    subtitle_vi: 'Các giải pháp kỹ thuật số và thiết kế toàn diện, kiến tạo dấu ấn thương hiệu bền vững.',
-  },
-  blog: {
-    heroTitle_en: 'Stories, Insights & Creative Thoughts',
-    heroTitle_vi: 'Câu chuyện, Góc nhìn & Cảm hứng Sáng tạo',
-    heroSubtitle_en: 'A curated journal exploring typography, visual identity, and modern digital craft.',
-    heroSubtitle_vi: 'Tạp chí chọn lọc khám phá nghệ thuật chữ, bản sắc thị giác và tay nghề kỹ thuật số đương đại.',
-  },
   connect: {
     heroTitle_en: 'Digital excellence for modern brands.',
     heroTitle_vi: 'Đẳng cấp kỹ thuật số cho các thương hiệu hiện đại.',
@@ -645,7 +621,7 @@ export const DEFAULT_SITE_SETTINGS: CMSSiteSettings = {
     title_en: 'Contact',
     title_vi: 'Liên hệ',
     subtitle_en: "Get in touch with us today! We're here to answer your questions and discuss how we can help you.",
-    subtitle_vi: 'Liên hệ với chúng tôi ngay hôm nay! Chúng tôi luôn sẵn sàng giải đáp thắc mắc và cùng thảo luận cách hỗ trợ tốt nhất cho bạn.',
+    subtitle_vi: 'Cùng trao đổi và thảo luận những ý tưởng.',
     namePlaceholder_en: 'Name',
     namePlaceholder_vi: 'Họ và tên',
     emailPlaceholder_en: 'Email',
@@ -662,6 +638,10 @@ export const DEFAULT_SITE_SETTINGS: CMSSiteSettings = {
     successSubtitle_vi: 'Cảm ơn bạn đã liên hệ! Chúng tôi luôn sẵn sàng giải đáp và sẽ phản hồi sớm nhất.',
     sendAnother_en: 'Send another message',
     sendAnother_vi: 'Gửi tin nhắn khác',
+    linkedinUrl: '',
+    youtubeUrl: '',
+    facebookUrl: '',
+    tiktokUrl: '',
   },
   footer: DEFAULT_FOOTER_SETTINGS,
   typography: DEFAULT_TYPOGRAPHY_SETTINGS,
@@ -669,7 +649,6 @@ export const DEFAULT_SITE_SETTINGS: CMSSiteSettings = {
 
 const LOCAL_STORAGE_POSTS = 'gocthuong_cms_posts';
 const LOCAL_STORAGE_PROJECTS = 'gocthuong_cms_projects';
-const LOCAL_STORAGE_SERVICES = 'gocthuong_cms_services';
 const LOCAL_STORAGE_SETTINGS = 'gocthuong_cms_settings';
 const LOCAL_STORAGE_CATEGORIES = 'gocthuong_cms_categories';
 const LOCAL_STORAGE_EDITORIAL_TAGS = 'gocthuong_cms_editorial_tags';
@@ -843,91 +822,6 @@ export const CMSService = {
       await deleteDoc(doc(db, 'projects', id));
     } catch (e) {
       console.warn('Firestore delete failed, removed locally:', e);
-    }
-  },
-
-  // -------------------------------------------------------------
-  // Services Operations (Dịch vụ: Tạo mới, Sửa, Xóa vào thùng rác, Draft/Publish)
-  // -------------------------------------------------------------
-  async fetchServices(): Promise<CMSServiceItem[]> {
-    const local = getLocal<CMSServiceItem[]>(LOCAL_STORAGE_SERVICES, []);
-    try {
-      const colRef = collection(db, 'services');
-      const snap = await getDocs(colRef);
-      if (!snap.empty) {
-        const services: CMSServiceItem[] = [];
-        snap.forEach((d) => {
-          services.push(d.data() as CMSServiceItem);
-        });
-        services.sort((a, b) => (a.number || '').localeCompare(b.number || ''));
-        setLocal(LOCAL_STORAGE_SERVICES, services);
-        return services;
-      } else {
-        // Seed initial services
-        const initial = SERVICES.map((s, idx) => ({
-          ...s,
-          status: 'published' as const,
-          order: idx + 1,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        }));
-        for (const item of initial) {
-          await setDoc(doc(db, 'services', item.id), item);
-        }
-        setLocal(LOCAL_STORAGE_SERVICES, initial);
-        return initial;
-      }
-    } catch (e) {
-      console.warn('Error fetching services from Firestore, using local fallback:', e);
-      if (local.length > 0) return local;
-      return SERVICES.map((s, idx) => ({
-        ...s,
-        status: 'published' as const,
-        order: idx + 1,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }));
-    }
-  },
-
-  async saveService(service: CMSServiceItem): Promise<CMSServiceItem> {
-    const now = new Date().toISOString();
-    const finalService: CMSServiceItem = {
-      ...service,
-      id: service.id || `srv-${Date.now()}`,
-      number: service.number || '01',
-      status: service.status || 'published',
-      updatedAt: now,
-      createdAt: service.createdAt || now,
-    };
-
-    const services = getLocal<CMSServiceItem[]>(LOCAL_STORAGE_SERVICES, []);
-    const idx = services.findIndex((s) => s.id === finalService.id);
-    if (idx >= 0) {
-      services[idx] = finalService;
-    } else {
-      services.push(finalService);
-    }
-    services.sort((a, b) => (a.number || '').localeCompare(b.number || ''));
-    setLocal(LOCAL_STORAGE_SERVICES, services);
-
-    try {
-      await setDoc(doc(db, 'services', finalService.id), finalService);
-    } catch (e) {
-      console.warn('Firestore write service failed, saved locally:', e);
-    }
-
-    return finalService;
-  },
-
-  async deleteService(id: string): Promise<void> {
-    const services = getLocal<CMSServiceItem[]>(LOCAL_STORAGE_SERVICES, []).filter((s) => s.id !== id);
-    setLocal(LOCAL_STORAGE_SERVICES, services);
-
-    try {
-      await deleteDoc(doc(db, 'services', id));
-    } catch (e) {
-      console.warn('Firestore delete service failed, removed locally:', e);
     }
   },
 
@@ -1116,17 +1010,9 @@ export const CMSService = {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }));
-    const initialServices = SERVICES.map((s, idx) => ({
-      ...s,
-      status: 'published' as const,
-      order: idx + 1,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }));
 
     setLocal(LOCAL_STORAGE_POSTS, initialPosts);
     setLocal(LOCAL_STORAGE_PROJECTS, initialProjects);
-    setLocal(LOCAL_STORAGE_SERVICES, initialServices);
     setLocal(LOCAL_STORAGE_SETTINGS, DEFAULT_SITE_SETTINGS);
     setLocal(LOCAL_STORAGE_CATEGORIES, DEFAULT_CATEGORIES);
     setLocal(LOCAL_STORAGE_EDITORIAL_TAGS, DEFAULT_EDITORIAL_TAGS);
@@ -1138,73 +1024,10 @@ export const CMSService = {
       for (const pr of initialProjects) {
         await setDoc(doc(db, 'projects', pr.id), pr);
       }
-      for (const s of initialServices) {
-        await setDoc(doc(db, 'services', s.id), s);
-      }
-      for (const [k, v] of Object.entries(DEFAULT_SITE_SETTINGS)) {
-        await setDoc(doc(db, 'site_sections', k), v);
-      }
-      for (const cat of DEFAULT_CATEGORIES) {
-        await setDoc(doc(db, 'categories', cat.id), cat);
-      }
-      for (const tag of DEFAULT_EDITORIAL_TAGS) {
-        await setDoc(doc(db, 'editorial_tags', tag.id), tag);
-      }
+      await this.saveSiteSettings(DEFAULT_SITE_SETTINGS);
     } catch (e) {
-      console.warn('Firestore reset failed:', e);
+      console.warn('Error resetting defaults to Firestore:', e);
     }
-  },
-
-  // -------------------------------------------------------------
-  // TRASH BIN & 30-DAY RETENTION (Thùng rác & Tự động xóa sau 30 ngày)
-  // -------------------------------------------------------------
-  async fetchTrash(): Promise<CMSTrashItem[]> {
-    const now = Date.now();
-    let trashList = getLocal<CMSTrashItem[]>(LOCAL_STORAGE_TRASH, []);
-
-    try {
-      const colRef = collection(db, 'trash');
-      const snap = await getDocs(colRef);
-      if (!snap.empty) {
-        const firestoreItems: CMSTrashItem[] = [];
-        snap.forEach((d) => {
-          firestoreItems.push(d.data() as CMSTrashItem);
-        });
-        trashList = firestoreItems;
-      }
-    } catch (e) {
-      console.warn('Error fetching trash from Firestore, using local fallback:', e);
-    }
-
-    // Auto-cleanup: permanently purge items older than 30 days
-    const activeTrash: CMSTrashItem[] = [];
-    const expiredIds: string[] = [];
-
-    for (const item of trashList) {
-      const expiresTime = new Date(item.expiresAt).getTime();
-      if (expiresTime <= now) {
-        expiredIds.push(item.id);
-      } else {
-        activeTrash.push(item);
-      }
-    }
-
-    if (expiredIds.length > 0) {
-      for (const id of expiredIds) {
-        try {
-          await deleteDoc(doc(db, 'trash', id));
-        } catch {
-          // ignore
-        }
-      }
-    }
-
-    activeTrash.sort(
-      (a, b) => new Date(b.deletedAt).getTime() - new Date(a.deletedAt).getTime()
-    );
-
-    setLocal(LOCAL_STORAGE_TRASH, activeTrash);
-    return activeTrash;
   },
 
   async moveToTrash(type: TrashItemType, item: any, name: string): Promise<CMSTrashItem> {
@@ -1224,8 +1047,6 @@ export const CMSService = {
 
     if (type === 'project') {
       await this.deleteProject(item.id);
-    } else if (type === 'service') {
-      await this.deleteService(item.id);
     } else if (type === 'tag') {
       await this.deleteEditorialTag(item.id);
     } else if (type === 'category') {
@@ -1271,8 +1092,6 @@ export const CMSService = {
   async restoreFromTrashItem(item: CMSTrashItem): Promise<any> {
     if (item.type === 'project') {
       await this.saveProject(item.payload);
-    } else if (item.type === 'service') {
-      await this.saveService(item.payload);
     } else if (item.type === 'tag') {
       await this.saveEditorialTag(item.payload);
     } else if (item.type === 'category') {

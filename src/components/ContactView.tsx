@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CheckCircle2, ArrowRight } from 'lucide-react';
+import { CheckCircle2, ArrowRight, Facebook, Linkedin, Youtube } from 'lucide-react';
 import { Language, UI_TEXT } from '../data/content';
 import { useCMS } from '../context/CMSContext';
 import { DEFAULT_TYPOGRAPHY_SETTINGS } from '../services/cmsService';
@@ -34,6 +34,12 @@ export function ContactView({ lang }: ContactViewProps) {
     successSubtitle: isEn ? contact?.successSubtitle_en || t.successSubtitle : contact?.successSubtitle_vi || t.successSubtitle,
     sendAnother: isEn ? contact?.sendAnother_en || t.sendAnother : contact?.sendAnother_vi || t.sendAnother,
   };
+  const socialLinks = [
+    { label: 'LinkedIn', url: contact?.linkedinUrl?.trim() || 'https://www.linkedin.com', icon: Linkedin },
+    { label: 'YouTube', url: contact?.youtubeUrl?.trim() || 'https://www.youtube.com', icon: Youtube },
+    { label: 'Facebook', url: contact?.facebookUrl?.trim() || 'https://www.facebook.com', icon: Facebook },
+    { label: 'TikTok', url: contact?.tiktokUrl?.trim() || 'https://www.tiktok.com', icon: () => <span className="font-bold text-sm leading-none">♪</span> },
+  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,15 +60,15 @@ export function ContactView({ lang }: ContactViewProps) {
   };
 
   return (
-    <div className="animate-in fade-in duration-300 pb-28 sm:pb-36">
+    <div className="animate-in fade-in duration-300 pb-0">
       {/* 1. CONTACT HEADING & SUBTITLE */}
       <section className="px-6 sm:px-10 pt-12 sm:pt-16 pb-6 text-center max-w-3xl mx-auto">
         <h1
           style={{
             fontFamily: typography.h1FontFamily,
-            fontSize: typography.h1CustomPx ? `clamp(32px, 6vw, ${typography.h1CustomPx}px)` : undefined,
+            fontSize: `clamp(32px, 5vw, ${Math.min(typography.h1CustomPx || 56, 56)}px)`,
           }}
-          className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[76px] text-zinc-900 font-normal leading-[1.05] tracking-tight"
+          className="font-serif text-4xl sm:text-5xl md:text-6xl text-zinc-900 font-normal leading-[1.05] tracking-tight"
         >
           {text.title}
         </h1>
@@ -72,7 +78,7 @@ export function ContactView({ lang }: ContactViewProps) {
       </section>
 
       {/* 2. MINIMALIST CONTACT FORM MATCHING SCREENSHOT */}
-      <section className="px-6 max-w-2xl mx-auto pt-6 sm:pt-8">
+      <section className="px-6 max-w-5xl mx-auto pt-6 sm:pt-8">
         {isSuccess ? (
           <div className="bg-[#f9f9f9] border border-zinc-200/80 rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center space-y-4 animate-in zoom-in-95 duration-200 shadow-2xs">
             <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
@@ -95,7 +101,8 @@ export function ContactView({ lang }: ContactViewProps) {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_220px] lg:items-start">
+            <form onSubmit={handleSubmit} className="space-y-4">
             {/* Top row: 2 input fields side-by-side */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -155,7 +162,30 @@ export function ContactView({ lang }: ContactViewProps) {
                 {isSubmitting ? text.sendingBtn : text.sendBtn}
               </button>
             </div>
-          </form>
+            </form>
+
+            <aside className="border-t border-zinc-200 pt-5 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
+              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                {isEn ? 'Follow us' : 'Kết nối với mình'}
+              </p>
+              <ul className="space-y-2">
+                {socialLinks.map(({ label, url, icon: Icon }) => (
+                  <li key={label}>
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group flex items-center gap-3 rounded-xl border border-zinc-200 bg-white px-3.5 py-3 text-sm font-medium text-zinc-800 transition-colors hover:border-zinc-900 hover:bg-zinc-900 hover:text-white"
+                    >
+                      <Icon size={17} />
+                      <span>{label}</span>
+                      <ArrowRight size={15} className="ml-auto transition-transform group-hover:translate-x-0.5" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </aside>
+          </div>
         )}
       </section>
     </div>

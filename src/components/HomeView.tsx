@@ -6,7 +6,7 @@ import { getBadgeColorClasses, DEFAULT_TYPOGRAPHY_SETTINGS } from '../services/c
 
 interface HomeViewProps {
   lang: Language;
-  onNavigate: (tab: 'home' | 'connect' | 'work' | 'blog' | 'services' | 'contact') => void;
+  onNavigate: (tab: 'home' | 'connect' | 'work' | 'blog' | 'contact') => void;
   onSelectArticle?: (article: Article) => void;
   onOpenContact: () => void;
 }
@@ -18,7 +18,7 @@ export function HomeView({
   onOpenContact
 }: HomeViewProps) {
   const isEn = lang === 'en';
-  const { publishedProjects, publishedPosts, publishedServices, siteSettings, categories, editorialTags } = useCMS();
+  const { publishedProjects, publishedPosts, siteSettings, categories, editorialTags } = useCMS();
 
   const typography = siteSettings?.typography || DEFAULT_TYPOGRAPHY_SETTINGS;
 
@@ -61,62 +61,13 @@ export function HomeView({
     };
   });
 
-  // Default fallback services
-  const defaultServicesList = [
-    {
-      num: '01',
-      title: 'Branding',
-      desc: isEn
-        ? 'Crafting identities that resonate and inspire lasting connections with audiences.'
-        : 'Kiến tạo nhận diện thương hiệu gợi cảm hứng và xây dựng kết nối bền lâu với công chúng.',
-      link: isEn ? 'ABOUT BRANDING' : 'VỀ BRANDING'
-    },
-    {
-      num: '02',
-      title: 'Web Design',
-      desc: isEn
-        ? 'Designing intuitive interfaces that captivate users and drive engagement seamlessly.'
-        : 'Thiết kế giao diện trực quan cuốn hút người dùng và tối ưu tương tác mượt mà.',
-      link: isEn ? 'ABOUT WEB DESIGN' : 'VỀ THIẾT KẾ WEB'
-    },
-    {
-      num: '03',
-      title: 'Web Development',
-      desc: isEn
-        ? "Building robust digital infrastructures tailored to your brand's unique needs."
-        : 'Xây dựng nền tảng công nghệ số vững chắc đáp ứng riêng biệt nhu cầu thương hiệu.',
-      link: isEn ? 'ABOUT WEB DEVELOPMENT' : 'VỀ PHÁT TRIỂN WEB'
-    },
-    {
-      num: '04',
-      title: 'SEO & Content',
-      desc: isEn
-        ? 'Optimizing content and strategies to boost visibility and organic reach.'
-        : 'Tối ưu hóa nội dung và chiến lược để thúc đẩy độ hiển thị và lưu lượng tự nhiên.',
-      link: isEn ? 'ABOUT SEO & CONTENT' : 'VỀ SEO & NỘI DUNG'
-    }
-  ];
-
-  // Resolve dynamic services from CMS or default fallback
-  const servicesList = (publishedServices && publishedServices.length > 0)
-    ? publishedServices.map((srv) => {
-        const titleStr = typeof srv.title === 'object'
-          ? (isEn ? srv.title?.en : srv.title?.vi)
-          : (srv.title || '');
-        const descStr = typeof srv.description === 'object'
-          ? (isEn ? srv.description?.en : srv.description?.vi)
-          : (srv.description || '');
-        const linkStr = srv.linkText
-          ? (typeof srv.linkText === 'object' ? (isEn ? srv.linkText?.en : srv.linkText?.vi) : srv.linkText)
-          : (isEn ? `ABOUT ${(titleStr || '').toUpperCase()}` : `VỀ ${(titleStr || '').toUpperCase()}`);
-        return {
-          num: srv.number || '01',
-          title: titleStr || 'Dịch vụ',
-          desc: descStr || '',
-          link: linkStr || (isEn ? 'LEARN MORE' : 'XEM CHI TIẾT'),
-        };
-      })
-    : defaultServicesList;
+  // Resolve homepage service cards from the CMS site settings.
+  const servicesList = (siteSettings.home?.servicesList || []).map((service) => ({
+    num: service.num,
+    title: isEn ? service.title_en : service.title_vi,
+    desc: isEn ? service.desc_en : service.desc_vi,
+    link: isEn ? service.link_en : service.link_vi,
+  }));
 
   // 4 Client Testimonials matching screenshot
   const clientReviews = [

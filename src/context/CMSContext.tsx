@@ -3,7 +3,6 @@ import {
   CMSService,
   CMSPost,
   CMSProject,
-  CMSServiceItem,
   CMSCategory,
   CMSEditorialTag,
   CMSSiteSettings,
@@ -13,15 +12,13 @@ import {
   DEFAULT_CATEGORIES,
   DEFAULT_EDITORIAL_TAGS,
 } from '../services/cmsService';
-import { ARTICLES, WORK_PROJECTS, SERVICES } from '../data/content';
+import { ARTICLES, WORK_PROJECTS } from '../data/content';
 
 interface CMSContextType {
   posts: CMSPost[];
   publishedPosts: CMSPost[];
   projects: CMSProject[];
   publishedProjects: CMSProject[];
-  services: CMSServiceItem[];
-  publishedServices: CMSServiceItem[];
   categories: CMSCategory[];
   editorialTags: CMSEditorialTag[];
   siteSettings: CMSSiteSettings;
@@ -35,9 +32,6 @@ interface CMSContextType {
   saveProject: (project: CMSProject) => Promise<CMSProject>;
   deleteProject: (id: string) => Promise<void>;
   setProjectStatus: (id: string, status: 'draft' | 'published') => Promise<void>;
-  saveService: (service: CMSServiceItem) => Promise<CMSServiceItem>;
-  deleteService: (id: string) => Promise<void>;
-  setServiceStatus: (id: string, status: 'draft' | 'published') => Promise<void>;
   saveCategory: (category: CMSCategory) => Promise<CMSCategory>;
   deleteCategory: (id: string) => Promise<void>;
   saveEditorialTag: (tag: CMSEditorialTag) => Promise<CMSEditorialTag>;
@@ -61,9 +55,6 @@ export function CMSProvider({ children }: { children: ReactNode }) {
   const [projects, setProjects] = useState<CMSProject[]>(() =>
     WORK_PROJECTS.map((p) => ({ ...p, status: 'published' }))
   );
-  const [services, setServices] = useState<CMSServiceItem[]>(() =>
-    SERVICES.map((s, idx) => ({ ...s, status: 'published', order: idx + 1 }))
-  );
   const [categories, setCategories] = useState<CMSCategory[]>(DEFAULT_CATEGORIES);
   const [editorialTags, setEditorialTags] = useState<CMSEditorialTag[]>(DEFAULT_EDITORIAL_TAGS);
   const [siteSettings, setSiteSettings] = useState<CMSSiteSettings>(DEFAULT_SITE_SETTINGS);
@@ -77,7 +68,6 @@ export function CMSProvider({ children }: { children: ReactNode }) {
       const [
         fetchedPosts,
         fetchedProjects,
-        fetchedServices,
         fetchedSettings,
         fetchedCategories,
         fetchedTags,
@@ -85,7 +75,6 @@ export function CMSProvider({ children }: { children: ReactNode }) {
       ] = await Promise.all([
         CMSService.fetchPosts(),
         CMSService.fetchProjects(),
-        CMSService.fetchServices(),
         CMSService.fetchSiteSettings(),
         CMSService.fetchCategories(),
         CMSService.fetchEditorialTags(),
@@ -93,7 +82,6 @@ export function CMSProvider({ children }: { children: ReactNode }) {
       ]);
       setPosts(fetchedPosts);
       setProjects(fetchedProjects);
-      setServices(fetchedServices);
       setSiteSettings(fetchedSettings);
       setCategories(fetchedCategories);
       setEditorialTags(fetchedTags);
@@ -159,30 +147,6 @@ export function CMSProvider({ children }: { children: ReactNode }) {
     await saveProject({ ...proj, status });
   };
 
-  const saveService = async (service: CMSServiceItem) => {
-    const saved = await CMSService.saveService(service);
-    setServices((prev) => {
-      const idx = prev.findIndex((s) => s.id === saved.id);
-      if (idx >= 0) {
-        const copy = [...prev];
-        copy[idx] = saved;
-        return copy.sort((a, b) => (a.number || '').localeCompare(b.number || ''));
-      }
-      return [...prev, saved].sort((a, b) => (a.number || '').localeCompare(b.number || ''));
-    });
-    return saved;
-  };
-
-  const deleteService = async (id: string) => {
-    await CMSService.deleteService(id);
-    setServices((prev) => prev.filter((s) => s.id !== id));
-  };
-
-  const setServiceStatus = async (id: string, status: 'draft' | 'published') => {
-    const srv = services.find((s) => s.id === id);
-    if (!srv) return;
-    await saveService({ ...srv, status });
-  };
 
   const saveCategory = async (cat: CMSCategory) => {
     const saved = await CMSService.saveCategory(cat);
@@ -236,8 +200,6 @@ export function CMSProvider({ children }: { children: ReactNode }) {
 
     if (type === 'project') {
       setProjects((prev) => prev.filter((p) => p.id !== item.id));
-    } else if (type === 'service') {
-      setServices((prev) => prev.filter((s) => s.id !== item.id));
     } else if (type === 'tag') {
       setEditorialTags((prev) => prev.filter((t) => t.id !== item.id));
     } else if (type === 'category') {
@@ -280,7 +242,6 @@ export function CMSProvider({ children }: { children: ReactNode }) {
 
   const publishedPosts = posts.filter((p) => (p.status || 'published') === 'published');
   const publishedProjects = projects.filter((p) => (p.status || 'published') === 'published');
-  const publishedServices = services.filter((s) => (s.status || 'published') === 'published');
 
   return (
     <CMSContext.Provider
@@ -289,8 +250,6 @@ export function CMSProvider({ children }: { children: ReactNode }) {
         publishedPosts,
         projects,
         publishedProjects,
-        services,
-        publishedServices,
         categories,
         editorialTags,
         siteSettings,
@@ -304,9 +263,6 @@ export function CMSProvider({ children }: { children: ReactNode }) {
         saveProject,
         deleteProject,
         setProjectStatus,
-        saveService,
-        deleteService,
-        setServiceStatus,
         saveCategory,
         deleteCategory,
         saveEditorialTag,

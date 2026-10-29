@@ -1128,7 +1128,6 @@ export function FooterStudio({ showNotification, onRequestDelete }: FooterStudio
                       >
                         <option value="home">Trang chủ (Home)</option>
                         <option value="work">Dự án (Work)</option>
-                        <option value="services">Dịch vụ (Services)</option>
                         <option value="blog">Bài viết (Journal)</option>
                         <option value="connect">Kết nối (Connect)</option>
                       </select>
@@ -1506,7 +1505,6 @@ export function FooterStudio({ showNotification, onRequestDelete }: FooterStudio
                   >
                     <option value="home">Trang chủ (Home)</option>
                     <option value="work">Dự án (Work / Portfolio)</option>
-                    <option value="services">Dịch vụ (Services)</option>
                     <option value="blog">Tạp chí / Bài viết (Journal)</option>
                     <option value="connect">Liên hệ & Kết nối (Connect / Contact)</option>
                   </select>

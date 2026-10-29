@@ -7,7 +7,6 @@ import { ArticleReader } from './components/ArticleReader';
 import { HomeView } from './components/HomeView';
 import { ConnectView } from './components/ConnectView';
 import { WorkView } from './components/WorkView';
-import { ServicesView } from './components/ServicesView';
 import { ContactView } from './components/ContactView';
 import { ContactModal } from './components/ContactModal';
 import { UtilityModal } from './components/UtilityModal';
@@ -19,13 +18,12 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { Article, ARTICLES, Language } from './data/content';
 import { Pencil, Settings2 } from 'lucide-react';
 
-export type AppTab = 'home' | 'connect' | 'work' | 'blog' | 'services' | 'contact';
+export type AppTab = 'home' | 'connect' | 'work' | 'blog' | 'contact';
 
 // Map tab to primary clean URL slug (Vietnamese)
 export const TAB_TO_PATH: Record<AppTab, string> = {
   home: '/',
   work: '/du-an',
-  services: '/dich-vu',
   blog: '/bai-viet',
   connect: '/ket-noi',
   contact: '/lien-he',
@@ -39,8 +37,6 @@ export const PATH_TO_TAB: Record<string, AppTab> = {
   '/du-an': 'work',
   '/work': 'work',
   '/projects': 'work',
-  '/dich-vu': 'services',
-  '/services': 'services',
   '/bai-viet': 'blog',
   '/blog': 'blog',
   '/articles': 'blog',
@@ -114,7 +110,6 @@ function MainApp() {
   const cmsSectionLabels: Record<CMSSettingsSubTab, string> = {
     home: '1. TRANG CHỦ',
     work: '2. DỰ ÁN',
-    services: '3. DỊCH VỤ',
     blog: '4. BÀI VIẾT',
     connect: '5. KẾT NỐI',
     contact: '6. LIÊN HỆ',
@@ -193,9 +188,6 @@ function MainApp() {
       switch (currentTab) {
         case 'work':
           document.title = lang === 'en' ? `Projects | ${brandName}` : `Dự án | ${brandName}`;
-          break;
-        case 'services':
-          document.title = lang === 'en' ? `Services | ${brandName}` : `Dịch vụ | ${brandName}`;
           break;
         case 'blog':
           document.title = lang === 'en' ? `Articles & Stories | ${brandName}` : `Bài viết & Ấn phẩm | ${brandName}`;
@@ -502,9 +494,7 @@ function MainApp() {
           <WorkView lang={lang} onOpenContact={(service) => handleOpenContact(service)} />
         ) : currentTab === 'contact' ? (
           <ContactView lang={lang} />
-        ) : (
-          <ServicesView lang={lang} onOpenContact={() => handleOpenContact()} />
-        )}
+        ) : null}
       </main>
 
       {/* Contextual CMS shortcut: visible only to an authenticated administrator. */}

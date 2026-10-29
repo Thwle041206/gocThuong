@@ -20,7 +20,7 @@ import { DEFAULT_FOOTER_SETTINGS, CMSFooterSocial, CMSFooterLinkItem } from '../
 
 interface FooterProps {
   lang: Language;
-  onSelectTab: (tab: 'home' | 'connect' | 'work' | 'blog' | 'services' | 'contact') => void;
+  onSelectTab: (tab: 'home' | 'connect' | 'work' | 'blog' | 'contact') => void;
   onOpenContact: () => void;
   onOpenUtility: (title: string, desc: string) => void;
 }
@@ -86,7 +86,7 @@ export function Footer({
 
   const handleLinkClick = (link: CMSFooterLinkItem) => {
     if (link.type === 'tab') {
-      const validTabs = ['home', 'connect', 'work', 'blog', 'services', 'contact'];
+      const validTabs = ['home', 'connect', 'work', 'blog', 'contact'];
       if (validTabs.includes(link.target)) {
         onSelectTab(link.target as any);
       } else {
@@ -115,7 +115,7 @@ export function Footer({
   const handleCtaClick = () => {
     if (!ctaBtn) return;
     if (ctaBtn.type === 'tab') {
-      const validTabs = ['home', 'connect', 'work', 'blog', 'services', 'contact'];
+      const validTabs = ['home', 'connect', 'work', 'blog', 'contact'];
       if (validTabs.includes(ctaBtn.target)) {
         onSelectTab(ctaBtn.target as any);
       }

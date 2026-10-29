@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Globe, User as UserIcon, LogOut, Settings2, ShieldCheck, ChevronDown, Type, Home, Briefcase, Layers, BookOpen, HeartHandshake, Mail, Menu, X } from 'lucide-react';
+import { Globe, User as UserIcon, LogOut, Settings2, ShieldCheck, ChevronDown, Type, Home, Briefcase, BookOpen, HeartHandshake, Mail, Menu, X } from 'lucide-react';
 import { HirokiLogo } from './HirokiLogo';
 import { Language, UI_TEXT } from '../data/content';
 import { useAuth } from '../context/AuthContext';
@@ -8,8 +8,8 @@ import { DEFAULT_TYPOGRAPHY_SETTINGS } from '../services/cmsService';
 import { TypographyCustomizerModal } from './TypographyCustomizerModal';
 
 interface NavbarProps {
-  currentTab: 'home' | 'connect' | 'work' | 'blog' | 'services' | 'contact';
-  onSelectTab: (tab: 'home' | 'connect' | 'work' | 'blog' | 'services' | 'contact') => void;
+  currentTab: 'home' | 'connect' | 'work' | 'blog' | 'contact';
+  onSelectTab: (tab: 'home' | 'connect' | 'work' | 'blog' | 'contact') => void;
   lang: Language;
   onToggleLang: () => void;
   onOpenContact: () => void;
@@ -45,10 +45,9 @@ export function Navbar({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const navItems: Array<{ id: 'home' | 'work' | 'services' | 'blog' | 'connect' | 'contact'; label: string }> = [
+  const navItems: Array<{ id: 'home' | 'work' | 'blog' | 'connect' | 'contact'; label: string }> = [
     { id: 'home', label: t.nav.home },
     { id: 'work', label: t.nav.work },
-    { id: 'services', label: t.nav.services || (lang === 'en' ? 'SERVICES' : 'DỊCH VỤ') },
     { id: 'blog', label: t.nav.blog },
     { id: 'connect', label: lang === 'vi' ? 'KẾT NỐI' : 'CONNECT' },
   ];
@@ -56,7 +55,6 @@ export function Navbar({
   const itemIcons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
     home: Home,
     work: Briefcase,
-    services: Layers,
     blog: BookOpen,
     connect: HeartHandshake,
     contact: Mail,

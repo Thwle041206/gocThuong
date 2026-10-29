@@ -54,7 +54,6 @@ import { useAuth } from '../context/AuthContext';
 import {
   CMSPost,
   CMSProject,
-  CMSServiceItem,
   CMSSiteSettings,
   CMSCategory,
   CMSEditorialTag,
@@ -74,7 +73,7 @@ import { processImageUpload } from '../utils/imageUpload';
 import { HirokiLogo } from './HirokiLogo';
 import { FooterStudio } from './admin/FooterStudio';
 
-export type CMSSettingsSubTab = 'home' | 'work' | 'services' | 'blog' | 'connect' | 'contact' | 'typography';
+export type CMSSettingsSubTab = 'home' | 'work' | 'blog' | 'connect' | 'contact' | 'typography';
 
 const SAMPLE_IMAGES = [
   { label: 'Work Kista', url: '/src/assets/images/work_kista_agency_1790135945749.jpg' },
@@ -99,7 +98,6 @@ export function AdminCMS({
   const {
     posts,
     projects,
-    services,
     categories,
     editorialTags,
     siteSettings,
@@ -110,9 +108,6 @@ export function AdminCMS({
     saveProject,
     deleteProject,
     setProjectStatus,
-    saveService,
-    deleteService,
-    setServiceStatus,
     saveCategory,
     deleteCategory,
     saveEditorialTag,
@@ -126,9 +121,9 @@ export function AdminCMS({
   } = useCMS();
   const { isAdmin, setIsAuthModalOpen } = useAuth();
 
-  // Navigation tab inside CMS: 'home-management' | 'posts' | 'projects' | 'services' | 'taxonomies' | 'footer' | 'settings' | 'backup' | 'trash'
+  // Navigation tab inside CMS: 'home-management' | 'posts' | 'projects' | 'taxonomies' | 'footer' | 'settings' | 'backup' | 'trash'
   const [activeTab, setActiveTab] = useState<
-    'home-management' | 'posts' | 'projects' | 'services' | 'taxonomies' | 'footer' | 'settings' | 'backup' | 'trash'
+    'home-management' | 'posts' | 'projects' | 'taxonomies' | 'footer' | 'settings' | 'backup' | 'trash'
   >(initialSettingsSubTab ? 'settings' : 'posts');
 
   // Delete Confirmation Popup Modal State
@@ -140,7 +135,7 @@ export function AdminCMS({
   } | null>(null);
 
   // Trash filter
-  const [trashFilter, setTrashFilter] = useState<'all' | 'project' | 'service' | 'tag' | 'category' | 'post' | 'footer_link' | 'footer_column'>('all');
+  const [trashFilter, setTrashFilter] = useState<'all' | 'project' | 'tag' | 'category' | 'post' | 'footer_link' | 'footer_column'>('all');
 
   // If user is not admin, deny access immediately
   if (!isAdmin) {
@@ -239,36 +234,6 @@ export function AdminCMS({
   const [editingProject, setEditingProject] = useState<CMSProject | null>(null);
   const [isCreatingProject, setIsCreatingProject] = useState(false);
 
-  // Service Management State
-  const [editingService, setEditingService] = useState<CMSServiceItem | null>(null);
-  const [isCreatingService, setIsCreatingService] = useState(false);
-  const [serviceSearchTerm, setServiceSearchTerm] = useState('');
-  const [serviceStatusFilter, setServiceStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
-  const [serviceForm, setServiceForm] = useState<{
-    id: string;
-    number: string;
-    title_vi: string;
-    title_en: string;
-    description_vi: string;
-    description_en: string;
-    features_vi: string[];
-    features_en: string[];
-    linkText_vi: string;
-    linkText_en: string;
-    status: 'draft' | 'published';
-  }>({
-    id: '',
-    number: '01',
-    title_vi: '',
-    title_en: '',
-    description_vi: '',
-    description_en: '',
-    features_vi: ['Chiến lược định vị', 'Phát triển thương hiệu', 'Ngôn ngữ hình ảnh'],
-    features_en: ['Positioning Strategy', 'Brand Development', 'Visual Language'],
-    linkText_vi: 'Bắt đầu hợp tác',
-    linkText_en: 'Start Collaboration',
-    status: 'published',
-  });
 
   // Site Settings Form State
   const [settingsForm, setSettingsForm] = useState<CMSSiteSettings>(siteSettings);
@@ -1169,126 +1134,6 @@ export function AdminCMS({
     });
   };
 
-  // --------------------------------------------------------------------------
-  // SERVICES HANDLERS (Create, Edit, Toggle Draft/Publish, Delete to 30-day trash)
-  // --------------------------------------------------------------------------
-  const startCreateService = () => {
-    const nextNum = String(services.length + 1).padStart(2, '0');
-    setServiceForm({
-      id: `srv-${Date.now()}`,
-      number: nextNum,
-      title_vi: '',
-      title_en: '',
-      description_vi: '',
-      description_en: '',
-      features_vi: ['Chiến lược định vị', 'Thiết kế nhận diện thương hiệu', 'Tối ưu hóa chuyển đổi'],
-      features_en: ['Positioning Strategy', 'Brand Identity Design', 'Conversion Optimization'],
-      linkText_vi: 'Bắt đầu hợp tác',
-      linkText_en: 'Start Collaboration',
-      status: 'published',
-    });
-    setEditingService(null);
-    setIsCreatingService(true);
-  };
-
-  const startEditService = (srv: CMSServiceItem) => {
-    const srvTitleVi = srv.title?.vi || (typeof srv.title === 'string' ? srv.title : '');
-    const srvTitleEn = srv.title?.en || (typeof srv.title === 'string' ? srv.title : '');
-    const srvDescVi = srv.description?.vi || (typeof srv.description === 'string' ? srv.description : '');
-    const srvDescEn = srv.description?.en || (typeof srv.description === 'string' ? srv.description : '');
-
-    let featVi: string[] = [];
-    if (srv.features && Array.isArray((srv.features as any).vi)) {
-      featVi = [...(srv.features as any).vi];
-    } else if (Array.isArray(srv.features)) {
-      featVi = [...srv.features];
-    } else {
-      featVi = ['Năng lực chuyên sâu'];
-    }
-
-    let featEn: string[] = [];
-    if (srv.features && Array.isArray((srv.features as any).en)) {
-      featEn = [...(srv.features as any).en];
-    } else if (Array.isArray(srv.features)) {
-      featEn = [...srv.features];
-    } else {
-      featEn = ['Core Capability'];
-    }
-
-    setServiceForm({
-      id: srv.id,
-      number: srv.number || '01',
-      title_vi: srvTitleVi,
-      title_en: srvTitleEn,
-      description_vi: srvDescVi,
-      description_en: srvDescEn,
-      features_vi: featVi,
-      features_en: featEn,
-      linkText_vi: srv.linkText?.vi || 'Bắt đầu hợp tác',
-      linkText_en: srv.linkText?.en || 'Start Collaboration',
-      status: srv.status || 'published',
-    });
-    setEditingService(srv);
-    setIsCreatingService(false);
-  };
-
-  const handleSaveService = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!serviceForm.title_vi.trim() && !serviceForm.title_en.trim()) {
-      alert('Vui lòng nhập tiêu đề dịch vụ (Tiếng Việt hoặc Tiếng Anh)');
-      return;
-    }
-
-    const payload: CMSServiceItem = {
-      id: serviceForm.id || `srv-${Date.now()}`,
-      number: serviceForm.number.trim() || '01',
-      title: {
-        vi: serviceForm.title_vi.trim() || serviceForm.title_en.trim(),
-        en: serviceForm.title_en.trim() || serviceForm.title_vi.trim(),
-      },
-      description: {
-        vi: serviceForm.description_vi.trim() || serviceForm.description_en.trim(),
-        en: serviceForm.description_en.trim() || serviceForm.description_vi.trim(),
-      },
-      features: {
-        vi: serviceForm.features_vi.map((f) => f.trim()).filter((f) => f.length > 0),
-        en: serviceForm.features_en.map((f) => f.trim()).filter((f) => f.length > 0),
-      },
-      linkText: {
-        vi: serviceForm.linkText_vi.trim() || 'Bắt đầu hợp tác',
-        en: serviceForm.linkText_en.trim() || 'Start Collaboration',
-      },
-      status: serviceForm.status,
-    };
-
-    await saveService(payload);
-    setIsCreatingService(false);
-    setEditingService(null);
-    showNotification(
-      editingService
-        ? `Đã cập nhật dịch vụ "${payload.title.vi}" thành công!`
-        : `Đã tạo dịch vụ mới "${payload.title.vi}" thành công!`
-    );
-  };
-
-  const handleToggleServiceStatus = async (srv: CMSServiceItem) => {
-    const nextStatus = (srv.status || 'published') === 'published' ? 'draft' : 'published';
-    await setServiceStatus(srv.id, nextStatus);
-    showNotification(
-      nextStatus === 'published'
-        ? `Đã xuất bản dịch vụ "${srv.title?.vi || srv.title?.en}"!`
-        : `Đã chuyển dịch vụ "${srv.title?.vi || srv.title?.en}" sang Bản Nháp (Draft)!`
-    );
-  };
-
-  const handleDeleteService = (srv: CMSServiceItem) => {
-    setDeleteModalState({
-      isOpen: true,
-      type: 'service',
-      item: srv,
-      name: srv.title?.vi || srv.title?.en || `Dịch vụ #${srv.number}`,
-    });
-  };
 
   // Quick Matrix Inline Assigners
   const handleQuickAssignPostCategory = async (post: CMSPost, newCat: string) => {
@@ -1342,22 +1187,6 @@ export function AdminCMS({
     return matchesSearch && matchesStatus;
   });
 
-  const filteredServices = services.filter((srv) => {
-    const srvTitleVi = srv.title?.vi || (typeof srv.title === 'string' ? srv.title : '');
-    const srvTitleEn = srv.title?.en || (typeof srv.title === 'string' ? srv.title : '');
-    const srvNumber = srv.number || '';
-    const matchesSearch =
-      srvTitleVi.toLowerCase().includes(serviceSearchTerm.toLowerCase()) ||
-      srvTitleEn.toLowerCase().includes(serviceSearchTerm.toLowerCase()) ||
-      srvNumber.toLowerCase().includes(serviceSearchTerm.toLowerCase());
-    const matchesStatus =
-      serviceStatusFilter === 'all'
-        ? true
-        : serviceStatusFilter === 'published'
-        ? (srv.status || 'published') === 'published'
-        : srv.status === 'draft';
-    return matchesSearch && matchesStatus;
-  });
 
   // Project taxonomy choices are managed in the CMS Taxonomies section.
   // Keep a project's existing value available as well, so older/custom data
@@ -1485,30 +1314,6 @@ export function AdminCMS({
                 </span>
               </button>
 
-              <button
-                onClick={() => {
-                  setActiveTab('services');
-                  setEditingService(null);
-                  setIsCreatingService(false);
-                }}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors cursor-pointer ${
-                  activeTab === 'services'
-                    ? 'bg-zinc-900 text-white font-semibold shadow-xs'
-                    : 'text-zinc-600 hover:bg-zinc-200/60 hover:text-zinc-900'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Sparkles size={16} />
-                  <span>Dịch vụ (Services)</span>
-                </div>
-                <span
-                  className={`text-[11px] px-1.5 py-0.5 rounded font-mono ${
-                    activeTab === 'services' ? 'bg-zinc-800 text-zinc-300' : 'bg-zinc-200 text-zinc-600'
-                  }`}
-                >
-                  {services.length}
-                </span>
-              </button>
 
               <button
                 onClick={() => {
@@ -1685,29 +1490,7 @@ export function AdminCMS({
                     </div>
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEditingService(null);
-                      setIsCreatingService(false);
-                      setActiveTab('services');
-                    }}
-                    className="text-left rounded-xl border border-zinc-200 p-5 hover:border-zinc-900 hover:shadow-sm transition-all cursor-pointer group"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <div className="flex items-center gap-2 text-zinc-900 font-semibold">
-                          <Layers size={18} />
-                          <span>Quản lý Dịch vụ</span>
-                          <span className="text-[11px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">{services.length}</span>
-                        </div>
-                        <p className="mt-2 text-xs text-zinc-500 leading-relaxed">
-                          Cập nhật các dịch vụ trong khu vực “What We Do” trên Trang chủ.
-                        </p>
-                      </div>
-                      <ExternalLink size={17} className="text-zinc-400 group-hover:text-zinc-900 shrink-0" />
-                    </div>
-                  </button>
+
 
                   <button
                     type="button"
@@ -4147,660 +3930,6 @@ export function AdminCMS({
 
             {/* ======================================================== */}
             {/* TAB: QUẢN LÝ DỊCH VỤ (SERVICES MANAGEMENT)              */}
-            {/* ======================================================== */}
-            {activeTab === 'services' && (
-              <div className="space-y-6 max-w-5xl mx-auto">
-                {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-100 pb-5">
-                  <div>
-                    <h2 className="text-xl sm:text-2xl font-bold font-serif text-zinc-900 flex items-center gap-2.5">
-                      <Sparkles className="text-zinc-900" size={24} />
-                      <span>Quản lý Dịch vụ (Services Studio)</span>
-                    </h2>
-                    <p className="text-zinc-500 text-xs sm:text-sm mt-1">
-                      Thêm mới, chỉnh sửa nội dung song ngữ, chuyển đổi trạng thái <strong>Bản nháp (Draft) / Xuất bản</strong> và xóa an toàn vào thùng rác 30 ngày.
-                    </p>
-                  </div>
-
-                  {!isCreatingService && !editingService && (
-                    <button
-                      onClick={startCreateService}
-                      className="bg-black text-white hover:bg-zinc-800 px-4 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm self-start sm:self-auto"
-                    >
-                      <Plus size={15} />
-                      <span>Tạo Dịch Vụ Mới</span>
-                    </button>
-                  )}
-                </div>
-
-                {/* Form: Create or Edit Service */}
-                {(isCreatingService || editingService) && (
-                  <form
-                    onSubmit={handleSaveService}
-                    className="bg-zinc-50 border-2 border-zinc-900 rounded-2xl p-6 sm:p-7 space-y-6 animate-in fade-in shadow-lg"
-                  >
-                    {/* Top Bar of Form */}
-                    <div className="flex items-center justify-between border-b border-zinc-200 pb-4">
-                      <div className="flex items-center gap-2.5">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsCreatingService(false);
-                            setEditingService(null);
-                          }}
-                          className="p-1.5 bg-white border border-zinc-200 rounded-lg hover:bg-zinc-100 text-zinc-700 transition-colors cursor-pointer"
-                          title="Quay lại danh sách"
-                        >
-                          <ArrowLeft size={16} />
-                        </button>
-                        <div>
-                          <h4 className="font-bold text-sm sm:text-base text-zinc-900 font-serif">
-                            {editingService
-                              ? `Chỉnh sửa Dịch Vụ: #${serviceForm.number} - ${serviceForm.title_vi || serviceForm.title_en}`
-                              : 'Tạo Dịch Vụ Mới'}
-                          </h4>
-                          <p className="text-[11px] text-zinc-500">
-                            Điền thông tin song ngữ (Tiếng Việt & English) và danh sách năng lực cốt lõi
-                          </p>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsCreatingService(false);
-                          setEditingService(null);
-                        }}
-                        className="text-zinc-400 hover:text-black p-1.5 rounded-lg hover:bg-zinc-200/60 cursor-pointer"
-                      >
-                        <X size={18} />
-                      </button>
-                    </div>
-
-                    {/* Number & Status */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
-                          Số hiệu / Thứ tự hiển thị *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={serviceForm.number}
-                          onChange={(e) =>
-                            setServiceForm({ ...serviceForm, number: e.target.value })
-                          }
-                          placeholder="VD: 01, 02, 03..."
-                          className="w-full bg-white border border-zinc-300 rounded-lg px-3.5 py-2 text-xs font-mono font-bold focus:ring-2 focus:ring-black"
-                        />
-                        <p className="text-[10px] text-zinc-400 mt-1">
-                          Hiển thị nổi bật ở góc dịch vụ (VD: 01, 02, 03, 04)
-                        </p>
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
-                          Trạng thái xuất bản
-                        </label>
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setServiceForm({ ...serviceForm, status: 'published' })
-                            }
-                            className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer border ${
-                              serviceForm.status === 'published'
-                                ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
-                                : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-100'
-                            }`}
-                          >
-                            <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                            <span>Đã xuất bản (Live)</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setServiceForm({ ...serviceForm, status: 'draft' })
-                            }
-                            className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer border ${
-                              serviceForm.status === 'draft'
-                                ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
-                                : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-100'
-                            }`}
-                          >
-                            <Clock size={13} />
-                            <span>Bản nháp (Draft)</span>
-                          </button>
-                        </div>
-                        <p className="text-[10px] text-zinc-400 mt-1">
-                          {serviceForm.status === 'published'
-                            ? 'Dịch vụ sẽ hiển thị công khai trên website.'
-                            : 'Chỉ lưu nội bộ trong CMS, không hiển thị ra ngoài.'}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Titles (VI & EN) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
-                          Tên dịch vụ (Tiếng Việt) *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={serviceForm.title_vi}
-                          onChange={(e) =>
-                            setServiceForm({ ...serviceForm, title_vi: e.target.value })
-                          }
-                          placeholder="VD: Chiến Lược Thương Hiệu"
-                          className="w-full bg-white border border-zinc-300 rounded-lg px-3.5 py-2 text-xs font-semibold focus:ring-2 focus:ring-black"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
-                          Tên dịch vụ (English)
-                        </label>
-                        <input
-                          type="text"
-                          value={serviceForm.title_en}
-                          onChange={(e) =>
-                            setServiceForm({ ...serviceForm, title_en: e.target.value })
-                          }
-                          placeholder="VD: Brand Strategy"
-                          className="w-full bg-white border border-zinc-300 rounded-lg px-3.5 py-2 text-xs focus:ring-2 focus:ring-black"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Descriptions (VI & EN) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
-                          Mô tả dịch vụ (Tiếng Việt)
-                        </label>
-                        <textarea
-                          rows={3}
-                          value={serviceForm.description_vi}
-                          onChange={(e) =>
-                            setServiceForm({ ...serviceForm, description_vi: e.target.value })
-                          }
-                          placeholder="Mô tả chi tiết giá trị và phương pháp triển khai dịch vụ..."
-                          className="w-full bg-white border border-zinc-300 rounded-lg p-3 text-xs leading-relaxed focus:ring-2 focus:ring-black"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
-                          Mô tả dịch vụ (English)
-                        </label>
-                        <textarea
-                          rows={3}
-                          value={serviceForm.description_en}
-                          onChange={(e) =>
-                            setServiceForm({ ...serviceForm, description_en: e.target.value })
-                          }
-                          placeholder="Detailed description of value proposition and delivery approach..."
-                          className="w-full bg-white border border-zinc-300 rounded-lg p-3 text-xs leading-relaxed focus:ring-2 focus:ring-black"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Features / Capabilities (VI & EN) */}
-                    <div className="bg-white border border-zinc-200 rounded-xl p-4 sm:p-5 space-y-4">
-                      <div className="flex items-center justify-between border-b border-zinc-100 pb-2">
-                        <div className="flex items-center gap-2">
-                          <CheckCircle size={15} className="text-zinc-700" />
-                          <h5 className="font-bold text-xs uppercase tracking-wider text-zinc-800">
-                            Năng lực cốt lõi / Gạch đầu dòng tính năng (Core Capabilities)
-                          </h5>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        {/* VI Bullets */}
-                        <div className="space-y-2.5">
-                          <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-600 block">
-                            Năng lực (Tiếng Việt)
-                          </span>
-                          {serviceForm.features_vi.map((item, idx) => (
-                            <div key={`feat-vi-${idx}`} className="flex items-center gap-1.5">
-                              <span className="text-[10px] font-mono text-zinc-400 w-4 text-right">
-                                {idx + 1}.
-                              </span>
-                              <input
-                                type="text"
-                                value={item}
-                                onChange={(e) => {
-                                  const next = [...serviceForm.features_vi];
-                                  next[idx] = e.target.value;
-                                  setServiceForm({ ...serviceForm, features_vi: next });
-                                }}
-                                placeholder={`Năng lực ${idx + 1}...`}
-                                className="flex-1 bg-zinc-50 border border-zinc-200 rounded-lg px-2.5 py-1.5 text-xs focus:bg-white focus:ring-2 focus:ring-black"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const next = serviceForm.features_vi.filter((_, i) => i !== idx);
-                                  setServiceForm({ ...serviceForm, features_vi: next });
-                                }}
-                                className="p-1.5 text-zinc-400 hover:text-rose-600 rounded cursor-pointer"
-                                title="Xóa dòng này"
-                              >
-                                <Trash2 size={13} />
-                              </button>
-                            </div>
-                          ))}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setServiceForm({
-                                ...serviceForm,
-                                features_vi: [...serviceForm.features_vi, 'Năng lực mới'],
-                              });
-                            }}
-                            className="text-xs font-semibold text-black hover:underline flex items-center gap-1 mt-1.5 cursor-pointer"
-                          >
-                            <Plus size={13} />
-                            <span>Thêm gạch đầu dòng (VI)</span>
-                          </button>
-                        </div>
-
-                        {/* EN Bullets */}
-                        <div className="space-y-2.5">
-                          <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-600 block">
-                            Năng lực (English)
-                          </span>
-                          {serviceForm.features_en.map((item, idx) => (
-                            <div key={`feat-en-${idx}`} className="flex items-center gap-1.5">
-                              <span className="text-[10px] font-mono text-zinc-400 w-4 text-right">
-                                {idx + 1}.
-                              </span>
-                              <input
-                                type="text"
-                                value={item}
-                                onChange={(e) => {
-                                  const next = [...serviceForm.features_en];
-                                  next[idx] = e.target.value;
-                                  setServiceForm({ ...serviceForm, features_en: next });
-                                }}
-                                placeholder={`Capability ${idx + 1}...`}
-                                className="flex-1 bg-zinc-50 border border-zinc-200 rounded-lg px-2.5 py-1.5 text-xs focus:bg-white focus:ring-2 focus:ring-black"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const next = serviceForm.features_en.filter((_, i) => i !== idx);
-                                  setServiceForm({ ...serviceForm, features_en: next });
-                                }}
-                                className="p-1.5 text-zinc-400 hover:text-rose-600 rounded cursor-pointer"
-                                title="Delete this bullet"
-                              >
-                                <Trash2 size={13} />
-                              </button>
-                            </div>
-                          ))}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setServiceForm({
-                                ...serviceForm,
-                                features_en: [...serviceForm.features_en, 'New Capability'],
-                              });
-                            }}
-                            className="text-xs font-semibold text-black hover:underline flex items-center gap-1 mt-1.5 cursor-pointer"
-                          >
-                            <Plus size={13} />
-                            <span>Add bullet point (EN)</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* CTA Button Text */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
-                          Nhãn nút liên hệ (Tiếng Việt)
-                        </label>
-                        <input
-                          type="text"
-                          value={serviceForm.linkText_vi}
-                          onChange={(e) =>
-                            setServiceForm({ ...serviceForm, linkText_vi: e.target.value })
-                          }
-                          placeholder="VD: Bắt đầu hợp tác"
-                          className="w-full bg-white border border-zinc-300 rounded-lg px-3.5 py-2 text-xs focus:ring-2 focus:ring-black"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
-                          Nhãn nút liên hệ (English)
-                        </label>
-                        <input
-                          type="text"
-                          value={serviceForm.linkText_en}
-                          onChange={(e) =>
-                            setServiceForm({ ...serviceForm, linkText_en: e.target.value })
-                          }
-                          placeholder="VD: Start Collaboration"
-                          className="w-full bg-white border border-zinc-300 rounded-lg px-3.5 py-2 text-xs focus:ring-2 focus:ring-black"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Live Preview Box */}
-                    <div className="bg-zinc-900 text-white rounded-xl p-5 border border-zinc-800 space-y-3">
-                      <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
-                        <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest">
-                          Mô phỏng hiển thị trên website (Live Preview)
-                        </span>
-                        <span
-                          className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
-                            serviceForm.status === 'published'
-                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                              : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                          }`}
-                        >
-                          {serviceForm.status === 'published' ? 'Đã Xuất Bản' : 'Bản Nháp'}
-                        </span>
-                      </div>
-
-                      <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-5 space-y-3">
-                        <div className="flex items-center gap-3">
-                          <span className="font-mono text-xs font-bold text-zinc-400 border border-zinc-700 px-2 py-0.5 rounded">
-                            {serviceForm.number || '01'}
-                          </span>
-                          <h4 className="text-base font-bold font-serif text-white">
-                            {serviceForm.title_vi || 'Tên Dịch Vụ'}
-                          </h4>
-                          {serviceForm.title_en && (
-                            <span className="text-xs text-zinc-400 italic">
-                              ({serviceForm.title_en})
-                            </span>
-                          )}
-                        </div>
-
-                        <p className="text-xs text-zinc-300 leading-relaxed">
-                          {serviceForm.description_vi || 'Mô tả ngắn gọn về dịch vụ này...'}
-                        </p>
-
-                        <div className="flex flex-wrap gap-2 pt-1">
-                          {serviceForm.features_vi.map((f, i) => (
-                            <span
-                              key={i}
-                              className="text-[11px] bg-zinc-900 border border-zinc-700 text-zinc-300 px-2.5 py-1 rounded-md flex items-center gap-1.5"
-                            >
-                              <Check size={11} className="text-emerald-400" />
-                              <span>{f}</span>
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex items-center justify-end gap-3 pt-2">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsCreatingService(false);
-                          setEditingService(null);
-                        }}
-                        className="px-4 py-2.5 rounded-lg text-xs font-semibold text-zinc-600 hover:bg-zinc-200/60 transition-colors cursor-pointer"
-                      >
-                        Hủy bỏ
-                      </button>
-                      <button
-                        type="submit"
-                        className="bg-black text-white px-5 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wider hover:bg-zinc-800 transition-colors cursor-pointer flex items-center gap-1.5 shadow-md"
-                      >
-                        <Save size={14} />
-                        <span>{editingService ? 'Lưu Thay Đổi Dịch Vụ' : 'Tạo Dịch Vụ Mới'}</span>
-                      </button>
-                    </div>
-                  </form>
-                )}
-
-                {/* Services List View */}
-                {!isCreatingService && !editingService && (
-                  <div className="space-y-5">
-                    {/* Search & Status Filter Bar */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-zinc-50 border border-zinc-200/80 p-3 rounded-xl">
-                      {/* Status Tabs */}
-                      <div className="flex items-center gap-1.5 overflow-x-auto">
-                        <button
-                          onClick={() => setServiceStatusFilter('all')}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                            serviceStatusFilter === 'all'
-                              ? 'bg-zinc-900 text-white shadow-xs'
-                              : 'text-zinc-600 hover:bg-zinc-200/60'
-                          }`}
-                        >
-                          Tất cả ({services.length})
-                        </button>
-
-                        <button
-                          onClick={() => setServiceStatusFilter('published')}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-                            serviceStatusFilter === 'published'
-                              ? 'bg-emerald-700 text-white shadow-xs'
-                              : 'text-zinc-600 hover:bg-zinc-200/60'
-                          }`}
-                        >
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                          <span>
-                            Đã xuất bản ({services.filter((s) => (s.status || 'published') === 'published').length})
-                          </span>
-                        </button>
-
-                        <button
-                          onClick={() => setServiceStatusFilter('draft')}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-                            serviceStatusFilter === 'draft'
-                              ? 'bg-amber-600 text-white shadow-xs'
-                              : 'text-zinc-600 hover:bg-zinc-200/60'
-                          }`}
-                        >
-                          <Clock size={12} />
-                          <span>
-                            Bản nháp ({services.filter((s) => s.status === 'draft').length})
-                          </span>
-                        </button>
-                      </div>
-
-                      {/* Search Box */}
-                      <div className="relative min-w-[200px]">
-                        <Search
-                          size={14}
-                          className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"
-                        />
-                        <input
-                          type="text"
-                          value={serviceSearchTerm}
-                          onChange={(e) => setServiceSearchTerm(e.target.value)}
-                          placeholder="Tìm kiếm dịch vụ..."
-                          className="w-full bg-white border border-zinc-200 rounded-lg pl-8 pr-3 py-1.5 text-xs focus:ring-2 focus:ring-black"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Empty State */}
-                    {filteredServices.length === 0 && (
-                      <div className="bg-zinc-50 border border-dashed border-zinc-200 rounded-2xl p-12 text-center space-y-3">
-                        <div className="w-12 h-12 rounded-full bg-zinc-100 text-zinc-400 flex items-center justify-center mx-auto">
-                          <Sparkles size={24} />
-                        </div>
-                        <h4 className="font-semibold text-sm text-zinc-800">
-                          {serviceSearchTerm
-                            ? 'Không tìm thấy dịch vụ nào phù hợp với từ khóa'
-                            : 'Chưa có dịch vụ nào trong mục này'}
-                        </h4>
-                        <p className="text-xs text-zinc-500 max-w-md mx-auto">
-                          Bạn có thể bấm nút "Tạo Dịch Vụ Mới" ở trên để bắt đầu thêm dịch vụ vào hệ thống.
-                        </p>
-                        <button
-                          onClick={startCreateService}
-                          className="bg-black text-white px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider inline-flex items-center gap-1.5 hover:bg-zinc-800 transition-colors cursor-pointer"
-                        >
-                          <Plus size={14} />
-                          <span>Tạo Dịch Vụ Đầu Tiên</span>
-                        </button>
-                      </div>
-                    )}
-
-                    {/* Services Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {filteredServices.map((srv) => {
-                        const isPublished = (srv.status || 'published') === 'published';
-                        const srvTitleVi = srv.title?.vi || (typeof srv.title === 'string' ? srv.title : '');
-                        const srvTitleEn = srv.title?.en || '';
-                        const srvDescVi = srv.description?.vi || (typeof srv.description === 'string' ? srv.description : '');
-                        const featList = Array.isArray(srv.features?.vi)
-                          ? srv.features.vi
-                          : Array.isArray(srv.features)
-                          ? srv.features
-                          : [];
-
-                        return (
-                          <div
-                            key={srv.id}
-                            className={`bg-white border rounded-2xl p-5 flex flex-col justify-between gap-4 transition-all shadow-2xs hover:shadow-md ${
-                              isPublished
-                                ? 'border-zinc-200 hover:border-zinc-400'
-                                : 'border-amber-200 bg-amber-50/20'
-                            }`}
-                          >
-                            <div className="space-y-3">
-                              {/* Top Bar: Number + Status */}
-                              <div className="flex items-center justify-between">
-                                <span className="font-mono text-xs font-bold bg-zinc-900 text-white px-2.5 py-0.5 rounded">
-                                  #{srv.number || '01'}
-                                </span>
-
-                                <div className="flex items-center gap-2">
-                                  {isPublished ? (
-                                    <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                      <span>Đã Xuất Bản</span>
-                                    </span>
-                                  ) : (
-                                    <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-                                      <Clock size={11} />
-                                      <span>Bản Nháp (Draft)</span>
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-
-                              {/* Titles */}
-                              <div>
-                                <h4 className="font-bold text-base text-zinc-900 font-serif">
-                                  {srvTitleVi}
-                                </h4>
-                                {srvTitleEn && (
-                                  <p className="text-xs text-zinc-400 italic">
-                                    EN: {srvTitleEn}
-                                  </p>
-                                )}
-                              </div>
-
-                              {/* Description */}
-                              {srvDescVi && (
-                                <p className="text-xs text-zinc-600 line-clamp-2 leading-relaxed">
-                                  {srvDescVi}
-                                </p>
-                              )}
-
-                              {/* Capabilities preview */}
-                              {featList.length > 0 && (
-                                <div className="space-y-1.5 pt-1">
-                                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-                                    Năng lực cốt lõi ({featList.length}):
-                                  </span>
-                                  <div className="flex flex-wrap gap-1.5">
-                                    {featList.slice(0, 3).map((f, i) => (
-                                      <span
-                                        key={i}
-                                        className="text-[10px] bg-zinc-100 text-zinc-700 px-2 py-0.5 rounded border border-zinc-200/80"
-                                      >
-                                        • {f}
-                                      </span>
-                                    ))}
-                                    {featList.length > 3 && (
-                                      <span className="text-[10px] text-zinc-400 font-medium self-center">
-                                        +{featList.length - 3} nữa
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Footer: Quick Actions */}
-                            <div className="pt-3 border-t border-zinc-100 flex items-center justify-between gap-2">
-                              {/* Quick Draft/Publish Toggle */}
-                              <button
-                                onClick={() => handleToggleServiceStatus(srv)}
-                                className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg border transition-colors cursor-pointer flex items-center gap-1 ${
-                                  isPublished
-                                    ? 'text-zinc-600 bg-zinc-50 border-zinc-200 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-200'
-                                    : 'text-emerald-700 bg-emerald-50 border-emerald-200 hover:bg-emerald-100'
-                                }`}
-                                title={
-                                  isPublished
-                                    ? 'Chuyển dịch vụ này sang Bản nháp (ẩn khỏi web)'
-                                    : 'Xuất bản dịch vụ này lên website'
-                                }
-                              >
-                                {isPublished ? (
-                                  <>
-                                    <Clock size={12} />
-                                    <span>Chuyển sang Nháp</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Check size={12} />
-                                    <span>Xuất bản ngay</span>
-                                  </>
-                                )}
-                              </button>
-
-                              {/* Edit & Delete */}
-                              <div className="flex items-center gap-1">
-                                <button
-                                  onClick={() => startEditService(srv)}
-                                  className="px-2.5 py-1 text-xs font-semibold text-zinc-700 hover:text-black hover:bg-zinc-100 rounded-lg transition-colors cursor-pointer flex items-center gap-1 border border-zinc-200"
-                                  title="Chỉnh sửa dịch vụ"
-                                >
-                                  <Edit3 size={13} />
-                                  <span>Sửa</span>
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteService(srv)}
-                                  className="p-1.5 text-zinc-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                                  title="Xóa dịch vụ (Chuyển vào thùng rác 30 ngày)"
-                                >
-                                  <Trash2 size={14} />
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* ======================================================== */}
-            {/* TAB: BỘ LỌC CHÍNH & BADGE (TAXONOMY & BADGE STUDIO)     */}
-            {/* ======================================================== */}
             {activeTab === 'taxonomies' && (
               <div className="space-y-6 max-w-5xl mx-auto">
                 {/* Header */}
@@ -5740,7 +4869,7 @@ export function AdminCMS({
                       Nội dung các Header & Trang
                     </h2>
                     <p className="text-zinc-500 text-xs sm:text-sm mt-0.5">
-                      Tự do cập nhật nội dung chữ cho: TRANG CHỦ, DỰ ÁN, DỊCH VỤ, BÀI VIẾT, KẾT NỐI và LIÊN HỆ.
+                      Tự do cập nhật nội dung chữ cho: TRANG CHỦ, DỰ ÁN, BÀI VIẾT, KẾT NỐI và LIÊN HỆ.
                     </p>
                   </div>
 
@@ -5759,7 +4888,6 @@ export function AdminCMS({
                     [
                       { id: 'home', label: '1. TRANG CHỦ' },
                       { id: 'work', label: '2. DỰ ÁN' },
-                      { id: 'services', label: '3. DỊCH VỤ' },
                       { id: 'blog', label: '4. BÀI VIẾT' },
                       { id: 'connect', label: '5. KẾT NỐI' },
                       { id: 'contact', label: '6. LIÊN HỆ' },
@@ -5917,47 +5045,6 @@ export function AdminCMS({
                     </div>
                   )}
 
-                  {settingsSubTab === 'services' && (
-                    <div className="space-y-4">
-                      <h3 className="font-semibold text-sm text-zinc-900">
-                        Cấu hình Trang DỊCH VỤ (Services Page)
-                      </h3>
-
-                      <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">
-                          Tiêu đề trang Dịch vụ
-                        </label>
-                        <input
-                          type="text"
-                          value={settingsForm.services.title_vi}
-                          onChange={(e) =>
-                            setSettingsForm({
-                              ...settingsForm,
-                              services: { ...settingsForm.services, title_vi: e.target.value },
-                            })
-                          }
-                          className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs font-semibold"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">
-                          Phụ đề dịch vụ
-                        </label>
-                        <textarea
-                          rows={2}
-                          value={settingsForm.services.subtitle_vi}
-                          onChange={(e) =>
-                            setSettingsForm({
-                              ...settingsForm,
-                              services: { ...settingsForm.services, subtitle_vi: e.target.value },
-                            })
-                          }
-                          className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs"
-                        />
-                      </div>
-                    </div>
-                  )}
 
                   {settingsSubTab === 'blog' && (
                     <div className="space-y-4">
@@ -6120,6 +5207,29 @@ export function AdminCMS({
                         <div>
                           <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">Send another button (English)</label>
                           <input type="text" value={settingsForm.contact.sendAnother_en} onChange={(e) => setSettingsForm({ ...settingsForm, contact: { ...settingsForm.contact, sendAnother_en: e.target.value } })} className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs" />
+                        </div>
+                      </div>
+
+                      <div className="border-t border-zinc-200 pt-5">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-700">Liên kết mạng xã hội</h4>
+                        <p className="mt-1 text-xs text-zinc-500">Các liên kết đã nhập sẽ hiển thị bên phải biểu mẫu trên trang Liên hệ.</p>
+                        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">LinkedIn URL</label>
+                            <input type="url" value={settingsForm.contact.linkedinUrl} onChange={(e) => setSettingsForm({ ...settingsForm, contact: { ...settingsForm.contact, linkedinUrl: e.target.value } })} placeholder="https://www.linkedin.com/in/hoai-thuong-le-thi-21772b253" className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">YouTube URL</label>
+                            <input type="url" value={settingsForm.contact.youtubeUrl} onChange={(e) => setSettingsForm({ ...settingsForm, contact: { ...settingsForm.contact, youtubeUrl: e.target.value } })} placeholder="https://youtube.com/@..." className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">Facebook URL</label>
+                            <input type="url" value={settingsForm.contact.facebookUrl} onChange={(e) => setSettingsForm({ ...settingsForm, contact: { ...settingsForm.contact, facebookUrl: e.target.value } })} placeholder="https://facebook.com/..." className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-zinc-600 mb-1">TikTok URL</label>
+                            <input type="url" value={settingsForm.contact.tiktokUrl} onChange={(e) => setSettingsForm({ ...settingsForm, contact: { ...settingsForm.contact, tiktokUrl: e.target.value } })} placeholder="https://tiktok.com/@..." className="w-full bg-white border border-zinc-300 rounded-lg p-2.5 text-xs" />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -6474,11 +5584,6 @@ export function AdminCMS({
                         count: trashItems.filter((i) => i.type === 'project').length,
                       },
                       {
-                        key: 'service',
-                        label: 'Dịch vụ',
-                        count: trashItems.filter((i) => i.type === 'service').length,
-                      },
-                      {
                         key: 'tag',
                         label: 'Thẻ BADGE',
                         count: trashItems.filter((i) => i.type === 'tag').length,
@@ -6690,8 +5795,6 @@ export function AdminCMS({
                 <h3 className="font-bold text-base text-zinc-900 font-serif">
                   {deleteModalState.type === 'project'
                     ? 'Xác nhận xóa Dự án'
-                    : deleteModalState.type === 'service'
-                    ? 'Xác nhận xóa Dịch vụ'
                     : deleteModalState.type === 'tag'
                     ? 'Xác nhận xóa Thẻ BADGE'
                     : deleteModalState.type === 'category'
@@ -6713,8 +5816,6 @@ export function AdminCMS({
               <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
                 {deleteModalState.type === 'project'
                   ? 'Tên Dự án'
-                  : deleteModalState.type === 'service'
-                  ? 'Tên Dịch vụ'
                   : deleteModalState.type === 'tag'
                   ? 'Tên Thẻ BADGE'
                   : deleteModalState.type === 'category'
