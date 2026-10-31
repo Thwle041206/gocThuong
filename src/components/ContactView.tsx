@@ -35,10 +35,10 @@ export function ContactView({ lang }: ContactViewProps) {
     sendAnother: isEn ? contact?.sendAnother_en || t.sendAnother : contact?.sendAnother_vi || t.sendAnother,
   };
   const socialLinks = [
-    { label: 'LinkedIn', url: contact?.linkedinUrl?.trim() || 'https://www.linkedin.com', icon: Linkedin },
-    { label: 'YouTube', url: contact?.youtubeUrl?.trim() || 'https://www.youtube.com', icon: Youtube },
-    { label: 'Facebook', url: contact?.facebookUrl?.trim() || 'https://www.facebook.com', icon: Facebook },
-    { label: 'TikTok', url: contact?.tiktokUrl?.trim() || 'https://www.tiktok.com', icon: () => <span className="font-bold text-sm leading-none">♪</span> },
+    { label: 'LinkedIn', url: contact?.linkedinUrl?.trim() || 'https://www.linkedin.com/in/hoai-thuong-le-thi-21772b253/', icon: Linkedin },
+    { label: 'YouTube', url: contact?.youtubeUrl?.trim() || 'https://youtube.com/@a.gocthuong', icon: Youtube },
+    { label: 'Facebook', url: contact?.facebookUrl?.trim() || 'https://www.facebook.com/le.thi.hoai.thuong.348175/', icon: Facebook },
+    { label: 'TikTok', url: contact?.tiktokUrl?.trim() || 'https://www.tiktok.com/@gocthuong', icon: () => <span className="font-bold text-sm leading-none">♪</span> },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
