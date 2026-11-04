@@ -659,6 +659,148 @@ const LOCAL_STORAGE_SETTINGS = 'gocthuong_cms_settings';
 const LOCAL_STORAGE_CATEGORIES = 'gocthuong_cms_categories';
 const LOCAL_STORAGE_EDITORIAL_TAGS = 'gocthuong_cms_editorial_tags';
 const LOCAL_STORAGE_TRASH = 'gocthuong_cms_trash_v2';
+const LOCAL_STORAGE_RESOURCES = 'gocthuong_cms_resources_v1';
+
+export interface SharedResource {
+  id: string;
+  title: string;
+  url: string;
+  comment: string;
+  tag: string;
+  subtopic?: string;
+  authorName?: string;
+  createdAt?: string;
+  upvotes?: number;
+  highlight?: boolean;
+}
+
+export const DEFAULT_SHARED_RESOURCES: SharedResource[] = [
+  {
+    id: 'res-figma-tokens',
+    title: 'Figma Design System UI Kits & Tokens',
+    url: 'https://www.figma.com/community',
+    comment: 'Bộ khung nguyên lý xây dựng Design System từ tokens, variable colors, typography đến responsive variants chuẩn chỉ cho web.',
+    tag: 'UI/UX & Design',
+    subtopic: 'Design Systems',
+    authorName: 'Hoài Thương',
+    createdAt: '2026-03-01T08:00:00.000Z',
+    upvotes: 24,
+    highlight: true,
+  },
+  {
+    id: 'res-mobbin-flows',
+    title: 'Mobbin - Real World UX Patterns & App Flows',
+    url: 'https://mobbin.com',
+    comment: 'Tra cứu hơn 1,000+ luồng UX onboarding, checkout và navigation thực tế từ các sản phẩm công nghệ hàng đầu thế giới.',
+    tag: 'UI/UX & Design',
+    subtopic: 'User Experience',
+    authorName: 'Creative Team',
+    createdAt: '2026-03-02T09:30:00.000Z',
+    upvotes: 19,
+  },
+  {
+    id: 'res-laws-of-ux',
+    title: 'Laws of UX - Quy luật tâm lý học thiết kế',
+    url: 'https://lawsofux.com',
+    comment: 'Bộ sưu tập các nguyên lý tâm lý học trực quan (Fitts, Hick, Miller, Jakob) giúp đưa ra quyết định thiết kế thuyết phục hơn.',
+    tag: 'UI/UX & Design',
+    subtopic: 'UX Psychology',
+    authorName: 'Minh Nhật',
+    createdAt: '2026-03-04T10:00:00.000Z',
+    upvotes: 15,
+  },
+  {
+    id: 'res-tailwind-v4',
+    title: 'Tailwind CSS v4 Engine & Modern Utilities',
+    url: 'https://tailwindcss.com/docs',
+    comment: 'Kiến trúc CSS thế hệ mới không runtime, tối ưu cascade layers và biến CSS native cực nhẹ, dễ maintain quy mô lớn.',
+    tag: 'Kỹ thuật & Web Dev',
+    subtopic: 'Styling & Frameworks',
+    authorName: 'Dev Hiroki',
+    createdAt: '2026-03-05T11:00:00.000Z',
+    upvotes: 31,
+    highlight: true,
+  },
+  {
+    id: 'res-ts-handbook',
+    title: 'TypeScript Handbook & Advanced Patterns',
+    url: 'https://www.typescriptlang.org/docs',
+    comment: 'Sổ tay TypeScript từ cơ bản đến nâng cao: Generics, Mapped Types và cách thiết kế type-safe cho React components.',
+    tag: 'Kỹ thuật & Web Dev',
+    subtopic: 'TypeScript',
+    authorName: 'Thành Nam',
+    createdAt: '2026-03-06T14:20:00.000Z',
+    upvotes: 22,
+  },
+  {
+    id: 'res-web-dev',
+    title: 'Google Web.dev - Core Web Vitals & Performance',
+    url: 'https://web.dev',
+    comment: 'Bộ tài liệu từ Google Chrome hướng dẫn tối ưu LCP, CLS, INP và SEO kỹ thuật cho tốc độ tải trang vượt trội.',
+    tag: 'Kỹ thuật & Web Dev',
+    subtopic: 'Web Performance',
+    authorName: 'Kỹ thuật Studio',
+    createdAt: '2026-03-07T16:00:00.000Z',
+    upvotes: 18,
+  },
+  {
+    id: 'res-typewolf',
+    title: 'Typewolf - Nghệ thuật phối Font Editorial & Web',
+    url: 'https://www.typewolf.com',
+    comment: 'Nguồn tham khảo typography kinh điển phong cách tạp chí, cẩm nang kết hợp Serif & Sans mang đậm chất thơ và sang trọng.',
+    tag: 'Typography & Editorial',
+    subtopic: 'Font Pairing',
+    authorName: 'Hoài Thương',
+    createdAt: '2026-03-08T08:45:00.000Z',
+    upvotes: 28,
+    highlight: true,
+  },
+  {
+    id: 'res-fontpair',
+    title: 'Fontpair - Cặp Google Fonts tiếng Việt miễn phí',
+    url: 'https://www.fontpair.co',
+    comment: 'Gợi ý các cặp phông chữ Google Fonts miễn phí hỗ trợ tiếng Việt trọn vẹn, tối ưu độ tương phản cho tiêu đề và nội dung.',
+    tag: 'Typography & Editorial',
+    subtopic: 'Free Fonts',
+    authorName: 'Design Lab',
+    createdAt: '2026-03-09T10:15:00.000Z',
+    upvotes: 17,
+  },
+  {
+    id: 'res-ai-studio',
+    title: 'Google AI Studio & Gemini API Interactive Guide',
+    url: 'https://ai.google.dev',
+    comment: 'Tài liệu thực hành tích hợp mô hình ngôn ngữ lớn: Structured Outputs, Function Calling và multimodal context.',
+    tag: 'AI & Công cụ Sáng tạo',
+    subtopic: 'Generative AI',
+    authorName: 'AI Explorer',
+    createdAt: '2026-03-10T09:00:00.000Z',
+    upvotes: 27,
+  },
+  {
+    id: 'res-raycast',
+    title: 'Raycast - Tối ưu Workflow làm việc cho Creators',
+    url: 'https://www.raycast.com',
+    comment: 'Công cụ thay thế Spotlight với hệ sinh thái extensions mạnh mẽ giúp quản lý clipboard, phím tắt và tìm kiếm tài liệu tức thì.',
+    tag: 'AI & Công cụ Sáng tạo',
+    subtopic: 'Productivity',
+    authorName: 'Quốc Bảo',
+    createdAt: '2026-03-11T13:00:00.000Z',
+    upvotes: 20,
+  },
+  {
+    id: 'res-copyhackers',
+    title: 'Copyhackers - Nghệ thuật viết Copywriting chuyển đổi',
+    url: 'https://copyhackers.com',
+    comment: 'Công thức viết tiêu đề, thông điệp thương hiệu và storytelling chạm đúng insight độc giả mà không bị sáo rỗng.',
+    tag: 'Chiến lược & Nội dung',
+    subtopic: 'Copywriting',
+    authorName: 'Lan Chi',
+    createdAt: '2026-03-12T15:30:00.000Z',
+    upvotes: 21,
+  },
+];
+
 
 // Cache helpers
 function getLocal<T>(key: string, fallback: T): T {
@@ -1174,4 +1316,87 @@ export const CMSService = {
       console.warn('Firestore empty trash failed:', e);
     }
   },
+
+  // -------------------------------------------------------------
+  // Shared Community Resources (Mindmap)
+  // -------------------------------------------------------------
+  async fetchResources(): Promise<SharedResource[]> {
+    const local = getLocal<SharedResource[]>(LOCAL_STORAGE_RESOURCES, []);
+    try {
+      const colRef = collection(db, 'resources');
+      const snap = await getDocs(colRef);
+      if (!snap.empty) {
+        const resources: SharedResource[] = [];
+        snap.forEach((d) => {
+          resources.push(d.data() as SharedResource);
+        });
+        setLocal(LOCAL_STORAGE_RESOURCES, resources);
+        return resources;
+      } else {
+        // Seed default resources
+        for (const item of DEFAULT_SHARED_RESOURCES) {
+          await setDoc(doc(db, 'resources', item.id), item);
+        }
+        setLocal(LOCAL_STORAGE_RESOURCES, DEFAULT_SHARED_RESOURCES);
+        return DEFAULT_SHARED_RESOURCES;
+      }
+    } catch (e) {
+      console.warn('Error fetching resources from Firestore, using local fallback:', e);
+      return local.length > 0 ? local : DEFAULT_SHARED_RESOURCES;
+    }
+  },
+
+  async saveResource(res: SharedResource): Promise<SharedResource> {
+    const now = new Date().toISOString();
+    const finalRes: SharedResource = {
+      ...res,
+      id: res.id || `res-${Date.now()}`,
+      createdAt: res.createdAt || now,
+      upvotes: res.upvotes ?? 0,
+    };
+
+    const list = getLocal<SharedResource[]>(LOCAL_STORAGE_RESOURCES, DEFAULT_SHARED_RESOURCES);
+    const idx = list.findIndex((r) => r.id === finalRes.id);
+    if (idx >= 0) {
+      list[idx] = finalRes;
+    } else {
+      list.unshift(finalRes);
+    }
+    setLocal(LOCAL_STORAGE_RESOURCES, list);
+
+    try {
+      await setDoc(doc(db, 'resources', finalRes.id), finalRes);
+    } catch (e) {
+      console.warn('Firestore save resource failed, stored locally:', e);
+    }
+
+    return finalRes;
+  },
+
+  async upvoteResource(id: string): Promise<number> {
+    const list = getLocal<SharedResource[]>(LOCAL_STORAGE_RESOURCES, DEFAULT_SHARED_RESOURCES);
+    const item = list.find((r) => r.id === id);
+    if (!item) return 0;
+    item.upvotes = (item.upvotes || 0) + 1;
+    setLocal(LOCAL_STORAGE_RESOURCES, list);
+
+    try {
+      await updateDoc(doc(db, 'resources', id), { upvotes: item.upvotes });
+    } catch (e) {
+      console.warn('Firestore upvote failed, stored locally:', e);
+    }
+    return item.upvotes;
+  },
+
+  async deleteResource(id: string): Promise<void> {
+    const list = getLocal<SharedResource[]>(LOCAL_STORAGE_RESOURCES, DEFAULT_SHARED_RESOURCES).filter((r) => r.id !== id);
+    setLocal(LOCAL_STORAGE_RESOURCES, list);
+
+    try {
+      await deleteDoc(doc(db, 'resources', id));
+    } catch (e) {
+      console.warn('Firestore delete resource failed, removed locally:', e);
+    }
+  },
 };
+

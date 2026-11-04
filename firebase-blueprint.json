@@ -97,6 +97,22 @@
         "updatedAt": { "type": "string" }
       },
       "required": ["id"]
+    },
+    "Resource": {
+      "title": "Resource",
+      "description": "Shared educational and reference resource with link and annotation for the connect mindmap",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "url": { "type": "string" },
+        "comment": { "type": "string" },
+        "tag": { "type": "string" },
+        "authorName": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "upvotes": { "type": "number" }
+      },
+      "required": ["id", "title", "url", "comment", "tag"]
     }
   },
   "firestore": {
@@ -123,6 +139,10 @@
     "/site_sections/{sectionId}": {
       "schema": { "$ref": "#/entities/SiteSection" },
       "description": "Configurable header and page content for Trang chu, Du an, Dich vu, Bai viet, Ket noi"
+    },
+    "/resources/{resourceId}": {
+      "schema": { "$ref": "#/entities/Resource" },
+      "description": "Shared learning and reference resources displayed on the Connect Mindmap"
     }
   }
 }
