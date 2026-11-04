@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { ArrowUpRight, X, Sparkles } from 'lucide-react';
+import { ArrowUpRight, X, Sparkles, Tag, Search, RotateCcw } from 'lucide-react';
 import { Language, WORK_PROJECTS, WorkProject, UI_TEXT } from '../data/content';
 import { useCMS } from '../context/CMSContext';
 import { getBadgeColorClasses, DEFAULT_TYPOGRAPHY_SETTINGS } from '../services/cmsService';
@@ -10,76 +10,125 @@ interface WorkViewProps {
 }
 
 export function WorkView({ lang, onOpenContact }: WorkViewProps) {
-  const [selectedFilter, setSelectedFilter] = useState<string>('ALL');
+  const [activeBadges, setActiveBadges] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeProjectModal, setActiveProjectModal] = useState<WorkProject | null>(null);
-  const { publishedProjects, siteSettings, categories, editorialTags } = useCMS();
+  const { publishedProjects, siteSettings, editorialTags } = useCMS();
 
   const t = UI_TEXT[lang].workSection;
   const isEn = lang === 'en';
 
+  // Live database connection: publishedProjects from Firestore with fallback to WORK_PROJECTS
   const allProjects = publishedProjects && publishedProjects.length > 0 ? publishedProjects : WORK_PROJECTS;
 
-  // Dynamically compute available category filter tabs for Work projects from CMS & real project data
-  const dynamicWorkFilters = useMemo(() => {
-    const filtersMap = new Map<string, string>();
+  // Dynamic tags for projects (from CMS editorialTags and project data)
+  const displayTags = useMemo(() => {
+    const tagsMap = new Map<string, { id: string; name: string; color: string }>();
 
-    // 1. Add categories explicitly configured in CMS for work
-    (categories || []).forEach((c) => {
-      if (c.target === 'work' || c.target === 'both') {
-        const key = c.name.toUpperCase();
-        const label = isEn ? (c.label_en || c.name) : (c.label_vi || c.name);
-        filtersMap.set(key, label);
+    // 1. From CMS editorialTags marked for projects or both
+    (editorialTags || []).forEach((t) => {
+      if (!t.badgeType || t.badgeType === 'project' || t.badgeType === 'both') {
+        tagsMap.set(t.name.toUpperCase(), {
+          id: t.id,
+          name: t.name.toUpperCase(),
+          color: t.color || 'dark',
+        });
       }
     });
 
-    // 2. Extract unique category badges & tags directly from published projects
-    allProjects.forEach((proj) => {
-      if (proj.categoryBadge) {
-        const key = proj.categoryBadge.toUpperCase();
-        if (!filtersMap.has(key)) {
-          filtersMap.set(key, proj.categoryBadge);
-        }
-      }
-      if (proj.filterTag) {
-        const key = proj.filterTag.toUpperCase();
-        if (!filtersMap.has(key)) {
-          filtersMap.set(key, proj.filterTag);
-        }
-      }
-      if (proj.secondaryTag) {
-        const key = proj.secondaryTag.toUpperCase();
-        if (!filtersMap.has(key)) {
-          filtersMap.set(key, proj.secondaryTag);
-        }
+    // 2. From allProjects categoryBadge / filterTag if not already present
+    allProjects.forEach((p) => {
+      const b = p.categoryBadge?.toUpperCase() || p.filterTag?.toUpperCase();
+      if (b && !tagsMap.has(b)) {
+        tagsMap.set(b, {
+          id: `tag-${b.toLowerCase()}`,
+          name: b,
+          color: 'dark',
+        });
       }
     });
 
-    // Minimal fallback if no categories exist at all
-    if (filtersMap.size === 0) {
-      filtersMap.set('BRANDING', isEn ? 'Branding' : 'Xây dựng thương hiệu');
-      filtersMap.set('WEB DESIGN', isEn ? 'Web Design' : 'Thiết kế Web');
-      filtersMap.set('WEB DEVELOPMENT', isEn ? 'Web Development' : 'Phát triển Web');
+    // Fallbacks if empty
+    if (tagsMap.size === 0) {
+      tagsMap.set('BRANDING', { id: 'tag-branding', name: 'BRANDING', color: 'dark' });
+      tagsMap.set('WEB DESIGN', { id: 'tag-webdesign', name: 'WEB DESIGN', color: 'indigo' });
+      tagsMap.set('WEB DEVELOPMENT', { id: 'tag-webdev', name: 'WEB DEVELOPMENT', color: 'emerald' });
     }
 
-    return Array.from(filtersMap.entries()).map(([key, label]) => ({ key, label }));
-  }, [categories, allProjects, isEn]);
+    return Array.from(tagsMap.values());
+  }, [editorialTags, allProjects]);
 
-  const filteredProjects = selectedFilter === 'ALL'
-    ? allProjects
-    : allProjects.filter(
-        (p) =>
-          (p.filterTag || '').toUpperCase() === selectedFilter.toUpperCase() ||
-          (p.secondaryTag || '').toUpperCase() === selectedFilter.toUpperCase() ||
-          (p.categoryBadge || '').toUpperCase() === selectedFilter.toUpperCase()
-      );
-
-  const handleFilterClick = (filterKey: string) => {
-    if (selectedFilter.toUpperCase() === filterKey.toUpperCase()) {
-      setSelectedFilter('ALL');
-    } else {
-      setSelectedFilter(filterKey);
+  const isBadgeActive = (badgeName: string) => {
+    if (badgeName === 'ALL') {
+      return !activeBadges || activeBadges.length === 0;
     }
+    return activeBadges.some((b) => b.toUpperCase() === badgeName.toUpperCase());
   };
+
+  const handleToggleBadge = (badge: string) => {
+    if (badge === 'ALL') {
+      setActiveBadges([]);
+      return;
+    }
+    const upper = badge.toUpperCase();
+    setActiveBadges((prev) => {
+      const isSelected = prev.some((b) => b.toUpperCase() === upper);
+      if (isSelected) {
+        return prev.filter((b) => b.toUpperCase() !== upper);
+      } else {
+        return [...prev, badge];
+      }
+    });
+  };
+
+  const filteredProjects = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+
+    return allProjects.filter((p) => {
+      // Badge matching
+      const matchBadge =
+        activeBadges.length === 0 ||
+        activeBadges.some((b) => {
+          if (b.toUpperCase() === 'ALL') return true;
+          const bUpper = b.toUpperCase();
+          return (
+            (p.categoryBadge || '').toUpperCase() === bUpper ||
+            (p.filterTag || '').toUpperCase() === bUpper ||
+            (p.secondaryTag || '').toUpperCase() === bUpper ||
+            (p.category?.en || '').toUpperCase() === bUpper ||
+            (p.category?.vi || '').toUpperCase() === bUpper
+          );
+        });
+
+      if (!matchBadge) return false;
+
+      if (!q) return true;
+
+      const name = (p.name || '').toLowerCase();
+      const titleEn = (p.title?.en || '').toLowerCase();
+      const titleVi = (p.title?.vi || '').toLowerCase();
+      const descEn = (p.description?.en || '').toLowerCase();
+      const descVi = (p.description?.vi || '').toLowerCase();
+      const client = (p.client || '').toLowerCase();
+      const categoryBadge = (p.categoryBadge || '').toLowerCase();
+      const filterTag = (p.filterTag || '').toLowerCase();
+      const deliverables = (p.deliverables || []).join(' ').toLowerCase();
+
+      return (
+        name.includes(q) ||
+        titleEn.includes(q) ||
+        titleVi.includes(q) ||
+        descEn.includes(q) ||
+        descVi.includes(q) ||
+        client.includes(q) ||
+        categoryBadge.includes(q) ||
+        filterTag.includes(q) ||
+        deliverables.includes(q)
+      );
+    });
+  }, [allProjects, activeBadges, searchQuery]);
+
+  const hasActiveFilters = activeBadges.length > 0 || Boolean(searchQuery.trim());
 
   const dynamicTitle = isEn
     ? siteSettings?.work?.title_en || t.title
@@ -87,14 +136,16 @@ export function WorkView({ lang, onOpenContact }: WorkViewProps) {
 
   const dynamicSubtitle = isEn
     ? siteSettings?.work?.subtitle_en || t.subtitle
-    : siteSettings?.work?.subtitle_vi || t.subtitle;
+    : (siteSettings?.work?.subtitle_vi && !siteSettings?.work?.subtitle_vi.includes('Khám phá')
+        ? siteSettings?.work?.subtitle_vi
+        : 'Các dự án mình tham gia đóng góp và ý tưởng tìm đối tác đồng hành');
 
   const typography = siteSettings?.typography || DEFAULT_TYPOGRAPHY_SETTINGS;
 
   return (
-    <div className="animate-in fade-in duration-300 pb-20 sm:pb-28">
-      {/* 1. WORK HEADING & SUBTITLE */}
-      <section className="px-6 sm:px-10 lg:px-12 pt-10 sm:pt-16 pb-8 text-center max-w-4xl mx-auto">
+    <div className="animate-in fade-in duration-300 pb-0">
+      {/* 1. WORK HEADING & SUBTITLE WITH BADGE PILLS */}
+      <section className="px-6 sm:px-10 lg:px-12 pt-10 sm:pt-16 pb-6 text-center max-w-4xl mx-auto">
         <h1
           style={{
             fontFamily: typography.h1FontFamily,
@@ -108,98 +159,256 @@ export function WorkView({ lang, onOpenContact }: WorkViewProps) {
           {dynamicSubtitle}
         </p>
 
-        {/* Pill filter bar dynamic from CMS */}
-        <div className="mt-8 sm:mt-10 inline-flex flex-wrap items-center justify-center gap-1.5 max-w-full">
-          <div className="bg-black text-white rounded-full px-3 py-1.5 sm:px-4 sm:py-2 flex flex-wrap items-center justify-center gap-1 sm:gap-2 shadow-md">
-            {/* Optional subtle ALL reset if filtered */}
-            {selectedFilter !== 'ALL' && (
-              <button
-                onClick={() => setSelectedFilter('ALL')}
-                className="text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase px-2.5 py-1 rounded-full text-zinc-400 hover:text-white transition-colors cursor-pointer"
-              >
-                ✕ {t.filters.all}
-              </button>
-            )}
-
-            {dynamicWorkFilters.map((flt) => {
-              const isActive = selectedFilter.toUpperCase() === flt.key.toUpperCase();
-              return (
-                <button
-                  key={flt.key}
-                  onClick={() => handleFilterClick(flt.key)}
-                  className={`text-[10px] sm:text-[11px] font-semibold tracking-[0.14em] uppercase px-3.5 py-1.5 rounded-full transition-all cursor-pointer ${
-                    isActive
-                      ? 'bg-zinc-800 text-white shadow-xs underline underline-offset-4'
-                      : 'text-zinc-300 hover:text-white'
-                  }`}
-                >
-                  {flt.label}
-                </button>
-              );
-            })}
+        {/* BADGE (Thẻ Nhãn) Multi-Select Filter Pills matching blog */}
+        <div className="flex flex-wrap items-center justify-center gap-2 pt-6 sm:pt-8 max-w-3xl mx-auto">
+          <div className="flex items-center gap-1 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider mr-1">
+            <Tag size={13} className="text-zinc-500" />
+            <span>{isEn ? 'BADGE:' : 'THẺ NHÃN:'}</span>
           </div>
+
+          <button
+            onClick={() => handleToggleBadge('ALL')}
+            className={`px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase transition-all cursor-pointer border ${
+              isBadgeActive('ALL')
+                ? 'bg-zinc-900 text-white border-zinc-900 shadow-2xs'
+                : 'bg-zinc-100/90 text-zinc-600 border-zinc-200/80 hover:bg-zinc-200/80 hover:text-zinc-900'
+            }`}
+            title={isEn ? 'Select all badges' : 'Chọn tất cả thẻ nhãn'}
+          >
+            {isEn ? 'ALL BADGES' : 'TẤT CẢ THẺ'}
+          </button>
+
+          {displayTags.map((tag) => {
+            const active = isBadgeActive(tag.name);
+            const badgeClasses = getBadgeColorClasses(tag.color || 'dark');
+
+            return (
+              <button
+                key={tag.id}
+                onClick={() => handleToggleBadge(tag.name)}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase transition-all cursor-pointer border ${
+                  active
+                    ? 'ring-2 ring-zinc-900 ring-offset-1 font-bold shadow-2xs ' + badgeClasses
+                    : 'bg-white hover:bg-zinc-50 text-zinc-700 border-zinc-200 hover:border-zinc-300'
+                }`}
+                title={isEn ? `Toggle badge ${tag.name}` : `Chọn/Bỏ chọn thẻ nhãn ${tag.name}`}
+              >
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${
+                    tag.color === 'emerald'
+                      ? 'bg-emerald-500'
+                      : tag.color === 'indigo'
+                      ? 'bg-indigo-500'
+                      : tag.color === 'rose'
+                      ? 'bg-rose-500'
+                      : tag.color === 'amber'
+                      ? 'bg-amber-500'
+                      : tag.color === 'purple'
+                      ? 'bg-purple-500'
+                      : tag.color === 'cyan'
+                      ? 'bg-cyan-500'
+                      : 'bg-zinc-800'
+                  }`}
+                />
+                <span>{tag.name}</span>
+                {active && <span className="ml-0.5 text-[9px] text-zinc-600">✓</span>}
+              </button>
+            );
+          })}
         </div>
       </section>
 
-      {/* 2. 2-COLUMN PROJECT GRID MATCHING SCREENSHOT */}
-      <section className="px-6 sm:px-10 lg:px-12 max-w-[1360px] mx-auto pt-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 lg:gap-12">
-          {filteredProjects.map((project) => {
+      {/* Integrated Toolbar ("narbav") with Projects Count (Left), Active Filter Pills, and Search Box (Right) */}
+      <div className="px-4 sm:px-6 max-w-7xl mx-auto mb-8 sm:mb-10">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 pt-6 border-t border-zinc-200/70">
+          {/* Left: Projects Count & Active Filter Indicator */}
+          <div className="flex items-center gap-2 text-xs text-zinc-500 flex-wrap justify-center md:justify-start shrink-0">
+            <span className="font-serif italic font-medium text-zinc-800 text-sm">
+              {filteredProjects.length} {isEn ? 'projects' : 'dự án'}
+            </span>
+
+            {hasActiveFilters && (
+              <div className="flex items-center gap-1.5 pl-2 border-l border-zinc-300 flex-wrap">
+                <span className="text-[11px] text-zinc-400">
+                  {isEn ? 'Filtering by:' : 'Đang lọc:'}
+                </span>
+
+                {searchQuery.trim() && (
+                  <span className="inline-flex items-center gap-1 bg-zinc-900 text-white text-[10px] font-semibold px-2 py-0.5 rounded-md">
+                    <span>"{searchQuery.trim()}"</span>
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="hover:text-rose-300 cursor-pointer ml-0.5"
+                      title={isEn ? 'Remove keyword' : 'Xóa từ khóa'}
+                    >
+                      ✕
+                    </button>
+                  </span>
+                )}
+
+                {activeBadges.map((badge) => (
+                  <span
+                    key={badge}
+                    className="inline-flex items-center gap-1 bg-zinc-800 text-white text-[10px] font-bold px-2 py-0.5 rounded-md uppercase"
+                  >
+                    <span>#{badge}</span>
+                    <button
+                      onClick={() => handleToggleBadge(badge)}
+                      className="hover:text-rose-300 cursor-pointer ml-0.5"
+                      title={isEn ? `Remove tag ${badge}` : `Bỏ lọc nhãn ${badge}`}
+                    >
+                      ✕
+                    </button>
+                  </span>
+                ))}
+
+                <button
+                  onClick={() => {
+                    setActiveBadges([]);
+                    setSearchQuery('');
+                  }}
+                  className="text-[11px] font-semibold text-rose-600 hover:text-rose-800 ml-1 flex items-center gap-1 cursor-pointer"
+                  title={isEn ? 'Reset all filters' : 'Xóa toàn bộ bộ lọc'}
+                >
+                  <RotateCcw size={11} />
+                  <span>{isEn ? 'Reset' : 'Đặt lại'}</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Center/Right: Search Box Input */}
+          <div className="w-full md:max-w-md my-1 md:my-0 flex-1 md:flex-initial">
+            <div className="relative flex items-center bg-zinc-50 hover:bg-white focus-within:bg-white border border-zinc-200/90 focus-within:border-zinc-900 focus-within:ring-2 focus-within:ring-zinc-900/10 rounded-full px-3.5 py-1.5 shadow-2xs transition-all">
+              <Search size={15} className="text-zinc-500 shrink-0 mr-2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={
+                  isEn
+                    ? 'Search by project name, client, category...'
+                    : 'Tìm theo tên dự án, khách hàng, thể loại...'
+                }
+                className="w-full bg-transparent text-xs text-zinc-900 placeholder:text-zinc-400 focus:outline-none"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="p-1 text-zinc-400 hover:text-zinc-800 rounded-full hover:bg-zinc-100 transition-colors cursor-pointer ml-1 shrink-0"
+                  title={isEn ? 'Clear search' : 'Xóa tìm kiếm'}
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. 4-COLUMN RESPONSIVE PROJECT GRID (MATCHING BLOG GRID SECTION FORMAT) */}
+      <section className="px-4 sm:px-6 mx-auto pb-16 transition-all duration-300 max-w-7xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-6 gap-y-8 sm:gap-y-10 animate-in fade-in duration-300">
+          {filteredProjects.map((project, idx) => {
             const matchingBadge = editorialTags?.find(
-              (tag) => tag.name.toUpperCase() === (project.categoryBadge || '').toUpperCase()
+              (tag) => tag.name.toUpperCase() === (project.categoryBadge || project.filterTag || '').toUpperCase()
             );
-            const badgeColorClass = getBadgeColorClasses(matchingBadge?.color || 'zinc');
+            const badgeColorClass = getBadgeColorClasses(matchingBadge?.color || 'dark');
 
             return (
-              <div
+              <article
                 key={project.id}
                 onClick={() => setActiveProjectModal(project)}
-                className="group cursor-pointer flex flex-col"
+                className="group cursor-pointer flex flex-col focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zinc-900 rounded-2xl"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setActiveProjectModal(project);
+                  }
+                }}
               >
-                {/* Outer soft grey card container */}
-                <div className="bg-[#f8f8f8] hover:bg-[#f3f3f3] transition-colors duration-300 rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-12 border border-zinc-200/70 flex items-center justify-center">
-                  {/* Floating Mockup Browser / Canvas */}
-                  <div className="w-full relative aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-black shadow-[0_20px_45px_-12px_rgba(0,0,0,0.22)] group-hover:shadow-[0_28px_55px_-12px_rgba(0,0,0,0.32)] transition-all duration-500 ease-out group-hover:scale-[1.018]">
-                    <img
-                      src={project.image}
-                      alt={project.name}
-                      className="w-full h-full object-cover transition-transform duration-700 ease-out"
-                      loading="lazy"
-                    />
-                    {/* Subtle hover prompt */}
-                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <span className="bg-white/95 text-zinc-900 text-[11px] font-semibold tracking-wider uppercase px-4 py-2 rounded-full shadow-lg flex items-center gap-1.5 backdrop-blur-xs">
-                        <span>{lang === 'en' ? 'VIEW CASE STUDY' : 'XEM DỰ ÁN'}</span>
-                        <ArrowUpRight size={13} />
-                      </span>
+                {/* Image Container with 16:10 Aspect Ratio, Top-Right Badge, Hover Prompt */}
+                <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-zinc-100 border border-zinc-200/50 shadow-xs">
+                  <img
+                    src={project.image}
+                    alt={project.title?.[lang] || project.name}
+                    referrerPolicy="no-referrer"
+                    loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                  />
+
+                  {/* Top-Right Badge with dynamic CMS style */}
+                  <div className="absolute top-4 right-4 z-10">
+                    <span className={`text-[10px] font-semibold tracking-wider uppercase px-2.5 py-1 rounded select-none ${badgeColorClass}`}>
+                      {project.categoryBadge || project.filterTag}
+                    </span>
+                  </div>
+
+                  {/* Bottom "VIEW PROJECT" bar on hover or top card */}
+                  <div
+                    className={`absolute inset-x-3 bottom-3 z-10 transition-all duration-300 ${
+                      idx === 0
+                        ? 'opacity-95 translate-y-0'
+                        : 'opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0'
+                    }`}
+                  >
+                    <div className="w-full bg-black/90 backdrop-blur-xs text-white text-center py-2.5 px-4 rounded-lg text-[11px] font-medium tracking-[0.16em] uppercase flex items-center justify-center gap-1.5 shadow-lg group-hover:bg-black transition-colors">
+                      <span>{isEn ? 'VIEW PROJECT' : 'XEM DỰ ÁN'}</span>
+                      <ArrowUpRight size={13} className="text-zinc-300" />
                     </div>
                   </div>
                 </div>
 
-                {/* Label Row: Left = Name, Right = Category Badge */}
-                <div className="flex items-baseline justify-between pt-4 sm:pt-5 px-1">
-                  <h3 className="font-serif text-xl sm:text-2xl text-zinc-900 group-hover:text-zinc-600 transition-colors font-normal">
-                    {project.name}
-                  </h3>
-                  <span className={`text-[10px] font-semibold tracking-[0.16em] uppercase px-2 py-0.5 rounded ${badgeColorClass}`}>
-                    {project.categoryBadge}
-                  </span>
+                {/* Project Content Below Image */}
+                <div className="pt-3.5 sm:pt-4 pb-2 flex flex-col flex-1">
+                  {/* Title in Serif font */}
+                  <h2 className="font-serif text-lg sm:text-xl font-normal leading-[1.3] text-zinc-900 group-hover:text-zinc-600 transition-colors text-balance line-clamp-2">
+                    {project.title?.[lang] || project.name}
+                  </h2>
+
+                  {/* Subtitle / Excerpt in muted sans font */}
+                  <p className="mt-1.5 text-xs sm:text-[13px] text-zinc-500 font-sans leading-relaxed line-clamp-2">
+                    {project.description?.[lang] || project.name}
+                  </p>
+
+                  {/* Clean Typographic Metadata Footer */}
+                  <div className="mt-3 flex items-center gap-1.5 text-xs text-zinc-400 font-sans flex-wrap">
+                    <span className="text-zinc-600 font-medium">{project.client || 'Client'}</span>
+                    <span aria-hidden="true" className="text-zinc-300">·</span>
+                    <span>{project.year || '2024'}</span>
+                    <span aria-hidden="true" className="text-zinc-300">·</span>
+                    <span>{project.category?.[lang] || project.categoryBadge}</span>
+                  </div>
                 </div>
-              </div>
+              </article>
             );
           })}
         </div>
 
+        {/* Empty State matching blog */}
         {filteredProjects.length === 0 && (
-          <div className="text-center py-20 text-zinc-400">
-            <p className="font-serif text-2xl">
-              {lang === 'en' ? 'No projects found with this filter' : 'Chưa có dự án phù hợp với bộ lọc này'}
+          <div className="text-center py-20 text-zinc-400 bg-zinc-50/60 rounded-3xl border border-dashed border-zinc-200 max-w-2xl mx-auto mt-6 px-6">
+            <p className="font-serif text-2xl text-zinc-700">
+              {isEn
+                ? 'No projects match your search or filters'
+                : 'Không tìm thấy dự án nào phù hợp với tìm kiếm hoặc bộ lọc'}
+            </p>
+            <p className="text-xs text-zinc-500 mt-2 max-w-md mx-auto">
+              {isEn
+                ? 'Try adjusting your search keyword or clearing the filters to explore all projects.'
+                : 'Hãy thử đổi từ khóa tìm kiếm hoặc xóa các bộ lọc để khám phá toàn bộ dự án.'}
             </p>
             <button
-              onClick={() => setSelectedFilter('ALL')}
-              className="mt-4 text-xs uppercase font-semibold underline text-black cursor-pointer"
+              onClick={() => {
+                setActiveBadges([]);
+                setSearchQuery('');
+              }}
+              className="mt-5 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs uppercase font-semibold bg-black text-white hover:bg-zinc-800 transition-all cursor-pointer shadow-xs"
             >
-              {lang === 'en' ? 'View all projects' : 'Xem tất cả dự án'}
+              <RotateCcw size={13} />
+              <span>{isEn ? 'Reset all filters & search' : 'Xóa tìm kiếm & bộ lọc'}</span>
             </button>
           </div>
         )}

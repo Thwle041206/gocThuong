@@ -984,7 +984,7 @@ export const UI_TEXT = {
     },
     workSection: {
       title: 'Work',
-      subtitle: 'Khám phá bộ sưu tập dự án tuyển chọn, thể hiện chuyên môn và năng lực sáng tạo của chúng tôi.',
+      subtitle: 'Các dự án mình tham gia đóng góp và ý tưởng tìm đối tác đồng hành',
       filters: {
         all: 'TẤT CẢ',
         branding: 'BRANDING',

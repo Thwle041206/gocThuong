@@ -607,7 +607,7 @@ export const DEFAULT_SITE_SETTINGS: CMSSiteSettings = {
     title_en: 'Work',
     title_vi: 'Dự án',
     subtitle_en: 'Dive into our curated collection of projects, highlighting our expertise.',
-    subtitle_vi: 'Khám phá bộ sưu tập các dự án tiêu biểu, minh chứng cho chuyên môn và thẩm mỹ.',
+    subtitle_vi: 'Các dự án mình tham gia đóng góp và ý tưởng tìm đối tác đồng hành',
   },
   blog: {
     heroTitle_en: 'Articles',
