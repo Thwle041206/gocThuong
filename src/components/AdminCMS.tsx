@@ -4384,7 +4384,7 @@ export function AdminCMS({
                           </button>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
                               Tên Bộ Lọc (Mã/Slug) *
@@ -4417,26 +4417,6 @@ export function AdminCMS({
                               <option value="blog">Chỉ Lọc Bài Viết (Blog Articles)</option>
                               <option value="work">Chỉ Lọc Dự Án (Work Projects)</option>
                             </select>
-                          </div>
-
-                          <div>
-                            <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
-                              Thanh Điều Hướng Hero
-                            </label>
-                            <div className="flex items-center gap-2 mt-2">
-                              <input
-                                type="checkbox"
-                                id="showInHeroCheck"
-                                checked={categoryForm.showInHero}
-                                onChange={(e) =>
-                                  setCategoryForm({ ...categoryForm, showInHero: e.target.checked })
-                                }
-                                className="w-4 h-4 rounded text-black focus:ring-black cursor-pointer"
-                              />
-                              <label htmlFor="showInHeroCheck" className="text-xs text-zinc-800 font-medium cursor-pointer">
-                                Hiển thị nút bấm trên thanh Hero
-                              </label>
-                            </div>
                           </div>
                         </div>
 
@@ -4545,11 +4525,6 @@ export function AdminCMS({
                                       ? 'Blog'
                                       : 'Toàn trang'}
                                   </span>
-                                  {cat.showInHero !== false && (
-                                    <span className="text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                      Hero Bar
-                                    </span>
-                                  )}
                                 </div>
                               </div>
 

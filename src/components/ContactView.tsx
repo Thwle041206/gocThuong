@@ -66,9 +66,9 @@ export function ContactView({ lang }: ContactViewProps) {
         <h1
           style={{
             fontFamily: typography.h1FontFamily,
-            fontSize: `clamp(32px, 5vw, ${Math.min(typography.h1CustomPx || 56, 56)}px)`,
+            fontSize: typography.h1CustomPx ? `clamp(29px, 6.4vw, ${Math.round(typography.h1CustomPx * 0.8)}px)` : undefined,
           }}
-          className="font-serif text-4xl sm:text-5xl md:text-6xl text-zinc-900 font-normal leading-[1.05] tracking-tight"
+          className="font-serif text-[32px] leading-[1.15] xs:text-[48px] sm:text-[58px] md:text-[77px] text-zinc-900 font-normal tracking-tight"
         >
           {text.title}
         </h1>

@@ -95,12 +95,12 @@ export interface CMSTrashItem {
 }
 
 export const DEFAULT_CATEGORIES: CMSCategory[] = [
-  { id: 'cat-branding', name: 'BRANDING', label_vi: 'Xây dựng thương hiệu', label_en: 'Branding', description: 'Chiến lược & bộ nhận diện thương hiệu', target: 'both', showInHero: true, order: 1 },
-  { id: 'cat-studio', name: 'STUDIO', label_vi: 'Đời sống Studio', label_en: 'Studio Culture', description: 'Góc nhìn nội bộ và văn hóa sáng tạo', target: 'blog', showInHero: true, order: 2 },
-  { id: 'cat-news', name: 'NEWS', label_vi: 'Tin tức & Xu hướng', label_en: 'News & Trends', description: 'Cập nhật sự kiện và chuyển động thiết kế', target: 'blog', showInHero: true, order: 3 },
-  { id: 'cat-web-design', name: 'WEB DESIGN', label_vi: 'Thiết kế Web UI/UX', label_en: 'Web Design', description: 'Giao diện & Trải nghiệm số đỉnh cao', target: 'both', showInHero: true, order: 4 },
-  { id: 'cat-web-development', name: 'WEB DEVELOPMENT', label_vi: 'Phát triển Web & Code', label_en: 'Web Development', description: 'Hạ tầng và công nghệ lập trình', target: 'work', showInHero: true, order: 5 },
-  { id: 'cat-design-system', name: 'DESIGN SYSTEM', label_vi: 'Hệ thống thiết kế', label_en: 'Design Systems', description: 'Quy chuẩn và ngôn ngữ thiết kế', target: 'blog', showInHero: true, order: 6 },
+  { id: 'cat-branding', name: 'BRANDING', label_vi: 'Xây dựng thương hiệu', label_en: 'Branding', description: 'Chiến lược & bộ nhận diện thương hiệu', target: 'both', showInHero: false, order: 1 },
+  { id: 'cat-studio', name: 'STUDIO', label_vi: 'Đời sống Studio', label_en: 'Studio Culture', description: 'Góc nhìn nội bộ và văn hóa sáng tạo', target: 'blog', showInHero: false, order: 2 },
+  { id: 'cat-news', name: 'NEWS', label_vi: 'Tin tức & Xu hướng', label_en: 'News & Trends', description: 'Cập nhật sự kiện và chuyển động thiết kế', target: 'blog', showInHero: false, order: 3 },
+  { id: 'cat-web-design', name: 'WEB DESIGN', label_vi: 'Thiết kế Web UI/UX', label_en: 'Web Design', description: 'Giao diện & Trải nghiệm số đỉnh cao', target: 'both', showInHero: false, order: 4 },
+  { id: 'cat-web-development', name: 'WEB DEVELOPMENT', label_vi: 'Phát triển Web & Code', label_en: 'Web Development', description: 'Hạ tầng và công nghệ lập trình', target: 'work', showInHero: false, order: 5 },
+  { id: 'cat-design-system', name: 'DESIGN SYSTEM', label_vi: 'Hệ thống thiết kế', label_en: 'Design Systems', description: 'Quy chuẩn và ngôn ngữ thiết kế', target: 'blog', showInHero: false, order: 6 },
 ];
 
 export const DEFAULT_EDITORIAL_TAGS: CMSEditorialTag[] = [
@@ -609,6 +609,12 @@ export const DEFAULT_SITE_SETTINGS: CMSSiteSettings = {
     subtitle_en: 'Dive into our curated collection of projects, highlighting our expertise.',
     subtitle_vi: 'Khám phá bộ sưu tập các dự án tiêu biểu, minh chứng cho chuyên môn và thẩm mỹ.',
   },
+  blog: {
+    heroTitle_en: 'Articles',
+    heroTitle_vi: 'Bài viết',
+    heroSubtitle_en: 'Personal stories, reflections, and experiences from my journey.',
+    heroSubtitle_vi: 'Ở đây có những câu chuyện trải nghiệm cá nhân mình.',
+  },
   connect: {
     heroTitle_en: 'Digital excellence for modern brands.',
     heroTitle_vi: 'Đẳng cấp kỹ thuật số cho các thương hiệu hiện đại.',
@@ -1028,6 +1034,22 @@ export const CMSService = {
     } catch (e) {
       console.warn('Error resetting defaults to Firestore:', e);
     }
+  },
+
+  async fetchTrash(): Promise<CMSTrashItem[]> {
+    const local = getLocal<CMSTrashItem[]>(LOCAL_STORAGE_TRASH, []);
+    try {
+      const snap = await getDocs(collection(db, 'trash'));
+      if (!snap.empty) {
+        const items: CMSTrashItem[] = [];
+        snap.forEach((d) => items.push(d.data() as CMSTrashItem));
+        setLocal(LOCAL_STORAGE_TRASH, items);
+        return items;
+      }
+    } catch (e) {
+      console.warn('Error fetching trash from Firestore, using local fallback:', e);
+    }
+    return local;
   },
 
   async moveToTrash(type: TrashItemType, item: any, name: string): Promise<CMSTrashItem> {

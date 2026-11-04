@@ -98,9 +98,9 @@ export function WorkView({ lang, onOpenContact }: WorkViewProps) {
         <h1
           style={{
             fontFamily: typography.h1FontFamily,
-            fontSize: typography.h1CustomPx ? `clamp(34px, 7vw, ${typography.h1CustomPx}px)` : undefined,
+            fontSize: typography.h1CustomPx ? `clamp(29px, 6.4vw, ${Math.round(typography.h1CustomPx * 0.8)}px)` : undefined,
           }}
-          className="font-serif text-[38px] leading-[1.1] xs:text-5xl sm:text-6xl md:text-7xl lg:text-[76px] text-zinc-900 font-normal sm:leading-[1.05] tracking-tight"
+          className="font-serif text-[32px] leading-[1.15] xs:text-[48px] sm:text-[58px] md:text-[77px] text-zinc-900 font-normal tracking-tight"
         >
           {dynamicTitle}
         </h1>

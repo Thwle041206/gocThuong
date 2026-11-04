@@ -36,9 +36,9 @@ export function ConnectView({ lang, onOpenContact }: ConnectViewProps) {
             <h1
               style={{
                 fontFamily: typography.h1FontFamily,
-                fontSize: typography.h1CustomPx ? `clamp(32px, 6vw, ${typography.h1CustomPx}px)` : undefined,
+                fontSize: typography.h1CustomPx ? `clamp(29px, 6.4vw, ${Math.round(typography.h1CustomPx * 0.8)}px)` : undefined,
               }}
-              className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-[76px] text-zinc-900 font-normal leading-[1.05] tracking-tight text-balance"
+              className="font-serif text-[32px] leading-[1.15] xs:text-[48px] sm:text-[58px] md:text-[77px] text-zinc-900 font-normal tracking-tight text-balance"
             >
               {heroTitle}
             </h1>

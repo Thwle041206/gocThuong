@@ -85,14 +85,14 @@ export function ArticleCard({
       </div>
 
       {/* Article Content Below Image */}
-      <div className="pt-4 sm:pt-5 pb-2 flex flex-col flex-1">
-        {/* Title in Serif font matching screenshot */}
-        <h2 className="font-serif text-xl sm:text-2xl font-normal leading-[1.3] text-zinc-900 group-hover:text-zinc-600 transition-colors text-balance">
+      <div className="pt-3.5 sm:pt-4 pb-2 flex flex-col flex-1">
+        {/* Title in Serif font */}
+        <h2 className="font-serif text-lg sm:text-xl font-normal leading-[1.3] text-zinc-900 group-hover:text-zinc-600 transition-colors text-balance line-clamp-2">
           {article.title[lang]}
         </h2>
 
-        {/* Subtitle / Excerpt in muted sans font matching screenshot */}
-        <p className="mt-2 text-sm sm:text-[15px] text-zinc-500 font-sans leading-relaxed line-clamp-2">
+        {/* Subtitle / Excerpt in muted sans font */}
+        <p className="mt-1.5 text-xs sm:text-[13px] text-zinc-500 font-sans leading-relaxed line-clamp-2">
           {article.excerpt[lang]}
         </p>
 

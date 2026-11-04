@@ -132,9 +132,9 @@ export function HomeView({
           <h1
             style={{
               fontFamily: typography.h1FontFamily,
-              fontSize: typography.h1CustomPx ? `clamp(34px, 7vw, ${typography.h1CustomPx}px)` : undefined,
+              fontSize: typography.h1CustomPx ? `clamp(29px, 6.4vw, ${Math.round(typography.h1CustomPx * 0.8)}px)` : undefined,
             }}
-            className="font-serif text-[38px] leading-[1.1] xs:text-5xl sm:text-6xl md:text-7xl lg:text-[84px] text-zinc-900 sm:leading-[1.05] tracking-tight font-normal"
+            className="font-serif text-[32px] leading-[1.15] xs:text-[48px] sm:text-[58px] md:text-[77px] text-zinc-900 font-normal tracking-tight"
           >
             {isEn ? (
               siteSettings?.home?.heroTitle_en || (
@@ -241,7 +241,7 @@ export function HomeView({
                   {/* Action Link */}
                   <div>
                     <button
-                      onClick={() => onNavigate('services')}
+                      onClick={() => onNavigate('work')}
                       className="text-[11px] font-bold tracking-widest text-zinc-900 uppercase underline underline-offset-4 hover:opacity-75 transition-opacity cursor-pointer inline-flex items-center"
                     >
                       {svc.link}

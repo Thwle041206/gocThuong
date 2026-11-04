@@ -305,8 +305,8 @@ function MainApp() {
     });
   }, [activeCategory, activeBadges, searchQuery, currentPosts]);
 
-  // 10 Articles / Page Pagination calculation
-  const ITEMS_PER_PAGE = 10;
+  // 12 Articles / Page (evenly divides into 4 cols for Grid and 2 cols for List)
+  const ITEMS_PER_PAGE = 12;
   const totalPages = Math.ceil(filteredArticles.length / ITEMS_PER_PAGE) || 1;
   const safePage = Math.min(Math.max(currentPage, 1), totalPages);
 
@@ -368,10 +368,10 @@ function MainApp() {
             />
 
             {/* Articles Presentation Section (Grid or List View) */}
-            <section className="px-4 sm:px-6 max-w-4xl mx-auto pb-16">
+            <section className="px-4 sm:px-6 mx-auto pb-16 transition-all duration-300 max-w-7xl">
               {viewMode === 'grid' ? (
-                /* 2-Column Editorial Grid View (Constrained to max-w-4xl to match List view width) */
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 sm:gap-x-8 gap-y-10 sm:gap-y-12 animate-in fade-in duration-300">
+                /* 4-Column Editorial Grid View (Responsive: 1 on mobile, 2 on sm, 3 on md, 4 on lg/desktop and up) */
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-6 gap-y-8 sm:gap-y-10 animate-in fade-in duration-300">
                   {paginatedArticles.map((article, idx) => (
                     <ArticleCard
                       key={article.id}
@@ -383,8 +383,8 @@ function MainApp() {
                   ))}
                 </div>
               ) : (
-                /* Editorial List View */
-                <div className="flex flex-col gap-4 sm:gap-5 animate-in fade-in duration-300">
+                /* Editorial List View (2 Columns on tablet/desktop, 1 Column on mobile) */
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 lg:gap-6 animate-in fade-in duration-300">
                   {paginatedArticles.map((article) => (
                     <ArticleListItem
                       key={article.id}
@@ -437,7 +437,7 @@ function MainApp() {
                       <span>
                         Hiển thị <strong className="text-zinc-900">{(safePage - 1) * ITEMS_PER_PAGE + 1}</strong>–
                         <strong className="text-zinc-900">{Math.min(safePage * ITEMS_PER_PAGE, filteredArticles.length)}</strong> trong tổng số{' '}
-                        <strong className="text-zinc-900">{filteredArticles.length}</strong> bài viết (10 bài/trang)
+                        <strong className="text-zinc-900">{filteredArticles.length}</strong> bài viết ({ITEMS_PER_PAGE} bài/trang)
                       </span>
                     )}
                   </div>

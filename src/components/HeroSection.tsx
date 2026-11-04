@@ -5,8 +5,8 @@ import { Tag, LayoutGrid, List, Search, X, RotateCcw, User, FileText, Sparkles, 
 
 interface HeroSectionProps {
   lang: Language;
-  activeCategory: string;
-  onSelectCategory: (cat: string) => void;
+  activeCategory?: string;
+  onSelectCategory?: (cat: string) => void;
   activeBadges?: string[];
   onToggleBadge?: (badge: string) => void;
   searchQuery?: string;
@@ -35,21 +35,15 @@ export function HeroSection({
 
   const dynamicTitle = isEn
     ? siteSettings?.blog?.heroTitle_en || t.hero.title
-    : siteSettings?.blog?.heroTitle_vi || t.hero.title;
+    : (siteSettings?.blog?.heroTitle_vi && siteSettings?.blog?.heroTitle_vi !== 'Bài viết & Ấn phẩm'
+        ? siteSettings?.blog?.heroTitle_vi
+        : 'Bài viết');
 
   const dynamicSubtitle = isEn
     ? siteSettings?.blog?.heroSubtitle_en || t.hero.subtitle
-    : siteSettings?.blog?.heroSubtitle_vi || t.hero.subtitle;
-
-  // Filter categories for blog
-  const blogCategories = (categories && categories.length > 0 ? categories : [])
-    .filter((c) => c.target !== 'work' && c.showInHero !== false);
-
-  const displayCategories = blogCategories.length > 0 ? blogCategories : [
-    { id: 'cat-branding', name: 'BRANDING', label_vi: 'Xây dựng thương hiệu', label_en: 'Branding' },
-    { id: 'cat-studio', name: 'STUDIO', label_vi: 'Đời sống Studio', label_en: 'Studio' },
-    { id: 'cat-news', name: 'NEWS', label_vi: 'Tin tức', label_en: 'News' },
-  ];
+    : (siteSettings?.blog?.heroSubtitle_vi && !siteSettings?.blog?.heroSubtitle_vi.includes('Khám phá')
+        ? siteSettings?.blog?.heroSubtitle_vi
+        : 'Ở đây có những câu chuyện trải nghiệm cá nhân mình.');
 
   // Dynamic editorial tags (BADGEs)
   const displayTags = editorialTags && editorialTags.length > 0 ? editorialTags : [
@@ -67,17 +61,17 @@ export function HeroSection({
     return activeBadges.some((b) => b.toUpperCase() === badgeName.toUpperCase());
   };
 
-  const hasActiveFilters = activeCategory !== 'ALL' || activeBadges.length > 0 || Boolean(searchQuery.trim());
+  const hasActiveFilters = activeBadges.length > 0 || Boolean(searchQuery.trim());
 
   return (
     <section className="pt-12 pb-8 sm:pt-16 sm:pb-12 text-center max-w-4xl mx-auto px-6">
-      {/* Editorial Title */}
+      {/* Editorial Title (80% of original scale) */}
       <h1
         style={{
           fontFamily: typography.h1FontFamily,
-          fontSize: typography.h1CustomPx ? `clamp(36px, 8vw, ${typography.h1CustomPx}px)` : undefined,
+          fontSize: typography.h1CustomPx ? `clamp(29px, 6.4vw, ${Math.round(typography.h1CustomPx * 0.8)}px)` : undefined,
         }}
-        className="font-serif text-[40px] leading-[1.1] xs:text-6xl sm:text-7xl md:text-8xl font-normal text-zinc-900 tracking-tight sm:leading-none mb-4"
+        className="font-serif text-[32px] leading-[1.15] xs:text-[48px] sm:text-[58px] md:text-[77px] font-normal text-zinc-900 tracking-tight sm:leading-none mb-3.5"
       >
         {dynamicTitle}
       </h1>
@@ -89,53 +83,7 @@ export function HeroSection({
 
       {/* Filter Systems Area */}
       <div className="space-y-4 max-w-3xl mx-auto">
-        {/* Row 1: Category Filter Pill Bar */}
-        <div className="flex flex-col items-center gap-2 pt-1">
-          <div className="inline-flex flex-wrap items-center justify-center gap-1.5 bg-black text-white px-5 sm:px-7 py-2.5 sm:py-3 rounded-full text-[11px] sm:text-xs font-semibold tracking-[0.14em] uppercase shadow-md select-none transition-all max-w-full">
-            <span className="text-[10px] font-mono text-zinc-400 hidden sm:inline-block pr-1 border-r border-zinc-800">
-              {isEn ? 'CATEGORY' : 'CHUYÊN MỤC'}
-            </span>
-
-            {displayCategories.map((cat, index) => {
-              const isActive = activeCategory.toUpperCase() === cat.name.toUpperCase();
-              const label = isEn
-                ? (cat.label_en || cat.name)
-                : (cat.label_vi || cat.name);
-
-              return (
-                <div key={cat.id || cat.name} className="inline-flex items-center">
-                  <button
-                    onClick={() => onSelectCategory(isActive ? 'ALL' : cat.name)}
-                    className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
-                      isActive
-                        ? 'text-white bg-zinc-800 underline underline-offset-4 font-bold shadow-xs'
-                        : 'text-zinc-300 hover:text-white'
-                    }`}
-                    title={cat.description || cat.name}
-                  >
-                    {label}
-                  </button>
-
-                  {index < displayCategories.length - 1 && (
-                    <span className="text-zinc-600 px-1 select-none">/</span>
-                  )}
-                </div>
-              );
-            })}
-
-            {activeCategory !== 'ALL' && (
-              <button
-                onClick={() => onSelectCategory('ALL')}
-                className="ml-2 pl-2 border-l border-zinc-700 text-[10px] text-zinc-400 hover:text-white transition-colors cursor-pointer flex items-center gap-1"
-                title={isEn ? 'Clear category' : 'Xóa lọc chuyên mục'}
-              >
-                <span>✕</span>
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Row 2: BADGE (Thẻ Nhãn) Multi-Select Filter Pills */}
+        {/* BADGE (Thẻ Nhãn) Multi-Select Filter Pills */}
         {onToggleBadge && (
           <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
             <div className="flex items-center gap-1 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider mr-1">
@@ -197,7 +145,9 @@ export function HeroSection({
       </div>
 
       {/* Row 3: Integrated Toolbar with Articles Count (Left), Search Box (Center), View Mode Toggle Grid/List (Right) */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 pt-6 mt-6 border-t border-zinc-200/70 max-w-4xl mx-auto">
+      <div
+        className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 pt-6 mt-6 border-t border-zinc-200/70 mx-auto transition-all duration-300 max-w-7xl"
+      >
         {/* Left: Articles Count & Active Filter Indicator */}
         <div className="flex items-center gap-2 text-xs text-zinc-500 flex-wrap justify-center md:justify-start shrink-0">
           <span className="font-serif italic font-medium text-zinc-800 text-sm">
@@ -223,18 +173,6 @@ export function HeroSection({
                 </span>
               )}
 
-              {activeCategory !== 'ALL' && (
-                <span className="inline-flex items-center gap-1 bg-black text-white text-[10px] font-bold px-2 py-0.5 rounded-md uppercase">
-                  <span>{activeCategory}</span>
-                  <button
-                    onClick={() => onSelectCategory('ALL')}
-                    className="hover:text-rose-300 cursor-pointer ml-0.5"
-                  >
-                    ✕
-                  </button>
-                </span>
-              )}
-
               {activeBadges.map((badge) => (
                 <span
                   key={badge}
@@ -253,7 +191,7 @@ export function HeroSection({
 
               <button
                 onClick={() => {
-                  onSelectCategory('ALL');
+                  if (onSelectCategory) onSelectCategory('ALL');
                   if (onToggleBadge) onToggleBadge('ALL');
                   if (onSearchChange) onSearchChange('');
                 }}
@@ -308,10 +246,10 @@ export function HeroSection({
                   ? 'bg-white text-zinc-900 shadow-xs border border-zinc-200/60'
                   : 'text-zinc-500 hover:text-zinc-900'
               }`}
-              title={isEn ? 'Grid layout (2 columns)' : 'Xem dạng Lưới (2 cột)'}
+              title={isEn ? 'Grid layout (4 columns)' : 'Xem dạng Lưới (4 cột)'}
             >
               <LayoutGrid size={14} />
-              <span className="hidden xs:inline">{isEn ? 'Grid' : 'Lưới'}</span>
+              <span className="hidden xs:inline">{isEn ? 'Grid (4 cols)' : 'Lưới (4 cột)'}</span>
             </button>
 
             <button
@@ -322,10 +260,10 @@ export function HeroSection({
                   ? 'bg-white text-zinc-900 shadow-xs border border-zinc-200/60'
                   : 'text-zinc-500 hover:text-zinc-900'
               }`}
-              title={isEn ? 'List layout (Detailed rows)' : 'Xem dạng Danh sách (Hàng ngang)'}
+              title={isEn ? 'List layout (2 columns)' : 'Xem dạng Danh sách (2 cột)'}
             >
               <List size={14} />
-              <span className="hidden xs:inline">{isEn ? 'List' : 'Danh sách'}</span>
+              <span className="hidden xs:inline">{isEn ? 'List (2 cols)' : 'Danh sách (2 cột)'}</span>
             </button>
           </div>
         )}

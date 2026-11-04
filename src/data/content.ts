@@ -1047,8 +1047,8 @@ export const UI_TEXT = {
       }
     },
     hero: {
-      title: 'Bài Viết',
-      subtitle: 'Khám phá các góc nhìn chuyên sâu, chiến lược thương hiệu và xu hướng thiết kế mới nhất.'
+      title: 'Bài viết',
+      subtitle: 'Ở đây có những câu chuyện trải nghiệm cá nhân mình.'
     },
     filters: {
       all: 'TẤT CẢ',
