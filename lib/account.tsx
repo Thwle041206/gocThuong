@@ -50,6 +50,7 @@ export function authMessage(e: unknown) {
   if (code.includes("too-many-requests")) return "Thử quá nhiều lần. Đợi một lát rồi thử lại.";
   if (code.includes("popup-closed") || code.includes("cancelled-popup")) return "Bạn đã đóng cửa sổ đăng nhập.";
   if (code.includes("popup-blocked")) return "Trình duyệt đã chặn cửa sổ đăng nhập. Cho phép popup rồi thử lại.";
+  if (code.includes("unauthorized-domain")) return "Trang này chưa được phép đăng nhập Google. Hãy dùng email, hoặc thêm tên miền vào Firebase Authentication → Settings → Authorized domains.";
   if (code.includes("requires-recent-login")) return "Vì an toàn, hãy đăng xuất, đăng nhập lại rồi thử lại.";
   if (code.includes("permission-denied")) return "Không có quyền thực hiện thao tác này.";
   if (code.includes("unavailable") || code.includes("network")) return "Mất kết nối. Thử lại sau.";
