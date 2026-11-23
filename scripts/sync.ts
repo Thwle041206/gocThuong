@@ -104,7 +104,11 @@ async function exportContent() {
   const out: Record<string, unknown> = {
     posts: posts.docs.map((d) => plain(d.data())),
     projects: projects.docs.map((d) => plain(d.data())).filter((x) => (x.status ?? "published") === "published"),
-    resources: resources.docs.map((d) => ({ ...plain(d.data()), id: d.id })),
+    // submittedBy is a reader's account id: keep it out of the public site.
+    resources: resources.docs.map((d) => {
+      const { submittedBy: _, ...r } = plain(d.data());
+      return { ...r, id: d.id };
+    }),
   };
   if (site.exists) out.site = plain(site.data()!);
   const json = JSON.stringify(out, null, 2);

@@ -1,35 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { authMessage, useAccount } from "@/lib/account";
 import { Bookmark, Share, ThumbDown, ThumbUp } from "./icons";
 import { copyLink, useToast } from "./Toast";
 
 export function PostToolbar({
   slug,
+  title,
   langs,
   current,
   onLang,
 }: {
   slug: string;
+  title: string;
   langs: { id: string; label: string; available: boolean }[];
   current: string;
   onLang: (id: string) => void;
 }) {
   const { flash, node } = useToast();
-  const [saved, setSaved] = useState(false);
-  const key = `saved:${slug}`;
-  useEffect(() => {
+  const { isSaved, toggleSave } = useAccount();
+  const saved = isSaved("post", slug);
+  const toggle = async () => {
     try {
-      setSaved(localStorage.getItem(key) === "1");
-    } catch {}
-  }, [key]);
-  const toggle = () => {
-    const v = !saved;
-    setSaved(v);
-    try {
-      v ? localStorage.setItem(key, "1") : localStorage.removeItem(key);
-    } catch {}
-    flash(v ? "Đã lưu bài viết" : "Đã bỏ lưu");
+      const v = await toggleSave({ type: "post", ref: slug, title, url: `/bai-viet/${slug}/` });
+      if (v !== null) flash(v ? "Đã lưu vào tài khoản" : "Đã bỏ lưu");
+    } catch (e) {
+      flash(authMessage(e));
+    }
   };
   return (
     <div className="flex items-center gap-2">

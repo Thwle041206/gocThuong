@@ -49,7 +49,7 @@ export default function PostReader({
       <div className="mx-auto max-w-[820px] px-4 pt-8 sm:px-8">
         <div className="flex flex-wrap items-center justify-between gap-4 border-y border-line py-4">
           {author}
-          <PostToolbar slug={slug} langs={langs} current={v.id} onLang={setCur} />
+          <PostToolbar slug={slug} title={v.title} langs={langs} current={v.id} onLang={setCur} />
         </div>
       </div>
 

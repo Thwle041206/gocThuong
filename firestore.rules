@@ -1,13 +1,50 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Only accounts with the custom claim role == "admin" (set by scripts/sync.ts in CI) can read or write.
-    // The public site never reads Firestore from the browser: content is exported at build time.
+    // Admins: accounts with the custom claim role == "admin" (set by scripts/sync.ts in CI).
+    // Readers: anyone signed in. They can only touch their own saved items and send resources for review.
+    // The public site never reads content from the browser: it is exported at build time.
     function isAdmin() {
       return request.auth != null && request.auth.token.role == "admin";
     }
+    function isUser(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+    function str(v, min, max) {
+      return v is string && v.size() >= min && v.size() <= max;
+    }
+
     match /{document=**} {
       allow read, write: if isAdmin();
+    }
+
+    // Each reader's saved posts and resources.
+    match /users/{uid}/saved/{itemId} {
+      allow read, delete: if isUser(uid);
+      allow create, update: if isUser(uid)
+        && request.resource.data.keys().hasOnly(["type", "ref", "title", "url", "savedAt"])
+        && request.resource.data.type in ["post", "resource"]
+        && str(request.resource.data.ref, 1, 300)
+        && str(request.resource.data.title, 0, 300)
+        && str(request.resource.data.url, 1, 500)
+        && request.resource.data.savedAt is int;
+    }
+
+    // Readers can send a resource for review and see the ones they sent. Only admins approve.
+    match /resources/{id} {
+      allow read: if request.auth != null && resource.data.submittedBy == request.auth.uid;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(["title", "url", "desc", "cat", "by", "likes", "status", "submittedBy", "createdAt"])
+        && request.resource.data.status == "pending"
+        && request.resource.data.submittedBy == request.auth.uid
+        && request.resource.data.likes == 0
+        && str(request.resource.data.title, 1, 200)
+        && str(request.resource.data.url, 8, 500)
+        && request.resource.data.url.matches("^https?://.+")
+        && str(request.resource.data.desc, 0, 500)
+        && str(request.resource.data.by, 1, 60)
+        && request.resource.data.cat in ["BA", "AI", "NGÔN NGỮ", "THIẾT KẾ", "KỸ THUẬT"]
+        && request.resource.data.createdAt is int;
     }
   }
 }

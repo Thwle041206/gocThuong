@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LANGS, useLang } from "@/lib/i18n";
-import { User } from "./icons";
+import AccountButton from "./account/AccountButton";
 
 export default function Header() {
   const path = usePathname() || "/";
@@ -64,14 +64,7 @@ export default function Header() {
               </button>
             ))}
           </div>
-          <button
-            type="button"
-            aria-label="Đăng nhập (sắp có)"
-            title="Đăng nhập quản trị — sắp có"
-            className="inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-xl border-0 bg-ink"
-          >
-            <User />
-          </button>
+          <AccountButton />
         </div>
       </div>
     </header>
