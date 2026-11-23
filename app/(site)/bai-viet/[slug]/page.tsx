@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import Toc from "@/components/Toc";
-import { Feedback, PostToolbar } from "@/components/PostBits";
+import PostReader from "@/components/PostReader";
+import { Feedback } from "@/components/PostBits";
+import { renderMarkdown } from "@/lib/markdown";
 import { site } from "@/content/site";
-import { sortedPosts as posts } from "@/content/posts";
+import { sortedPosts as posts, LOCALE_LABEL, type Locale } from "@/content/posts";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -36,6 +37,11 @@ export default async function PostDetail({ params }: Props) {
   const next = posts[i - 1];
   const related = [...posts.filter((x) => x.slug !== slug && x.cat === p.cat), ...posts.filter((x) => x.slug !== slug && x.cat !== p.cat)].slice(0, 3);
   const zh = p.lang === "中文" ? "zh" : undefined;
+  const versions = (Object.keys(p.tr) as Locale[]).map((id) => {
+    const t = p.tr[id]!;
+    const r = t.body?.trim() ? renderMarkdown(t.body) : { html: undefined, headings: [] };
+    return { id, label: LOCALE_LABEL[id], title: t.title, excerpt: t.excerpt, html: r.html, headings: r.headings };
+  });
 
   return (
     <>
@@ -50,17 +56,18 @@ export default async function PostDetail({ params }: Props) {
       </nav>
 
       <article>
-        <header className="mx-auto flex max-w-[820px] flex-col items-center gap-5 px-4 pt-14 text-center sm:px-8">
-          <div className="flex flex-wrap items-center justify-center gap-2.5 font-mono text-xs text-muted">
-            <span className="tag !text-xs">{p.cat}</span>
-            <span>{p.lang} · {p.dateLabel} · {p.read.toUpperCase()}{p.date ? " ĐỌC" : ""}</span>
-          </div>
-          <h1 lang={zh} className="m-0 font-serif text-[clamp(42px,6vw,68px)] leading-[1.05] font-medium">{p.title}</h1>
-          <p className="m-0 max-w-[46ch] text-xl leading-relaxed text-muted">{p.excerpt}</p>
-        </header>
-
-        <div className="mx-auto max-w-[820px] px-4 pt-8 sm:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-y border-line py-4">
+        <PostReader
+          slug={p.slug}
+          original={p.original}
+          versions={versions}
+          placeholderToc={toc}
+          meta={
+            <div className="flex flex-wrap items-center justify-center gap-2.5 font-mono text-xs text-muted">
+              <span className="tag !text-xs">{p.cat}</span>
+              <span>{p.lang} · {p.dateLabel} · {p.read.toUpperCase()} ĐỌC</span>
+            </div>
+          }
+          author={
             <div className="flex items-center gap-3">
               <span aria-hidden="true" className="flex h-11 w-11 items-center justify-center rounded-full bg-ink font-serif text-[22px] text-white">T</span>
               <span className="flex flex-col leading-[1.35]">
@@ -68,42 +75,30 @@ export default async function PostDetail({ params }: Props) {
                 <span className="text-[13px] text-muted">{site.role}</span>
               </span>
             </div>
-            <PostToolbar slug={p.slug} lang={p.lang} />
-          </div>
-        </div>
-
-        <figure className="mx-auto mt-10 mb-0 flex max-w-[1104px] flex-col gap-2.5 px-4 sm:px-8">
-          <div className="placeholder aspect-[16/9] rounded-2xl bg-panel text-dim sm:aspect-[21/9]">[ẢNH BÌA BÀI VIẾT]</div>
-          <figcaption className="text-center text-[13px] text-muted">[Chú thích ảnh bìa]</figcaption>
-        </figure>
-
-        <div className="mx-auto flex max-w-[1104px] flex-wrap items-start gap-12 px-4 pt-14 sm:px-8">
-          <aside className="flex-[0_0_200px] max-md:hidden">
-            <Toc title="Mục lục" items={toc} />
-          </aside>
-          <div className="flex min-w-0 max-w-[700px] flex-[1_1_560px] flex-col gap-6 text-lg leading-[1.8]">
-            <p className="m-0 text-[21px] leading-[1.7]">[Đoạn mở: nêu vấn đề hoặc câu hỏi chính trong 2–3 câu, để người đọc biết vì sao nên đọc tiếp.]</p>
-            <h2 id="boi-canh" className={h2}>Bối cảnh</h2>
-            <p className="m-0">[Tình huống thực tế: dự án, nhóm, công cụ AI đang dùng. Viết ngắn, cụ thể.]</p>
-            <blockquote className="mx-0 my-2 border-y border-ink py-7 text-center font-serif text-[30px] leading-[1.35] italic">[Một câu đáng nhớ nhất của bài — câu người đọc sẽ chia sẻ lại.]</blockquote>
-            <h2 id="van-de" className={h2}>Vấn đề</h2>
-            <ul className="m-0 flex flex-col gap-2 pl-[22px]">
-              <li>[Ý 1: chi phí / thời gian khi hỏi AI không rõ ràng]</li>
-              <li>[Ý 2]</li>
-              <li>[Ý 3]</li>
-            </ul>
-            <figure className="mx-0 my-2 flex flex-col gap-2.5">
-              <div className="placeholder aspect-video rounded-xl bg-soft text-muted">[ẢNH MINH HOẠ / SƠ ĐỒ]</div>
-              <figcaption className="text-sm text-muted">[Chú thích: hình này cho thấy điều gì]</figcaption>
-            </figure>
-            <h2 id="cach-tiep-can" className={h2}>Cách tiếp cận</h2>
-            <p className="m-0">[Các bước bạn đã làm. Có thể dùng danh sách đánh số.]</p>
-            <div className="flex flex-col gap-2 rounded-xl bg-soft px-6 py-5">
-              <span className="label">GHI CHÚ CỦA BA</span>
-              <span className="text-base leading-[1.7]">[Mẹo thực tế hoặc mẫu prompt ngắn người đọc có thể dùng ngay.]</span>
-            </div>
-            <h2 id="bai-hoc" className={h2}>Bài học</h2>
-            <p className="m-0">[2–3 điều rút ra. Kết bằng một câu hỏi mở cho người đọc.]</p>
+          }
+          placeholder={
+            <>
+              <p className="m-0 text-[21px] leading-[1.7]">[Đoạn mở: nêu vấn đề hoặc câu hỏi chính trong 2–3 câu, để người đọc biết vì sao nên đọc tiếp.]</p>
+              <h2 id="boi-canh" className={h2}>Bối cảnh</h2>
+              <p className="m-0">[Tình huống thực tế: dự án, nhóm, công cụ AI đang dùng. Viết ngắn, cụ thể.]</p>
+              <blockquote className="mx-0 my-2 border-y border-ink py-7 text-center font-serif text-[30px] leading-[1.35] italic">[Một câu đáng nhớ nhất của bài — câu người đọc sẽ chia sẻ lại.]</blockquote>
+              <h2 id="van-de" className={h2}>Vấn đề</h2>
+              <ul className="m-0 flex flex-col gap-2 pl-[22px]">
+                <li>[Ý 1: chi phí / thời gian khi hỏi AI không rõ ràng]</li>
+                <li>[Ý 2]</li>
+                <li>[Ý 3]</li>
+              </ul>
+              <h2 id="cach-tiep-can" className={h2}>Cách tiếp cận</h2>
+              <p className="m-0">[Các bước bạn đã làm. Có thể dùng danh sách đánh số.]</p>
+              <div className="flex flex-col gap-2 rounded-xl bg-soft px-6 py-5">
+                <span className="label">GHI CHÚ CỦA BA</span>
+                <span className="text-base leading-[1.7]">[Mẹo thực tế hoặc mẫu prompt ngắn người đọc có thể dùng ngay.]</span>
+              </div>
+              <h2 id="bai-hoc" className={h2}>Bài học</h2>
+              <p className="m-0">[2–3 điều rút ra. Kết bằng một câu hỏi mở cho người đọc.] Viết nội dung bài trong trang quản trị để thay khung mẫu này.</p>
+            </>
+          }
+        >
             <div className="flex flex-wrap gap-2 pt-4">
               {p.tags.map((t) => (
                 <Link key={t} href="/bai-viet/" className="rounded-md bg-soft px-3 py-2 font-mono text-xs no-underline">#{t}</Link>
@@ -115,12 +110,11 @@ export default async function PostDetail({ params }: Props) {
               <div className="flex flex-[1_1_300px] flex-col gap-2 text-[15px] leading-relaxed">
                 <span className="label !text-dim">TÁC GIẢ</span>
                 <span className="font-serif text-[26px]">{site.author}</span>
-                <span className="text-on-dark">Business Analyst mảng IT/AI. Đang học tiếng Anh và tiếng Trung để trở thành phiên dịch viên.</span>
+                <span className="text-on-dark">{site.bio}</span>
                 <Link href="/#lien-he" className="font-semibold !text-white underline-offset-4">Kết nối với mình →</Link>
               </div>
             </div>
-          </div>
-        </div>
+        </PostReader>
 
         <nav aria-label="Bài trước và bài sau" className="mx-auto flex max-w-[1104px] flex-wrap gap-4 px-4 pt-14 sm:px-8">
           {prev && (

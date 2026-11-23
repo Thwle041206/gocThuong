@@ -4,7 +4,17 @@ import { useEffect, useState } from "react";
 import { Bookmark, Share, ThumbDown, ThumbUp } from "./icons";
 import { copyLink, useToast } from "./Toast";
 
-export function PostToolbar({ slug, lang }: { slug: string; lang: string }) {
+export function PostToolbar({
+  slug,
+  langs,
+  current,
+  onLang,
+}: {
+  slug: string;
+  langs: { id: string; label: string; available: boolean }[];
+  current: string;
+  onLang: (id: string) => void;
+}) {
   const { flash, node } = useToast();
   const [saved, setSaved] = useState(false);
   const key = `saved:${slug}`;
@@ -21,23 +31,22 @@ export function PostToolbar({ slug, lang }: { slug: string; lang: string }) {
     } catch {}
     flash(v ? "Đã lưu bài viết" : "Đã bỏ lưu");
   };
-  const readLangs = ["VI", "EN"];
   return (
     <div className="flex items-center gap-2">
       <div role="group" aria-label="Đọc bằng ngôn ngữ" className="flex items-center gap-1.5 text-[13px] text-muted">
         Đọc bằng
         <span className="flex rounded-[10px] border border-line p-0.5 font-mono text-xs">
-          {readLangs.map((l) => {
-            const on = l === (lang === "中文" ? "VI" : lang);
+          {langs.map((l) => {
+            const on = l.id === current;
             return (
               <button
-                key={l}
+                key={l.id}
                 type="button"
                 aria-pressed={on}
-                onClick={() => !on && flash("Bản dịch sẽ có khi bài được dịch")}
-                className={`h-10 min-w-11 cursor-pointer rounded-lg border-0 ${on ? "bg-ink text-white" : "bg-transparent text-muted"}`}
+                onClick={() => (l.available ? onLang(l.id) : flash("Bản dịch này chưa có"))}
+                className={`h-10 min-w-11 cursor-pointer rounded-lg border-0 px-1 ${on ? "bg-ink text-white" : l.available ? "bg-transparent text-ink" : "bg-transparent text-[#BDBDBD]"}`}
               >
-                {l}
+                {l.label}
               </button>
             );
           })}

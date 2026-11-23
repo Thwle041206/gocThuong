@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Only accounts with the custom claim role == "admin" (set by scripts/sync.ts in CI) can read or write.
+    // The public site never reads Firestore from the browser: content is exported at build time.
+    function isAdmin() {
+      return request.auth != null && request.auth.token.role == "admin";
+    }
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

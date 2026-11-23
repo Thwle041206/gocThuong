@@ -1,4 +1,6 @@
-// Projects (case studies). Add a new object to publish a new project page at /du-an/<slug>/.
+// Projects (case studies). Live content comes from the CMS (Firestore) via remote.json at deploy time;
+// the seed list below is used when remote.json is empty.
+import remote from "./remote.json";
 
 export type Category = "BA" | "AI" | "DỮ LIỆU" | "NGÔN NGỮ";
 
@@ -12,6 +14,9 @@ export type Project = {
   title: string;
   summary: string;
   featured?: boolean;
+  status?: "draft" | "published";
+  order?: number;
+  updatedAt?: number;
   lead: string;
   meta: { role: string; duration: string; team: string; domain: string; tools: string[] };
   results: { value: string; label: string }[];
@@ -56,7 +61,7 @@ const base = {
   lessons: ["[Bài học 1]", "[Bài học 2]"],
 };
 
-export const projects: Project[] = [
+export const seedProjects: Project[] = [
   { ...base, slug: "tinh-nang-ai", cat: "AI", year: 2026, kind: "TÍNH NĂNG AI", img: "[ẢNH WIREFRAME]", chips: ["User story", "LLM", "Acceptance criteria"], featured: true },
   { ...base, slug: "toi-uu-quy-trinh", cat: "BA", year: 2025, kind: "TỐI ƯU QUY TRÌNH", img: "[ẢNH SƠ ĐỒ BPMN]", chips: ["BPMN", "BRD", "Stakeholder"], featured: true },
   { ...base, slug: "dashboard-kpi", cat: "DỮ LIỆU", year: 2025, kind: "DASHBOARD", img: "[ẢNH DASHBOARD]", chips: ["SQL", "KPI", "Wireframe"], featured: true },
@@ -64,6 +69,11 @@ export const projects: Project[] = [
   { ...base, slug: "product-backlog", cat: "BA", year: 2024, kind: "PRODUCT BACKLOG", img: "[ẢNH USER STORY MAP]", chips: ["Story map", "Backlog", "Jira"] },
   { ...base, slug: "tai-lieu-song-ngu", cat: "NGÔN NGỮ", year: 2026, kind: "TÀI LIỆU SONG NGỮ", img: "[ẢNH TÀI LIỆU]", chips: ["EN ⇄ VI", "Thuật ngữ IT", "中文"] },
 ];
+
+const all: Project[] = (remote as { projects?: Project[] }).projects ?? seedProjects;
+export const projects: Project[] = all
+  .filter((p) => (p.status ?? "published") === "published")
+  .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
 export const projectFilters: { label: string; cat: Category | null }[] = [
   { label: "Tất cả", cat: null },

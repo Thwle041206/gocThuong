@@ -10,7 +10,7 @@ export default function ResourcesBrowser() {
   const [q, setQ] = useState("");
   const [sort, setSort] = useState<"top" | "az">("top");
   const [view, setView] = useState<"grouped" | "flat">("grouped");
-  const [liked, setLiked] = useState<Record<number, boolean>>({});
+  const [liked, setLiked] = useState<Record<string, boolean>>({});
   const { flash, node } = useToast();
 
   // Likes are remembered in this browser only until the backend (Sprint 6) exists.
@@ -19,7 +19,7 @@ export default function ResourcesBrowser() {
       setLiked(JSON.parse(localStorage.getItem("liked") || "{}"));
     } catch {}
   }, []);
-  const toggle = (id: number) => {
+  const toggle = (id: number | string) => {
     const next = { ...liked, [id]: !liked[id] };
     setLiked(next);
     try {
