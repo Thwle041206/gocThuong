@@ -66,13 +66,8 @@ jobs:
       - name: Deploy to Firebase (live)
         if: steps.gate.outputs.skip != 'true' && github.event_name != 'pull_request' && env.GOOGLE_APPLICATION_CREDENTIALS != ''
         run: |
-          npx -y firebase-tools@14 deploy --only hosting,firestore:rules --project "$FIREBASE_PROJECT" --non-interactive --force
+          npx -y firebase-tools@14 deploy --only hosting --project "$FIREBASE_PROJECT" --non-interactive --force
           npx tsx scripts/mark-deployed.ts
-
-      # Rules are shared by live and preview; the preview admin needs them too.
-      - name: Firestore rules (pull requests)
-        if: github.event_name == 'pull_request' && env.GOOGLE_APPLICATION_CREDENTIALS != ''
-        run: npx -y firebase-tools@14 deploy --only firestore:rules --project "$FIREBASE_PROJECT" --non-interactive --force
 
       - name: Preview channel (pull requests)
         if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository

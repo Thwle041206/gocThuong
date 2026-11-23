@@ -7,10 +7,11 @@
  * Every step is best-effort: a failure logs a warning and the build continues with the seed content.
  */
 import { createHash } from "node:crypto";
-import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { applicationDefault, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore, Timestamp } from "firebase-admin/firestore";
+import { getSecurityRules } from "firebase-admin/security-rules";
 import { seedPosts } from "../content/posts";
 import { seedProjects } from "../content/projects";
 import { seedResources } from "../content/resources";
@@ -115,9 +116,17 @@ async function exportContent() {
   return hash;
 }
 
+/** Publishes firestore.rules (admin-only access). */
+async function rules() {
+  if (process.env.FIRESTORE_EMULATOR_HOST) return;
+  await getSecurityRules().releaseFirestoreRulesetFromSource(readFileSync("firestore.rules", "utf8"));
+  console.log("✓ Firestore rules published");
+}
+
 async function main() {
   await webConfig().catch((e) => warn("Firebase web config", e));
   await setupAuth().catch((e) => warn("Auth setup (enable Authentication in Firebase console?)", e));
+  await rules().catch((e) => warn("Firestore rules (paste firestore.rules in the console Rules tab?)", e));
   let hash = "";
   try {
     await seed();
