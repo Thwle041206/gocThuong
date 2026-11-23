@@ -1,0 +1,306 @@
+@import "tailwindcss";
+
+/* Design tokens from the "góc Thương — Homepage Redesign" canvas */
+@theme {
+  --color-ink: #111111;
+  --color-muted: #6b6b6b;
+  --color-line: #eaeaea;
+  --color-line-strong: #e0e0e0;
+  --color-soft: #f2f2f2;
+  --color-mist: #f7f7f7;
+  --color-panel: #18181b;
+  --color-dim: #a1a1a1;
+  --color-on-dark: #cfcfcf;
+
+  --font-sans: var(--font-be-vietnam), var(--font-noto-sc), system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), var(--font-noto-sc), serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    background: #ffffff;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  a {
+    color: var(--color-ink);
+  }
+  a:hover {
+    color: #000;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+  [lang="zh"] {
+    font-family: var(--font-noto-sc), var(--font-sans);
+  }
+}
+
+@layer components {
+  .wrap {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 32px;
+  }
+  @media (max-width: 640px) {
+    .wrap {
+      padding-inline: 16px;
+    }
+  }
+
+  /* Type */
+  .eyebrow {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+  }
+  .label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+  }
+  .display {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-weight: 500;
+    line-height: 1.02;
+    font-size: clamp(44px, 7vw, 80px);
+  }
+  .h2 {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(34px, 4.5vw, 48px);
+  }
+  .h2-sm {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(32px, 4vw, 44px);
+  }
+
+  /* Small badges */
+  .tag {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--color-ink);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 5px 9px;
+    border-radius: 4px;
+    background: var(--color-soft);
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 52px;
+    padding: 0 26px;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid var(--color-ink);
+    background: #fff;
+    color: var(--color-ink);
+  }
+  .btn-dark {
+    background: var(--color-ink);
+    color: #fff;
+  }
+  .btn-dark:hover {
+    color: #fff;
+  }
+  .btn-light {
+    background: #fff;
+    color: var(--color-ink);
+    border-color: #fff;
+  }
+  .btn-ghost-light {
+    background: transparent;
+    color: #fff;
+    border-color: #fff;
+  }
+  .btn-ghost-light:hover {
+    color: #fff;
+  }
+  .btn-sm {
+    height: 48px;
+    padding: 0 22px;
+  }
+
+  .card {
+    border: 1px solid var(--color-line);
+    border-radius: 16px;
+    background: #fff;
+  }
+  .placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-align: center;
+    padding: 12px;
+  }
+
+  /* Search field */
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 48px;
+    padding: 0 16px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 999px;
+    background: #fff;
+  }
+  .search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font: inherit;
+    font-size: 15px;
+    color: var(--color-ink);
+  }
+  .search:focus-within {
+    border-color: var(--color-ink);
+  }
+
+  .select {
+    height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    font-size: 14px;
+    color: var(--color-ink);
+    cursor: pointer;
+  }
+
+  /* Filter chips: style follows aria-pressed so one element covers both states */
+  .filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: var(--color-soft);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .filter .n {
+    color: var(--color-muted);
+  }
+  .filter[aria-pressed="true"] {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: #fff;
+  }
+  .filter[aria-pressed="true"] .n {
+    color: var(--color-on-dark);
+  }
+  .filter-outline {
+    background: #fff;
+    border-color: var(--color-line-strong);
+  }
+  .filter-pill {
+    border-radius: 999px;
+  }
+
+  /* Segmented control (view switchers) */
+  .seg {
+    display: flex;
+    padding: 3px;
+    border-radius: 12px;
+    background: var(--color-soft);
+  }
+  .seg button {
+    min-width: 44px;
+    height: 40px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--color-muted);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .seg button[aria-pressed="true"] {
+    background: #fff;
+    color: var(--color-ink);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  }
+
+  .empty {
+    padding: 72px 24px;
+    border: 1px dashed #d4d4d4;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .toc-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px;
+    padding: 0 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--color-muted);
+    text-decoration: none;
+  }
+  .toc-link[aria-current] {
+    background: var(--color-soft);
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  .sr-only-x {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
