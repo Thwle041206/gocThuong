@@ -9,6 +9,12 @@ on:
     # Picks up content published in the CMS. Skips the deploy when nothing changed.
     - cron: "*/15 * * * *"
 
+# The preview step posts the preview link on the PR, which needs write access.
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
 concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: false
