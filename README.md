@@ -54,3 +54,9 @@ npx firebase-tools deploy --only hosting
 Admin/CMS, contact + "share a resource" forms (need a small backend), full `/en/` and `/zh/`
 pages (needs translated content), real images/PDFs. Likes and saved posts are stored in the
 visitor's browser only.
+
+## Automatic deploys
+
+`.github/workflows/deploy.yml` builds the site on every push. Pushes to `main` go live on
+https://gocthuong.web.app, and pull requests get a temporary preview link.
+It needs one repository secret, `FIREBASE_SERVICE_ACCOUNT_GOCTHUONG` (a Firebase service account key).

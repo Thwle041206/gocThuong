@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "npx serve out",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "next": "^16.4.6",
