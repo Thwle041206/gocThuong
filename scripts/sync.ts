@@ -7,7 +7,7 @@
  * Every step is best-effort: a failure logs a warning and the build continues with the seed content.
  */
 import { createHash } from "node:crypto";
-import { appendFileSync, writeFileSync } from "node:fs";
+import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { applicationDefault, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore, Timestamp } from "firebase-admin/firestore";
@@ -109,6 +109,7 @@ async function exportContent() {
   const json = JSON.stringify(out, null, 2);
   writeFileSync("content/remote.json", json);
   const hash = createHash("sha256").update(json).digest("hex").slice(0, 16);
+  mkdirSync("public", { recursive: true });
   writeFileSync("public/content-hash.txt", hash);
   console.log(`✓ Exported ${posts.size} posts, ${(out.projects as unknown[]).length} projects, ${resources.size} resources (hash ${hash})`);
   return hash;
