@@ -81,12 +81,12 @@ export default function ResourcesBrowser() {
           <div role="group" aria-label="Chủ đề" className="flex flex-wrap gap-2">
             {resourceTabs.map((x) => (
               <button key={x.label} type="button" aria-pressed={x.label === f} onClick={() => setF(x.label)} className="filter filter-outline !font-sans !text-sm !tracking-normal">
-                {x.label} <span className="n font-mono text-[11px]">{x.cat ? resources.filter((r) => r.cat === x.cat).length : resources.length}</span>
+                {x.label} <span className="n font-mono text-xs">{x.cat ? resources.filter((r) => r.cat === x.cat).length : resources.length}</span>
               </button>
             ))}
           </div>
           <div className="flex items-center gap-3">
-            <label className="flex items-center gap-2 text-[13px] text-muted">
+            <label className="flex items-center gap-2 text-sm text-muted">
               Sắp xếp
               <select className="select" value={sort} onChange={(e) => setSort(e.target.value as "top" | "az")}>
                 <option value="top">Phổ biến</option>
@@ -106,7 +106,7 @@ export default function ResourcesBrowser() {
           <div key={g.name || "all"} className="flex flex-wrap gap-x-10 gap-y-4">
             {!flat && (
               <div className="flex flex-[0_0_220px] flex-col gap-1.5 pt-3.5">
-                <h2 className="m-0 font-serif text-[30px] font-medium">{g.name}</h2>
+                <h2 className="m-0 font-serif text-3xl font-medium">{g.name}</h2>
                 <span className="font-mono text-xs text-muted">{g.items.length} TÀI LIỆU</span>
               </div>
             )}
@@ -119,7 +119,7 @@ export default function ResourcesBrowser() {
                     </a>
                     <span className="text-sm leading-[1.55] text-muted">{r.desc}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[13px] text-muted">
+                  <div className="flex items-center gap-2 text-sm text-muted">
                     {flat && <span className="tag">{r.cat}</span>}
                     <span className="min-w-[92px] px-1">{r.by}</span>
                     <button
@@ -127,7 +127,7 @@ export default function ResourcesBrowser() {
                       aria-pressed={!!liked[r.id]}
                       aria-label={liked[r.id] ? "Bỏ thích" : "Thích"}
                       onClick={() => toggle(r.id)}
-                      className={`inline-flex h-11 min-w-16 cursor-pointer items-center gap-1.5 rounded-[10px] border px-3 text-[13px] ${liked[r.id] ? "border-ink bg-ink text-white" : "border-line-strong bg-white text-ink"}`}
+                      className={`inline-flex h-11 min-w-16 cursor-pointer items-center gap-1.5 rounded-[10px] border px-3 text-sm ${liked[r.id] ? "border-ink bg-ink text-white" : "border-line-strong bg-white text-ink"}`}
                     >
                       <Heart filled={!!liked[r.id]} />
                       {r.count || "—"}
@@ -160,8 +160,8 @@ export default function ResourcesBrowser() {
         ))}
         {rows.length === 0 && (
           <div className="empty">
-            <span className="font-serif text-[30px]">Chưa có tài liệu phù hợp</span>
-            <span className="text-[15px] text-muted">Thử từ khoá khác — hoặc chia sẻ tài liệu đầu tiên.</span>
+            <span className="font-serif text-3xl">Chưa có tài liệu phù hợp</span>
+            <span className="text-base text-muted">Thử từ khoá khác — hoặc chia sẻ tài liệu đầu tiên.</span>
             <button type="button" onClick={() => { setF("Tất cả"); setQ(""); }} className="btn btn-dark h-11 px-5 text-sm">Xoá bộ lọc</button>
           </div>
         )}

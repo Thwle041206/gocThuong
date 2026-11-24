@@ -71,8 +71,8 @@ export default function AccountPage() {
         <h2 id="h-saved" className="h2-sm">Đã lưu</h2>
         {items.length === 0 && (
           <div className="empty">
-            <span className="font-serif text-[28px]">Chưa lưu gì</span>
-            <span className="text-[15px] text-muted">Bấm biểu tượng <Bookmark size={14} /> trên bài viết hoặc tài liệu để lưu vào đây.</span>
+            <span className="font-serif text-3xl">Chưa lưu gì</span>
+            <span className="text-base text-muted">Bấm biểu tượng <Bookmark size={14} /> trên bài viết hoặc tài liệu để lưu vào đây.</span>
             <div className="flex flex-wrap justify-center gap-2">
               <Link href="/bai-viet/" className="btn btn-sm">Xem bài viết</Link>
               <Link href="/ket-noi/" className="btn btn-sm">Xem tài nguyên</Link>

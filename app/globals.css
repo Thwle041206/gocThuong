@@ -12,6 +12,8 @@
   --color-dim: #a1a1a1;
   --color-on-dark: #cfcfcf;
 
+  /* Type scale (Tailwind defaults): xs 12 · sm 14 · base 16 · lg 18 · xl 20 · 2xl 24 · 3xl 30 · 4xl 36 · 5xl 48 · 6xl 60.
+     Use these classes instead of pixel sizes so the whole site stays on one scale. */
   --font-sans: var(--font-be-vietnam), var(--font-noto-sc), system-ui, sans-serif;
   --font-serif: var(--font-cormorant), var(--font-noto-sc), serif;
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
@@ -20,6 +22,8 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* Keeps anchored sections clear of the sticky header. */
+    scroll-padding-top: 96px;
   }
   body {
     margin: 0;
@@ -97,12 +101,12 @@
     background: var(--color-ink);
     color: #fff;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0.06em;
   }
   .chip {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 12px;
     padding: 5px 9px;
     border-radius: 4px;
     background: var(--color-soft);
@@ -183,7 +187,7 @@
     outline: none;
     background: transparent;
     font: inherit;
-    font-size: 15px;
+    font-size: 16px;
     color: var(--color-ink);
   }
   .search:focus-within {
@@ -254,7 +258,7 @@
     background: transparent;
     color: var(--color-muted);
     font: inherit;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
     display: inline-flex;
     align-items: center;
@@ -325,7 +329,7 @@
   scroll-margin-top: 24px;
 }
 .prose-gt h3 {
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 600;
 }
 .prose-gt ul,
@@ -395,7 +399,7 @@
   border-radius: 10px;
   background: #fff;
   font: inherit;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--color-ink);
   box-sizing: border-box;
 }
@@ -411,7 +415,7 @@ textarea.field {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--color-muted);
 }
 .btn:disabled {

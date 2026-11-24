@@ -23,7 +23,7 @@ export default function AccountButton() {
     };
   }, [menu]);
 
-  const base = "inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-xl border-0 bg-ink";
+  const base = "inline-flex h-11 w-11 sm:h-12 sm:w-12 cursor-pointer items-center justify-center rounded-xl border-0 bg-ink";
   if (!ready || !enabled || !user)
     return (
       <button
@@ -41,11 +41,11 @@ export default function AccountButton() {
   const initial = (user.displayName || user.email || "?").trim().charAt(0).toUpperCase();
   return (
     <div ref={box} className="relative">
-      <button type="button" aria-haspopup="menu" aria-expanded={menu} aria-label="Tài khoản của bạn" onClick={() => setMenu((m) => !m)} className={`${base} overflow-hidden font-serif text-[22px] text-white`}>
+      <button type="button" aria-haspopup="menu" aria-expanded={menu} aria-label="Tài khoản của bạn" onClick={() => setMenu((m) => !m)} className={`${base} overflow-hidden font-serif text-2xl text-white`}>
         {user.photoURL ? <img src={user.photoURL} alt="" width={48} height={48} referrerPolicy="no-referrer" className="h-full w-full object-cover" /> : initial}
       </button>
       {menu && (
-        <div role="menu" className="absolute right-0 top-[56px] z-40 flex w-60 flex-col rounded-xl border border-line bg-white p-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
+        <div role="menu" className="absolute right-0 top-[52px] sm:top-[56px] z-40 flex w-60 flex-col rounded-xl border border-line bg-white p-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
           <div className="flex flex-col px-3 py-2.5">
             <span className="truncate text-sm font-semibold">{user.displayName || "Bạn đọc"}</span>
             <span className="truncate text-xs text-muted">{user.email}</span>

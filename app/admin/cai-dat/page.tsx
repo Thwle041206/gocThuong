@@ -35,7 +35,7 @@ export default function AdminSettings() {
               ["now", "Hàng “Hiện tại”"],
             ] as const
           ).map(([k, l]) => (
-            <button key={k} type="button" aria-pressed={tab === k} onClick={() => setTab(k)} className={`h-11 shrink-0 cursor-pointer rounded-[10px] border-0 px-4 text-left text-[15px] ${tab === k ? "bg-[#EAEAEA] font-medium" : "bg-transparent"}`}>{l}</button>
+            <button key={k} type="button" aria-pressed={tab === k} onClick={() => setTab(k)} className={`h-11 shrink-0 cursor-pointer rounded-[10px] border-0 px-4 text-left text-base ${tab === k ? "bg-[#EAEAEA] font-medium" : "bg-transparent"}`}>{l}</button>
           ))}
         </nav>
         <div className="card flex min-w-0 flex-[1_1_560px] flex-col gap-4 p-6">
@@ -67,7 +67,7 @@ export default function AdminSettings() {
               <h2 className="m-0 text-lg font-semibold">Hàng “Hiện tại” trên Trang chủ</h2>
               {s.now.map((n, i) => (
                 <div key={i} className="grid grid-cols-[160px_1fr] gap-2 max-sm:grid-cols-1">
-                  <input className="field font-mono text-[13px]" value={n.label} onChange={(e) => set({ now: s.now.map((x, k) => (k === i ? { ...x, label: e.target.value.toUpperCase() } : x)) })} />
+                  <input className="field font-mono text-sm" value={n.label} onChange={(e) => set({ now: s.now.map((x, k) => (k === i ? { ...x, label: e.target.value.toUpperCase() } : x)) })} />
                   <input className="field" value={n.value} onChange={(e) => set({ now: s.now.map((x, k) => (k === i ? { ...x, value: e.target.value } : x)) })} />
                 </div>
               ))}

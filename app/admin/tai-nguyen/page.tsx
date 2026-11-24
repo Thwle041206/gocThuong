@@ -51,8 +51,8 @@ export default function AdminResources() {
                   ["rejected", "Đã từ chối"],
                 ] as const
               ).map(([id, l]) => (
-                <button key={id} type="button" role="tab" aria-selected={tab === id} onClick={() => setTab(id)} className={`flex h-[52px] cursor-pointer items-center gap-2 border-0 border-b-2 bg-transparent px-3 text-[15px] ${tab === id ? "border-ink font-semibold" : "border-transparent text-muted"}`}>
-                  {l}<span className={`rounded-full px-1.5 font-mono text-[11px] ${tab === id ? "bg-ink text-white" : "bg-soft"}`}>{count(id)}</span>
+                <button key={id} type="button" role="tab" aria-selected={tab === id} onClick={() => setTab(id)} className={`flex h-[52px] cursor-pointer items-center gap-2 border-0 border-b-2 bg-transparent px-3 text-base ${tab === id ? "border-ink font-semibold" : "border-transparent text-muted"}`}>
+                  {l}<span className={`rounded-full px-1.5 font-mono text-xs ${tab === id ? "bg-ink text-white" : "bg-soft"}`}>{count(id)}</span>
                 </button>
               ))}
             </div>
@@ -61,8 +61,8 @@ export default function AdminResources() {
               {rows.map((r) => (
                 <div key={r.id} className="flex flex-col gap-3 rounded-[14px] border border-line p-4">
                   <div className="flex flex-col gap-1">
-                    <span className="text-[13px] text-muted"><b className="text-ink">{r.by}</b> · {topics[r.cat] ?? r.cat} · ♥ {r.likes}</span>
-                    <a href={r.url} target="_blank" rel="noopener nofollow" className="text-[17px] font-semibold no-underline">{r.title} ↗</a>
+                    <span className="text-sm text-muted"><b className="text-ink">{r.by}</b> · {topics[r.cat] ?? r.cat} · ♥ {r.likes}</span>
+                    <a href={r.url} target="_blank" rel="noopener nofollow" className="text-lg font-semibold no-underline">{r.title} ↗</a>
                     <span className="truncate font-mono text-xs text-muted">{r.url}</span>
                     <span className="text-sm text-muted">{r.desc}</span>
                   </div>
@@ -79,9 +79,9 @@ export default function AdminResources() {
           <div className="flex flex-[1_1_300px] flex-col gap-4">
             {edit && (
               <div className="card flex flex-col gap-3 p-5">
-                <h2 className="m-0 text-[17px] font-semibold">{edit.id ? "Sửa tài nguyên" : "Thêm tài nguyên"}</h2>
+                <h2 className="m-0 text-lg font-semibold">{edit.id ? "Sửa tài nguyên" : "Thêm tài nguyên"}</h2>
                 <label className="flabel">Tiêu đề<input className="field" value={edit.title} onChange={(e) => setEdit({ ...edit, title: e.target.value })} /></label>
-                <label className="flabel">Đường dẫn<input className="field font-mono text-[13px]" value={edit.url} onChange={(e) => setEdit({ ...edit, url: e.target.value })} /></label>
+                <label className="flabel">Đường dẫn<input className="field font-mono text-sm" value={edit.url} onChange={(e) => setEdit({ ...edit, url: e.target.value })} /></label>
                 <label className="flabel">Mô tả<textarea className="field" rows={3} value={edit.desc} onChange={(e) => setEdit({ ...edit, desc: e.target.value })} /></label>
                 <div className="grid grid-cols-2 gap-3">
                   <label className="flabel">Chủ đề<select className="select" value={edit.cat} onChange={(e) => setEdit({ ...edit, cat: e.target.value })}>{Object.entries(topics).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></label>
@@ -104,9 +104,9 @@ export default function AdminResources() {
               </div>
             )}
             <div className="card flex flex-col gap-2 p-5">
-              <h2 className="m-0 text-[17px] font-semibold">Chủ đề</h2>
+              <h2 className="m-0 text-lg font-semibold">Chủ đề</h2>
               {Object.entries(topics).map(([k, v]) => (
-                <div key={k} className="flex justify-between py-1.5 text-[15px]"><span>{v}</span><span className="font-mono text-xs text-muted">{(data ?? []).filter((r) => r.cat === k && (r.status ?? "approved") === "approved").length}</span></div>
+                <div key={k} className="flex justify-between py-1.5 text-base"><span>{v}</span><span className="font-mono text-xs text-muted">{(data ?? []).filter((r) => r.cat === k && (r.status ?? "approved") === "approved").length}</span></div>
               ))}
             </div>
           </div>

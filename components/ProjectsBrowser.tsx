@@ -50,7 +50,7 @@ export default function ProjectsBrowser() {
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <span role="status" className="font-mono text-xs text-muted">{shown.length} DỰ ÁN</span>
-            <label className="flex items-center gap-2 text-[13px] text-muted">
+            <label className="flex items-center gap-2 text-sm text-muted">
               Sắp xếp
               <select className="select" value={sort} onChange={(e) => setSort(e.target.value as "new" | "old")}>
                 <option value="new">Mới nhất</option>
@@ -68,8 +68,8 @@ export default function ProjectsBrowser() {
       <section aria-label="Danh sách dự án" className="wrap pt-7">
         {shown.length === 0 ? (
           <div className="empty">
-            <span className="font-serif text-[30px]">Không có dự án phù hợp</span>
-            <span className="text-[15px] text-muted">Thử từ khoá khác hoặc chọn “Tất cả”.</span>
+            <span className="font-serif text-3xl">Không có dự án phù hợp</span>
+            <span className="text-base text-muted">Thử từ khoá khác hoặc chọn “Tất cả”.</span>
             <button type="button" onClick={clear} className="btn btn-dark h-11 px-5 text-sm">Xoá bộ lọc</button>
           </div>
         ) : view === "grid" ? (
@@ -79,12 +79,12 @@ export default function ProjectsBrowser() {
                 <div className="placeholder relative aspect-[16/10] bg-soft text-muted">
                   {p.img}
                   <span className="tag absolute top-3.5 left-3.5">{p.cat}</span>
-                  <span className="absolute top-3.5 right-3.5 rounded border border-line bg-white px-2 py-[3px] text-[11px]">{p.year}</span>
+                  <span className="absolute top-3.5 right-3.5 rounded border border-line bg-white px-2 py-[3px] text-xs">{p.year}</span>
                 </div>
                 <div className="flex flex-col gap-2.5 p-[22px]">
-                  <span className="font-mono text-[11px] tracking-[0.08em] text-muted">{p.kind}</span>
-                  <span className="font-serif text-[30px] leading-[1.1] font-medium">{p.title}</span>
-                  <span className="text-[15px] leading-[1.55] text-muted">{p.summary}</span>
+                  <span className="font-mono text-xs tracking-[0.08em] text-muted">{p.kind}</span>
+                  <span className="font-serif text-3xl leading-[1.1] font-medium">{p.title}</span>
+                  <span className="text-base leading-[1.55] text-muted">{p.summary}</span>
                   <div className="flex flex-wrap gap-1.5 border-t border-[#F0F0F0] pt-3">
                     {p.chips.map((c) => <span key={c} className="chip">{c}</span>)}
                   </div>
@@ -97,13 +97,13 @@ export default function ProjectsBrowser() {
             {shown.map((p) => (
               <li key={p.slug}>
                 <Link href={`/du-an/${p.slug}/`} className="card flex flex-wrap items-center gap-6 p-4 no-underline">
-                  <div className="placeholder h-[140px] flex-[0_0_220px] rounded-[10px] bg-soft text-[11px] text-muted max-sm:flex-auto">{p.img}</div>
+                  <div className="placeholder h-[140px] flex-[0_0_220px] rounded-[10px] bg-soft text-xs text-muted max-sm:flex-auto">{p.img}</div>
                   <div className="flex min-w-0 flex-[1_1_360px] flex-col gap-2">
-                    <div className="flex items-center gap-2 font-mono text-[11px] text-muted">
+                    <div className="flex items-center gap-2 font-mono text-xs text-muted">
                       <span className="tag">{p.cat}</span>{p.kind} · {p.year}
                     </div>
-                    <span className="font-serif text-[28px] font-medium">{p.title}</span>
-                    <span className="text-[15px] text-muted">{p.summary}</span>
+                    <span className="font-serif text-3xl font-medium">{p.title}</span>
+                    <span className="text-base text-muted">{p.summary}</span>
                   </div>
                   <div className="flex flex-[0_1_260px] flex-wrap gap-1.5">
                     {p.chips.map((c) => <span key={c} className="chip">{c}</span>)}

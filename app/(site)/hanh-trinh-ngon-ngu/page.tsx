@@ -28,10 +28,10 @@ export default function JourneyPage() {
           <p className="m-0 max-w-[52ch] text-lg leading-relaxed text-muted">Lộ trình, tiến độ thật và sản phẩm thật — cập nhật mỗi khi mình đạt một mốc mới.</p>
         </div>
         <div id="kenh" className="flex flex-[1_1_300px] flex-col gap-2.5">
-          <span className="font-mono text-[11px] tracking-[0.08em] text-muted">THEO DÕI SẢN PHẨM THẬT THEO NGÔN NGỮ</span>
+          <span className="font-mono text-xs tracking-[0.08em] text-muted">THEO DÕI SẢN PHẨM THẬT THEO NGÔN NGỮ</span>
           {channels.map((c) => (
             <a key={c.name} href={c.url} className="flex items-center gap-3 rounded-xl border border-line px-3.5 py-3 no-underline">
-              <span aria-hidden="true" className="flex h-9 w-9 items-center justify-center rounded-[9px] bg-ink font-mono text-[11px] text-white">{c.abbr}</span>
+              <span aria-hidden="true" className="flex h-9 w-9 items-center justify-center rounded-[9px] bg-ink font-mono text-xs text-white">{c.abbr}</span>
               <span className="flex flex-1 flex-col gap-px">
                 <span className="text-sm font-semibold">{c.name}</span>
                 <span className="text-xs text-muted">{c.what}</span>
@@ -55,8 +55,8 @@ export default function JourneyPage() {
                   {r.st === "next" && <span aria-hidden="true" className="box-border h-[18px] w-[18px] flex-none rounded-full border-2 border-dashed border-[#9A9A9A]" />}
                   <span aria-hidden="true" className={`ml-2 h-0.5 flex-1 ${last ? "bg-transparent" : r.st === "next" ? "bg-line-strong" : "bg-ink"}`} />
                 </div>
-                <span className="font-mono text-[11px] tracking-[0.08em] text-muted">{r.when}</span>
-                <span className="font-serif text-[26px] leading-[1.15] font-medium">{r.title}</span>
+                <span className="font-mono text-xs tracking-[0.08em] text-muted">{r.when}</span>
+                <span className="font-serif text-2xl leading-[1.15] font-medium">{r.title}</span>
                 <span className="text-sm leading-[1.55] text-muted">{r.desc}</span>
               </li>
             );
@@ -67,13 +67,13 @@ export default function JourneyPage() {
       <section aria-labelledby="h-prog" className="wrap flex flex-col gap-6 pt-[72px]">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
           <h2 id="h-prog" className="h2-sm">Tiến độ từng ngôn ngữ</h2>
-          <span className="text-[13px] text-muted">Tính theo cấp độ chứng chỉ, không ước lượng.</span>
+          <span className="text-sm text-muted">Tính theo cấp độ chứng chỉ, không ước lượng.</span>
         </div>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(340px,100%),1fr))] gap-4">
           {languages.map((l) => (
             <article key={l.name} className="card flex flex-col gap-4 p-6">
               <div className="flex items-baseline justify-between gap-3">
-                <h3 lang={l.name === "中文" ? "zh" : undefined} className="m-0 font-serif text-[30px] font-medium">{l.name}</h3>
+                <h3 lang={l.name === "中文" ? "zh" : undefined} className="m-0 font-serif text-3xl font-medium">{l.name}</h3>
                 <span className="font-mono text-xs text-muted">{l.scale}</span>
               </div>
               <div className="flex flex-col gap-2">
@@ -88,7 +88,7 @@ export default function JourneyPage() {
                     ),
                   )}
                 </div>
-                <div className="grid grid-cols-6 gap-1 font-mono text-[10px] text-muted">
+                <div className="grid grid-cols-6 gap-1 font-mono text-xs text-muted">
                   {l.labels.map((lab, i) => <span key={i} className="text-center">{lab}</span>)}
                 </div>
               </div>
@@ -97,7 +97,7 @@ export default function JourneyPage() {
                 <dt className="text-muted">Mục tiêu</dt><dd className="m-0 font-semibold">{l.goalText}</dd>
                 <dt className="text-muted">Làm được</dt><dd className="m-0 leading-[1.55]">{l.can}</dd>
               </dl>
-              {l.proof && <a href="#" className="self-start text-[13px] font-semibold underline-offset-4">{l.proof}</a>}
+              {l.proof && <a href="#" className="self-start text-sm font-semibold underline-offset-4">{l.proof}</a>}
             </article>
           ))}
         </div>

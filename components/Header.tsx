@@ -16,19 +16,19 @@ export default function Header() {
   ];
 
   return (
-    <header className="border-b border-line bg-white">
-      <div className="wrap flex flex-wrap items-center justify-between gap-4 py-3.5">
-        <Link href="/" className="flex items-center gap-3 no-underline">
-          <span aria-hidden="true" className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-ink font-serif text-[22px] font-semibold text-white">
+    <header className="sticky top-0 z-30 border-b border-line bg-white/95 backdrop-blur">
+      <div className="wrap flex flex-wrap items-center justify-between gap-x-2.5 gap-y-2.5 sm:gap-x-4 py-2.5 sm:py-3.5">
+        <Link href="/" className="mr-auto flex items-center gap-3 no-underline sm:mr-0">
+          <span aria-hidden="true" className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-ink font-serif text-2xl font-semibold text-white">
             gT
           </span>
           <span className="flex flex-col leading-[1.2]">
             <span className="text-lg font-semibold">góc Thương</span>
-            <span className="text-xs text-muted">gocthuong.com</span>
+            <span className="hidden text-xs text-muted sm:block">gocthuong.com</span>
           </span>
         </Link>
-        <div className="flex max-w-full flex-wrap items-center gap-2.5">
-          <nav aria-label="Chính" className="flex max-w-full items-center gap-0.5 overflow-x-auto rounded-xl bg-ink p-1">
+        <div className="contents sm:flex sm:max-w-full sm:flex-wrap sm:items-center sm:gap-2.5">
+          <nav aria-label="Chính" className="order-last flex w-full max-w-full items-center gap-0.5 overflow-x-auto rounded-xl bg-ink p-1 sm:order-none sm:w-auto">
             {items.map((it) => {
               const active = it.match(path);
               return (
@@ -36,7 +36,7 @@ export default function Header() {
                   key={it.href}
                   href={it.href}
                   aria-current={active ? "page" : undefined}
-                  className={`inline-flex h-11 shrink-0 items-center rounded-lg px-2 text-[12px] sm:px-3.5 sm:text-[13px] font-medium tracking-[0.04em] no-underline sm:tracking-[0.06em] ${
+                  className={`inline-flex h-11 shrink-0 items-center rounded-lg px-2 text-xs sm:px-3.5 sm:text-sm font-medium tracking-[0.04em] no-underline sm:tracking-[0.06em] ${
                     active ? "bg-[#2A2A2A] !text-white" : "!text-[#A1A1A1] hover:!text-white"
                   }`}
                 >
@@ -46,7 +46,7 @@ export default function Header() {
             })}
             <Link
               href="/#lien-he"
-              className="ml-1 inline-flex h-11 shrink-0 items-center rounded-lg bg-white px-2.5 text-[12px] sm:px-4 sm:text-[13px] font-semibold tracking-[0.06em] !text-ink no-underline"
+              className="ml-1 inline-flex h-11 shrink-0 items-center rounded-lg bg-white px-2.5 text-xs sm:px-4 sm:text-sm font-semibold tracking-[0.06em] !text-ink no-underline"
             >
               {t.nav.contact}
             </Link>
@@ -58,7 +58,7 @@ export default function Header() {
                 type="button"
                 aria-pressed={lang === l.id}
                 onClick={() => setLang(l.id)}
-                className={`h-11 min-w-11 cursor-pointer rounded-[10px] border-0 px-1 ${lang === l.id ? "bg-ink text-white" : "bg-transparent text-muted"}`}
+                className={`h-10 min-w-9 cursor-pointer rounded-[10px] border-0 px-1 sm:h-11 sm:min-w-11 ${lang === l.id ? "bg-ink text-white" : "bg-transparent text-muted"}`}
               >
                 {l.label}
               </button>
