@@ -10,7 +10,9 @@ import { sortedPosts as posts, LOCALE_LABEL, type Locale } from "@/content/posts
 type Props = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
-  return posts.map((p) => ({ slug: p.slug }));
+  // A static export needs at least one page; with nothing published this renders the 404 page.
+  const list = posts.map((p) => ({ slug: p.slug }));
+  return list.length ? list : [{ slug: "chua-co" }];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

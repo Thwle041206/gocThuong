@@ -8,7 +8,9 @@ import { projects } from "@/content/projects";
 type Props = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
-  return projects.map((p) => ({ slug: p.slug }));
+  // A static export needs at least one page; with nothing published this renders the 404 page.
+  const list = projects.map((p) => ({ slug: p.slug }));
+  return list.length ? list : [{ slug: "chua-co" }];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
