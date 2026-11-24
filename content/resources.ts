@@ -1,6 +1,7 @@
-// Shared links on the "Kết nối" page.
+// Shared links on the "Kết nối" page. Live data comes from the CMS via remote.json.
+import remote from "./remote.json";
 
-export type Resource = { id: number; cat: string; title: string; url: string; desc: string; by: string; likes: number };
+export type Resource = { id: number | string; cat: string; title: string; url: string; desc: string; by: string; likes: number; status?: "pending" | "approved" | "rejected"; createdAt?: number };
 
 export const topics: Record<string, string> = {
   BA: "BA & Quy trình",
@@ -19,7 +20,7 @@ export const resourceTabs: { label: string; cat: string | null }[] = [
   { label: "Kỹ thuật", cat: "KỸ THUẬT" },
 ];
 
-export const resources: Resource[] = [
+export const seedResources: Resource[] = [
   { id: 1, cat: "BA", title: "[Mẫu BRD & user story]", url: "#", desc: "Gợi ý thêm — mục BA là thế mạnh của bạn, nên có tài liệu riêng.", by: "Thương", likes: 0 },
   { id: 2, cat: "AI", title: "Google AI Studio & Gemini API Interactive Guide", url: "https://ai.google.dev/", desc: "Thực hành mô hình ngôn ngữ lớn: Structured Outputs, Function Calling, multimodal.", by: "AI Explorer", likes: 27 },
   { id: 3, cat: "AI", title: "Raycast – Tối ưu workflow", url: "https://www.raycast.com/", desc: "Thay thế Spotlight với extensions quản lý clipboard, phím tắt, tìm tài liệu.", by: "Quốc Bảo", likes: 20 },
@@ -29,3 +30,7 @@ export const resources: Resource[] = [
   { id: 7, cat: "KỸ THUẬT", title: "Tailwind CSS v4", url: "https://tailwindcss.com/", desc: "Kiến trúc CSS mới không runtime, cascade layers và biến CSS native.", by: "Dev Hiroki", likes: 31 },
   { id: 8, cat: "KỸ THUẬT", title: "TypeScript Handbook & Advanced Patterns", url: "https://www.typescriptlang.org/docs/", desc: "Từ cơ bản đến Generics, Mapped Types, type-safe cho React components.", by: "Thành Nam", likes: 22 },
 ];
+
+export const resources: Resource[] = ((remote as { resources?: Resource[] }).resources ?? seedResources).filter(
+  (r) => (r.status ?? "approved") === "approved",
+);

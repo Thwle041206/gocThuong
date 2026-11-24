@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Be_Vietnam_Pro, Cormorant_Garamond, JetBrains_Mono, Noto_Serif_SC } from "next/font/google";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { LangProvider } from "@/lib/i18n";
 import { site } from "@/content/site";
 import "./globals.css";
@@ -23,9 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="vi" className={`${sans.variable} ${serif.variable} ${mono.variable} ${sc.variable}`}>
       <body>
         <LangProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
+          {children}
         </LangProvider>
       </body>
     </html>

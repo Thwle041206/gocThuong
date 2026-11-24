@@ -1,13 +1,16 @@
+import remote from "./remote.json";
+
 // Edit this file to change your profile, contact links and the "Hiện tại" row.
 // Text in [brackets] is a placeholder from the design — replace it with real content.
 
-export const site = {
+const seedSite = {
   name: "góc Thương",
   domain: "gocthuong.com",
   url: "https://gocthuong.com",
   author: "Thương",
   role: "Business Analyst · IT & AI",
   tagline: "BA · AI · Ngôn ngữ. Ghi chép từ một góc nhỏ.",
+  bio: "Business Analyst mảng IT/AI. Đang học tiếng Anh và tiếng Trung để trở thành phiên dịch viên.",
   email: "[email@gocthuong.com]",
   cvUrl: "#lien-he",
   social: {
@@ -23,3 +26,8 @@ export const site = {
     { label: "ĐANG NHẬN", value: "Dự án BA/AI · Dịch EN ⇄ VI ⇄ 中文", dot: true },
   ],
 };
+
+export type Site = typeof seedSite & { bio?: string };
+export { seedSite };
+const r = (remote as { site?: Partial<Site> }).site;
+export const site: Site = r ? { ...seedSite, ...r, social: { ...seedSite.social, ...(r.social ?? {}) }, now: r.now ?? seedSite.now } : seedSite;

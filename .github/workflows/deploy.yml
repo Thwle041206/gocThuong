@@ -1,13 +1,29 @@
-name: Deploy to Firebase Hosting
+name: Deploy
 
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+  schedule:
+    # Picks up content published in the CMS. Skips the deploy when nothing changed.
+    - cron: "*/15 * * * *"
+
+# The preview step posts the preview link on the PR, which needs write access.
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+    env:
+      FIREBASE_PROJECT: gocthuong
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -15,12 +31,48 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run typecheck
-      - run: npm run build
-      # Pull requests get a temporary preview link; pushes to main go live.
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+
+      - name: Write service account
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_GOCTHUONG }}
+        run: |
+          if [ -n "$SA" ]; then
+            echo "$SA" > "$RUNNER_TEMP/sa.json"
+            echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
+          fi
+
+      - name: Sync content from the CMS
+        id: sync
+        if: env.GOOGLE_APPLICATION_CREDENTIALS != ''
+        env:
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+        run: npx tsx scripts/sync.ts
+
+      - name: Stop if nothing changed (scheduled run)
+        id: gate
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "${{ steps.sync.outputs.changed }}" != "true" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"; echo "No content changes."
+          fi
+
+      - if: steps.gate.outputs.skip != 'true'
+        run: npm run typecheck
+      - if: steps.gate.outputs.skip != 'true'
+        run: npm run build
+
+      - name: Deploy to Firebase (live)
+        if: steps.gate.outputs.skip != 'true' && github.event_name != 'pull_request' && env.GOOGLE_APPLICATION_CREDENTIALS != ''
+        run: |
+          npx -y firebase-tools@14 deploy --only hosting --project "$FIREBASE_PROJECT" --non-interactive --force
+          npx tsx scripts/mark-deployed.ts
+
+      - name: Preview channel (pull requests)
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_GOCTHUONG }}
           projectId: gocthuong
-          channelId: ${{ github.event_name == 'push' && 'live' || '' }}
