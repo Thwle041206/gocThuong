@@ -86,7 +86,7 @@ export default function Home() {
       <section id="lien-he" aria-labelledby="h-lienhe" className="wrap scroll-mt-6">
         <div className="flex flex-wrap items-center justify-between gap-8 rounded-[20px] bg-ink p-8 text-white sm:p-14">
           <div className="flex flex-col gap-2.5">
-            <h2 id="h-lienhe" className="m-0 font-serif text-[clamp(38px,5vw,52px)] leading-[1.05] font-medium">Cùng làm việc nhé.</h2>
+            <h2 id="h-lienhe" className="m-0 font-serif text-[clamp(30px,5vw,52px)] leading-[1.05] font-medium">Cùng làm việc nhé.</h2>
             <p className="m-0 text-base text-[#BDBDBD]">Dự án BA/AI, tài liệu song ngữ, hoặc một buổi cà phê.</p>
           </div>
           <div className="flex flex-wrap gap-3">

@@ -32,6 +32,13 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
+  /* Phones: every rem-based size (text-*, spacing) is about 6% smaller. Inputs keep 16px. */
+  @media (max-width: 640px) {
+    html {
+      font-size: 93.75%;
+      scroll-padding-top: 80px;
+    }
+  }
   a {
     color: var(--color-ink);
   }
@@ -78,19 +85,19 @@
     font-family: var(--font-serif);
     font-weight: 500;
     line-height: 1.02;
-    font-size: clamp(44px, 7vw, 80px);
+    font-size: clamp(36px, 7vw, 80px);
   }
   .h2 {
     margin: 0;
     font-family: var(--font-serif);
     font-weight: 500;
-    font-size: clamp(34px, 4.5vw, 48px);
+    font-size: clamp(28px, 4.5vw, 48px);
   }
   .h2-sm {
     margin: 0;
     font-family: var(--font-serif);
     font-weight: 500;
-    font-size: clamp(32px, 4vw, 44px);
+    font-size: clamp(26px, 4vw, 44px);
   }
 
   /* Small badges */
@@ -421,4 +428,21 @@ textarea.field {
 .btn:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+@media (max-width: 640px) {
+  .prose-gt {
+    font-size: 16px;
+    gap: 20px;
+  }
+  .prose-gt h2 {
+    font-size: 28px;
+  }
+  .prose-gt h3 {
+    font-size: 18px;
+  }
+  .prose-gt blockquote {
+    font-size: 24px;
+    padding: 20px 0;
+  }
 }

@@ -42,7 +42,7 @@ export default function PostReader({
     <>
       <header className="mx-auto flex max-w-[820px] flex-col items-center gap-5 px-4 pt-14 text-center sm:px-8">
         {meta}
-        <h1 lang={zh} className="m-0 font-serif text-[clamp(42px,6vw,68px)] leading-[1.05] font-medium">{v.title}</h1>
+        <h1 lang={zh} className="m-0 font-serif text-[clamp(32px,6vw,68px)] leading-[1.05] font-medium">{v.title}</h1>
         <p lang={zh} className="m-0 max-w-[46ch] text-xl leading-relaxed text-muted">{v.excerpt}</p>
       </header>
 

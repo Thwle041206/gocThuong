@@ -26,7 +26,7 @@ const toc = [
   { id: "bai-hoc", label: "Bài học" },
 ];
 
-const h2 = "mt-4 mb-0 scroll-mt-6 font-serif text-4xl leading-[1.2] font-medium";
+const h2 = "mt-4 mb-0 scroll-mt-6 font-serif text-3xl sm:text-4xl leading-[1.2] font-medium";
 
 export default async function PostDetail({ params }: Props) {
   const { slug } = await params;
@@ -133,7 +133,7 @@ export default async function PostDetail({ params }: Props) {
 
         <section aria-labelledby="h-lienquan" className="mx-auto flex max-w-[1104px] flex-col gap-6 px-4 pt-[72px] sm:px-8">
           <div className="flex items-baseline justify-between gap-3">
-            <h2 id="h-lienquan" className="m-0 font-serif text-5xl font-medium">Bài viết liên quan</h2>
+            <h2 id="h-lienquan" className="m-0 font-serif text-4xl sm:text-5xl font-medium">Bài viết liên quan</h2>
             <Link href="/bai-viet/" className="text-sm font-semibold tracking-[0.04em]">XEM TẤT CẢ ↗</Link>
           </div>
           <div className="grid grid-cols-[repeat(auto-fill,minmax(min(280px,100%),1fr))] gap-5">

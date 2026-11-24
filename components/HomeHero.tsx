@@ -12,7 +12,7 @@ export default function HomeHero() {
       <p className="m-0 font-mono text-sm tracking-[0.08em]">{h.eyebrow}</p>
       <h1
         lang={lang === "zh" ? "zh" : undefined}
-        className="m-0 max-w-[15ch] font-serif text-[clamp(48px,8vw,84px)] leading-[1.02] font-medium tracking-[-0.01em]"
+        className="m-0 max-w-[15ch] font-serif text-[clamp(36px,8vw,84px)] leading-[1.02] font-medium tracking-[-0.01em]"
       >
         {h.headline}
       </h1>

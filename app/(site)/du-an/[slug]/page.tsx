@@ -68,7 +68,7 @@ export default async function ProjectDetail({ params }: Props) {
             <span className="tag !text-xs">{p.cat}</span>
             <span>{p.kind} · {p.year}</span>
           </div>
-          <h1 className="m-0 font-serif text-[clamp(44px,6.5vw,76px)] leading-[1.02] font-medium">{p.title}</h1>
+          <h1 className="m-0 font-serif text-[clamp(34px,6.5vw,76px)] leading-[1.02] font-medium">{p.title}</h1>
           <p className="m-0 max-w-[48ch] text-xl leading-relaxed text-muted">{p.lead}</p>
           <ProjectActions />
         </div>
@@ -101,7 +101,7 @@ export default async function ProjectDetail({ params }: Props) {
             const dark = k === p.results.length - 1;
             return (
               <div key={k} className={`flex flex-[1_1_260px] flex-col gap-1.5 rounded-2xl p-6 ${dark ? "bg-ink text-white" : "border border-line"}`}>
-                <span className="font-serif text-6xl leading-none font-medium">{r.value}</span>
+                <span className="font-serif text-5xl sm:text-6xl leading-none font-medium">{r.value}</span>
                 <span className={`text-base ${dark ? "text-on-dark" : "text-muted"}`}>{r.label}</span>
               </div>
             );

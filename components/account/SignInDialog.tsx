@@ -71,7 +71,7 @@ export default function SignInDialog() {
     <Dialog open={open} onClose={closeSignIn} label={title}>
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-1.5">
-          <h2 className="m-0 font-serif text-4xl font-medium leading-tight">{title}</h2>
+          <h2 className="m-0 font-serif text-3xl sm:text-4xl font-medium leading-tight">{title}</h2>
           <p className="m-0 text-base leading-relaxed text-muted">{signInReason}</p>
         </div>
         <button type="button" onClick={closeSignIn} aria-label="Đóng" className="h-10 w-10 shrink-0 cursor-pointer rounded-lg border-0 bg-soft text-lg">×</button>
