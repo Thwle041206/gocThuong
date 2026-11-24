@@ -19,10 +19,10 @@ export default function JourneyPage() {
         </ol>
       </nav>
 
-      <section className="wrap flex flex-wrap items-end justify-between gap-10 pt-14">
+      <section className="wrap flex flex-wrap items-end justify-between gap-10 pt-7">
         <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-5">
           <p className="eyebrow">● VI · EN · 中文 — TỪ BA ĐẾN PHIÊN DỊCH</p>
-          <h1 className="m-0 max-w-[17ch] font-serif text-[clamp(34px,6vw,68px)] leading-[1.05] font-medium">
+          <h1 className="m-0 max-w-[17ch] font-serif text-[clamp(28px,4.8vw,54px)] leading-[1.05] font-medium">
             BA phiên dịch giữa kinh doanh và công nghệ. Mình muốn phiên dịch cả giữa con người.
           </h1>
           <p className="m-0 max-w-[52ch] text-lg leading-relaxed text-muted">Lộ trình, tiến độ thật và sản phẩm thật — cập nhật mỗi khi mình đạt một mốc mới.</p>

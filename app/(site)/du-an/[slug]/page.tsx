@@ -62,13 +62,13 @@ export default async function ProjectDetail({ params }: Props) {
         </ol>
       </nav>
 
-      <section className="wrap flex flex-wrap items-end gap-12 pt-14">
+      <section className="wrap flex flex-wrap items-end gap-12 pt-7">
         <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-5">
           <div className="flex flex-wrap items-center gap-2.5 font-mono text-xs text-muted">
             <span className="tag !text-xs">{p.cat}</span>
             <span>{p.kind} · {p.year}</span>
           </div>
-          <h1 className="m-0 font-serif text-[clamp(34px,6.5vw,76px)] leading-[1.02] font-medium">{p.title}</h1>
+          <h1 className="m-0 font-serif text-[clamp(28px,5.2vw,61px)] leading-[1.02] font-medium">{p.title}</h1>
           <p className="m-0 max-w-[48ch] text-xl leading-relaxed text-muted">{p.lead}</p>
           <ProjectActions />
         </div>
@@ -110,7 +110,7 @@ export default async function ProjectDetail({ params }: Props) {
       </section>
 
       <div className="wrap flex flex-wrap items-start gap-14 pt-[72px]">
-        <aside className="flex-[0_0_210px] max-md:hidden">
+        <aside className="flex-[0_0_210px] self-stretch max-md:hidden">
           <Toc title="Trên trang này" items={toc} numbered />
         </aside>
         <div className="flex min-w-0 flex-[1_1_640px] flex-col gap-[72px]">

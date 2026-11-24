@@ -60,7 +60,7 @@ export default function ResourcesBrowser() {
 
   return (
     <>
-      <section className="wrap flex flex-wrap items-end justify-between gap-6 pt-20">
+      <section className="wrap flex flex-wrap items-end justify-between gap-6 pt-7">
         <div className="flex flex-col gap-3.5">
           <p className="eyebrow">● {resources.length} TÀI LIỆU · {Object.keys(topics).length} CHỦ ĐỀ</p>
           <h1 className="display">Tài nguyên chia sẻ</h1>

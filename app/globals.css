@@ -32,6 +32,12 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
+  /* Desktop: the design reads best at 90%, the same as browser zoom 90%. */
+  @media (min-width: 641px) {
+    html {
+      zoom: 0.9;
+    }
+  }
   /* Phones: every rem-based size (text-*, spacing) is about 6% smaller. Inputs keep 16px. */
   @media (max-width: 640px) {
     html {
@@ -85,7 +91,7 @@
     font-family: var(--font-serif);
     font-weight: 500;
     line-height: 1.02;
-    font-size: clamp(36px, 7vw, 80px);
+    font-size: clamp(30px, 5.6vw, 64px);
   }
   .h2 {
     margin: 0;

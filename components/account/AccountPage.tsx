@@ -33,7 +33,7 @@ export default function AccountPage() {
 
   if (!acc.user)
     return (
-      <section className="wrap flex flex-col items-start gap-5 py-24">
+      <section className="wrap flex flex-col items-start gap-5 pt-7 pb-24">
         <p className="eyebrow">● TÀI KHOẢN</p>
         <h1 className="display">Lưu những gì bạn thích</h1>
         <p className="m-0 max-w-[560px] text-lg text-muted">Đăng nhập để lưu bài viết, tài liệu và chia sẻ tài liệu hay với mọi người.</p>
@@ -55,7 +55,7 @@ export default function AccountPage() {
 
   return (
     <>
-      <section className="wrap flex flex-wrap items-end justify-between gap-6 pt-20">
+      <section className="wrap flex flex-wrap items-end justify-between gap-6 pt-7">
         <div className="flex flex-col gap-3">
           <p className="eyebrow">● TÀI KHOẢN</p>
           <h1 className="display">Chào {u.displayName?.split(" ").slice(-1)[0] || "bạn"}</h1>

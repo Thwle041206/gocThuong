@@ -26,7 +26,7 @@ export default function ProjectsBrowser() {
 
   return (
     <>
-      <section className="wrap flex flex-wrap items-end justify-between gap-6 pt-20">
+      <section className="wrap flex flex-wrap items-end justify-between gap-6 pt-7">
         <div className="flex flex-col gap-3.5">
           <p className="eyebrow">● CASE STUDY BA &amp; AI</p>
           <h1 className="display">Dự án</h1>

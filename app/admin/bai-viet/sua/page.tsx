@@ -7,7 +7,7 @@ import { renderMarkdown } from "@/lib/markdown";
 import { cms, slugify } from "@/lib/cms";
 import { Loading, StatusBadge, TagInput, friendly } from "@/components/admin/ui";
 import { useToast } from "@/components/Toast";
-import { LOCALE_LABEL, readingMinutes, type Locale, type PostDoc, type PostTr } from "@/content/posts";
+import { LOCALE_LABEL, readingMinutes, type Locale, type PostDoc, type PostRef, type PostTr } from "@/content/posts";
 
 const CATS = ["BA", "AI", "DỮ LIỆU", "NGÔN NGỮ"] as const;
 const LOCALES: Locale[] = ["vi", "en", "zh"];
@@ -106,6 +106,11 @@ export default function PostEditor() {
     if (next.status === "published" && !next.date) next.date = today();
     // drop empty translations (title missing)
     next.tr = Object.fromEntries(Object.entries(next.tr).filter(([, t]) => t && t.title.trim())) as PostDoc["tr"];
+    // keep only complete references with an http(s) link
+    const refs = (next.refs ?? []).map((r) => ({ title: r.title.trim(), url: r.url.trim() }));
+    if (refs.some((r) => (r.title || r.url.replace(/^https?:\/\//, "")) && !(r.title && /^https?:\/\/\S+\.\S+/i.test(r.url))))
+      return flash("Mỗi link tham khảo cần có tên và link bắt đầu bằng http(s)://");
+    next.refs = refs.filter((r) => r.title);
     setBusy(true);
     try {
       const all = await cms.posts.list();
@@ -269,6 +274,32 @@ export default function PostEditor() {
             <div className="flabel">Tags
               <TagInput value={post.tags} onChange={(tags) => update({ tags })} placeholder="Thêm tag…" upper />
             </div>
+          </section>
+
+          <section className="card flex flex-col gap-3 p-5">
+            <div className="flex items-baseline justify-between">
+              <h2 className="m-0 text-lg font-semibold">Tham khảo</h2>
+              <span className="text-xs text-muted">Hiện dưới Mục lục</span>
+            </div>
+            {(post.refs ?? []).map((r, i, all) => {
+              const set = (patch: Partial<PostRef>) => update({ refs: all.map((x, j) => (j === i ? { ...x, ...patch } : x)) });
+              const bad = r.url.trim() !== "" && !/^https?:\/\//i.test(r.url.trim());
+              return (
+                <div key={i} className="flex flex-col gap-2 rounded-[10px] border border-line p-3">
+                  <input className="field" placeholder="Tên tài liệu" value={r.title} onChange={(e) => set({ title: e.target.value })} aria-label={`Tên tài liệu ${i + 1}`} />
+                  <input className="field font-mono !text-sm" placeholder="https://…" value={r.url} onChange={(e) => set({ url: e.target.value })} aria-label={`Link ${i + 1}`} aria-invalid={bad} />
+                  {bad && <span className="text-xs text-[#B42318]">Link cần bắt đầu bằng http:// hoặc https://</span>}
+                  <div className="flex gap-1.5">
+                    <button type="button" className="btn h-9 border-line-strong px-3 text-xs" disabled={i === 0} onClick={() => { const n = [...all]; [n[i - 1], n[i]] = [n[i], n[i - 1]]; update({ refs: n }); }} aria-label="Lên">↑</button>
+                    <button type="button" className="btn h-9 border-line-strong px-3 text-xs" disabled={i === all.length - 1} onClick={() => { const n = [...all]; [n[i + 1], n[i]] = [n[i], n[i + 1]]; update({ refs: n }); }} aria-label="Xuống">↓</button>
+                    <button type="button" className="btn ml-auto h-9 border-line-strong px-3 text-xs" onClick={() => update({ refs: all.filter((_, j) => j !== i) })}>Xoá</button>
+                  </div>
+                </div>
+              );
+            })}
+            <button type="button" className="btn btn-sm border-line-strong" onClick={() => update({ refs: [...(post.refs ?? []), { title: "", url: "https://" }] })}>
+              + Thêm link tham khảo
+            </button>
           </section>
 
           <section className="card flex flex-col gap-3 p-5">

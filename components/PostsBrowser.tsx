@@ -36,7 +36,7 @@ export default function PostsBrowser() {
 
   return (
     <>
-      <section className="wrap flex flex-col items-center gap-3.5 pt-20 text-center">
+      <section className="wrap flex flex-col items-center gap-3.5 pt-7 text-center">
         <p className="eyebrow">GHI CHÉP · BA · AI · NGÔN NGỮ</p>
         <h1 className="display">Bài viết</h1>
         <p className="m-0 text-lg text-muted">Bài học từ công việc BA, thử nghiệm AI và hành trình học ngôn ngữ.</p>

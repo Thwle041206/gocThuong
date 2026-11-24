@@ -61,6 +61,7 @@ export default async function PostDetail({ params }: Props) {
           original={p.original}
           versions={versions}
           placeholderToc={toc}
+          refs={p.refs}
           meta={
             <div className="flex flex-wrap items-center justify-center gap-2.5 font-mono text-xs text-muted">
               <span className="tag !text-xs">{p.cat}</span>
