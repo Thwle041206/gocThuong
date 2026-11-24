@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { resourceTabs, resources, topics } from "@/content/resources";
-import { ArrowUpRight, Copy, Heart, Plus, Search } from "./icons";
+import { authMessage, useAccount } from "@/lib/account";
+import ShareResourceDialog from "./account/ShareResourceDialog";
+import { ArrowUpRight, Bookmark, Copy, Heart, Plus, Search } from "./icons";
 import { copyLink, useToast } from "./Toast";
 
 export default function ResourcesBrowser() {
@@ -12,6 +14,17 @@ export default function ResourcesBrowser() {
   const [view, setView] = useState<"grouped" | "flat">("grouped");
   const [liked, setLiked] = useState<Record<string, boolean>>({});
   const { flash, node } = useToast();
+  const { user, openSignIn, isSaved, toggleSave } = useAccount();
+  const [sharing, setSharing] = useState(false);
+  const share = () => (user ? setSharing(true) : openSignIn("Đăng nhập để chia sẻ tài liệu với mọi người."));
+  const save = async (r: { id: number | string; title: string; url: string }) => {
+    try {
+      const v = await toggleSave({ type: "resource", ref: String(r.id), title: r.title, url: r.url });
+      if (v !== null) flash(v ? "Đã lưu vào tài khoản" : "Đã bỏ lưu");
+    } catch (e) {
+      flash(authMessage(e));
+    }
+  };
 
   // Likes are remembered in this browser only until the backend (Sprint 6) exists.
   useEffect(() => {
@@ -53,7 +66,7 @@ export default function ResourcesBrowser() {
           <h1 className="display">Tài nguyên chia sẻ</h1>
           <p className="m-0 text-lg text-muted">Link và tài liệu chọn lọc cho BA, AI và người học ngôn ngữ.</p>
         </div>
-        <button type="button" onClick={() => flash("Form chia sẻ tài liệu sẽ mở ở giai đoạn sau")} className="inline-flex h-12 cursor-pointer items-center gap-2 rounded-xl border-0 bg-ink px-[22px] font-medium text-white">
+        <button type="button" onClick={share} className="inline-flex h-12 cursor-pointer items-center gap-2 rounded-xl border-0 bg-ink px-[22px] font-medium text-white">
           <Plus /> Chia sẻ tài liệu
         </button>
       </section>
@@ -121,6 +134,15 @@ export default function ResourcesBrowser() {
                     </button>
                     <button
                       type="button"
+                      aria-pressed={isSaved("resource", String(r.id))}
+                      aria-label={isSaved("resource", String(r.id)) ? "Bỏ lưu tài liệu" : "Lưu tài liệu"}
+                      onClick={() => save(r)}
+                      className={`inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-[10px] border ${isSaved("resource", String(r.id)) ? "border-ink bg-ink" : "border-line-strong bg-white"}`}
+                    >
+                      <Bookmark size={16} filled={isSaved("resource", String(r.id))} />
+                    </button>
+                    <button
+                      type="button"
                       aria-label="Sao chép link"
                       onClick={async () => {
                         await copyLink(r.url.startsWith("http") ? r.url : undefined);
@@ -144,6 +166,14 @@ export default function ResourcesBrowser() {
           </div>
         )}
       </section>
+      <ShareResourceDialog
+        open={sharing}
+        onClose={() => setSharing(false)}
+        onDone={() => {
+          setSharing(false);
+          flash("Đã gửi. Tài liệu sẽ hiện sau khi được duyệt.");
+        }}
+      />
       {node}
     </>
   );
