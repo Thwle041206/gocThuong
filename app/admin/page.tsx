@@ -39,7 +39,7 @@ export default function Overview() {
             ].map(([k, n, s]) => (
               <div key={k as string} className="card flex flex-col gap-2 p-5">
                 <span className="label">{k}</span>
-                <span className="font-serif text-[48px] leading-none">{n}</span>
+                <span className="font-serif text-5xl leading-none">{n}</span>
                 <span className="text-sm text-muted">{s}</span>
               </div>
             ))}
@@ -56,7 +56,7 @@ export default function Overview() {
                   <span className="text-sm text-on-dark">Lần deploy gần nhất: {fmtDate(data.meta.lastDeployAt)}</span>
                 </>
               )}
-              <a href="https://github.com/lletthuong061204-source/gocthuong-web/actions/workflows/deploy.yml" target="_blank" rel="noopener" className="mt-auto self-start rounded-full border border-white px-3 py-1.5 text-[13px] !text-white no-underline">Deploy ngay ↗</a>
+              <a href="https://github.com/lletthuong061204-source/gocthuong-web/actions/workflows/deploy.yml" target="_blank" rel="noopener" className="mt-auto self-start rounded-full border border-white px-3 py-1.5 text-sm !text-white no-underline">Deploy ngay ↗</a>
             </div>
           </div>
 
@@ -75,10 +75,10 @@ export default function Overview() {
                   const t = p.tr[p.original] ?? Object.values(p.tr)[0];
                   return (
                     <Link key={p.id} href={`/admin/bai-viet/sua/?id=${p.id}`} className="flex items-center gap-3 rounded-xl p-3 no-underline hover:bg-soft">
-                      <span className="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-ink font-mono text-[10px] text-white">{p.cat === "NGÔN NGỮ" ? LOCALE_LABEL[p.original] : p.cat.slice(0, 2)}</span>
+                      <span className="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-ink font-mono text-xs text-white">{p.cat === "NGÔN NGỮ" ? LOCALE_LABEL[p.original] : p.cat.slice(0, 2)}</span>
                       <span className="flex min-w-0 flex-col">
-                        <span className="truncate text-[16px] font-medium">{t?.title || "(Chưa có tiêu đề)"}</span>
-                        <span className="text-[13px] text-muted">Bản nháp · {LOCALE_LABEL[p.original]} · sửa {fmtDate(p.updatedAt).toLowerCase()}</span>
+                        <span className="truncate text-base font-medium">{t?.title || "(Chưa có tiêu đề)"}</span>
+                        <span className="text-sm text-muted">Bản nháp · {LOCALE_LABEL[p.original]} · sửa {fmtDate(p.updatedAt).toLowerCase()}</span>
                       </span>
                     </Link>
                   );
@@ -89,7 +89,7 @@ export default function Overview() {
               {data.activity.length === 0 && <p className="m-0 text-sm text-muted">Chưa có hoạt động.</p>}
               <ul className="m-0 flex list-none flex-col gap-2 p-0">
                 {data.activity.map((a) => (
-                  <li key={a.id} className="flex gap-4 text-[15px]">
+                  <li key={a.id} className="flex gap-4 text-base">
                     <span className="w-24 flex-none font-mono text-xs leading-6 text-muted">{fmtDate(a.atMs).replace("Hôm nay, ", "")}</span>
                     <span>{a.text}</span>
                   </li>

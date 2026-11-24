@@ -52,9 +52,9 @@ export default function AdminPosts() {
                 ["draft", "Bản nháp"],
               ] as const
             ).map(([id, label]) => (
-              <button key={id} role="tab" aria-selected={tab === id} type="button" onClick={() => setTab(id)} className={`flex h-[52px] shrink-0 cursor-pointer items-center gap-2 border-0 border-b-2 bg-transparent px-3 text-[15px] ${tab === id ? "border-ink font-semibold" : "border-transparent text-muted"}`}>
+              <button key={id} role="tab" aria-selected={tab === id} type="button" onClick={() => setTab(id)} className={`flex h-[52px] shrink-0 cursor-pointer items-center gap-2 border-0 border-b-2 bg-transparent px-3 text-base ${tab === id ? "border-ink font-semibold" : "border-transparent text-muted"}`}>
                 {label}
-                <span className={`rounded-full px-1.5 font-mono text-[11px] ${tab === id ? "bg-ink text-white" : "bg-soft"}`}>{count(id)}</span>
+                <span className={`rounded-full px-1.5 font-mono text-xs ${tab === id ? "bg-ink text-white" : "bg-soft"}`}>{count(id)}</span>
               </button>
             ))}
           </div>
@@ -82,7 +82,7 @@ export default function AdminPosts() {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[820px] border-collapse text-left">
               <thead>
-                <tr className="text-[13px] text-muted">
+                <tr className="text-sm text-muted">
                   <th className="px-4 py-3 font-normal">Tiêu đề</th>
                   <th className="px-3 font-normal">Chủ đề</th>
                   <th className="px-3 font-normal">Bản dịch</th>
@@ -98,7 +98,7 @@ export default function AdminPosts() {
                     <tr key={p.id} className="border-t border-line">
                       <td className="px-4 py-3.5">
                         <Link href={`/admin/bai-viet/sua/?id=${p.id}`} className="flex flex-col no-underline">
-                          <span lang={p.original === "zh" ? "zh" : undefined} className="text-[16px] font-medium">{t?.title || "(Chưa có tiêu đề)"}</span>
+                          <span lang={p.original === "zh" ? "zh" : undefined} className="text-base font-medium">{t?.title || "(Chưa có tiêu đề)"}</span>
                           <span className="font-mono text-xs text-muted">/bai-viet/{p.slug}</span>
                         </Link>
                       </td>
@@ -106,14 +106,14 @@ export default function AdminPosts() {
                       <td className="px-3">
                         <span className="flex gap-1">
                           {(["vi", "en", "zh"] as Locale[]).map((l) => (
-                            <span key={l} title={p.tr[l] ? "Đã có" : "Chưa có"} className={`rounded px-1.5 py-0.5 font-mono text-[11px] ${p.tr[l] ? "border border-ink" : "border border-dashed border-[#BDBDBD] text-muted"}`}>
+                            <span key={l} title={p.tr[l] ? "Đã có" : "Chưa có"} className={`rounded px-1.5 py-0.5 font-mono text-xs ${p.tr[l] ? "border border-ink" : "border border-dashed border-[#BDBDBD] text-muted"}`}>
                               {p.tr[l] ? "" : "+"}{LOCALE_LABEL[l]}
                             </span>
                           ))}
                         </span>
                       </td>
                       <td className="px-3"><StatusBadge status={p.status} /></td>
-                      <td className="px-3 text-[15px] text-muted">{p.status === "published" && p.date ? p.date.split("-").reverse().join(".") : fmtDate(p.updatedAt)}</td>
+                      <td className="px-3 text-base text-muted">{p.status === "published" && p.date ? p.date.split("-").reverse().join(".") : fmtDate(p.updatedAt)}</td>
                       <td className="px-4 text-right whitespace-nowrap">
                         <Link href={`/admin/bai-viet/sua/?id=${p.id}`} className="inline-flex h-10 items-center rounded-lg px-3 text-sm no-underline hover:bg-soft">Sửa</Link>
                         {p.status === "published" && <a href={`/bai-viet/${p.slug}/`} target="_blank" className="inline-flex h-10 items-center rounded-lg px-3 text-sm no-underline hover:bg-soft">Xem</a>}

@@ -16,10 +16,10 @@ export function Timeline() {
     <section aria-labelledby="h-time" className="wrap flex flex-wrap gap-10 pt-[72px]">
       <div className="flex flex-[0_1_280px] flex-col gap-3">
         <h2 id="h-time" className="h2-sm leading-[1.05]">Quá trình chi tiết</h2>
-        <p className="m-0 text-[15px] leading-relaxed text-muted">Từng mốc, kèm chứng chỉ hoặc sản phẩm để kiểm chứng.</p>
+        <p className="m-0 text-base leading-relaxed text-muted">Từng mốc, kèm chứng chỉ hoặc sản phẩm để kiểm chứng.</p>
         <div role="group" aria-label="Lọc theo ngôn ngữ" className="flex flex-wrap gap-1.5 pt-1">
           {filters.map(([id, label]) => (
-            <button key={id} type="button" aria-pressed={tl === id} onClick={() => setTl(id)} className="filter filter-outline filter-pill !font-sans !text-[13px] !tracking-normal">
+            <button key={id} type="button" aria-pressed={tl === id} onClick={() => setTl(id)} className="filter filter-outline filter-pill !font-sans !text-sm !tracking-normal">
               {label}
             </button>
           ))}
@@ -31,7 +31,7 @@ export function Timeline() {
             <div className="flex items-center gap-4 pb-2">
               <span aria-hidden="true" className="flex h-12 w-12 flex-none items-center justify-center rounded-[10px] bg-ink font-mono text-xs text-white">{g.abbr}</span>
               <span className="flex flex-col gap-0.5">
-                <span className="text-[17px] font-semibold">{g.name}</span>
+                <span className="text-lg font-semibold">{g.name}</span>
                 <span className="text-sm text-muted">{g.meta}</span>
               </span>
             </div>
@@ -50,11 +50,11 @@ export function Timeline() {
                     <div className="flex min-w-0 flex-1 flex-col gap-1.5 py-4">
                       <span className="flex flex-wrap items-center gap-2">
                         <span className="text-base font-semibold">{e.title}</span>
-                        {e.st === "next" && <span className="rounded border border-dashed border-[#9A9A9A] px-1.5 py-0.5 font-mono text-[10px] text-muted">SẮP TỚI</span>}
-                        {e.st === "now" && <span className="rounded bg-ink px-1.5 py-0.5 font-mono text-[10px] text-white">ĐANG LÀM</span>}
+                        {e.st === "next" && <span className="rounded border border-dashed border-[#9A9A9A] px-1.5 py-0.5 font-mono text-xs text-muted">SẮP TỚI</span>}
+                        {e.st === "now" && <span className="rounded bg-ink px-1.5 py-0.5 font-mono text-xs text-white">ĐANG LÀM</span>}
                       </span>
                       <span className="text-sm text-muted">{e.when}</span>
-                      <p className="mt-1.5 mb-0 text-[15px] leading-relaxed text-[#3A3A3A]">
+                      <p className="mt-1.5 mb-0 text-base leading-relaxed text-[#3A3A3A]">
                         {long && !isOpen ? e.text.slice(0, MAX).trim() : e.text}
                         {long && (
                           <>
@@ -66,7 +66,7 @@ export function Timeline() {
                         )}
                       </p>
                       {e.link && (
-                        <a href="#" className="mt-1.5 inline-flex items-center gap-2.5 self-start rounded-[10px] border border-line py-2 pr-3 pl-2 text-[13px] no-underline">
+                        <a href="#" className="mt-1.5 inline-flex items-center gap-2.5 self-start rounded-[10px] border border-line py-2 pr-3 pl-2 text-sm no-underline">
                           <span aria-hidden="true" className="h-[30px] w-10 rounded-md bg-panel" />
                           {e.link}
                         </a>
@@ -133,8 +133,8 @@ export function TranslationSamples() {
         <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))]">
           {keys.filter((k) => cols[k]).map((k) => (
             <div key={k} lang={k} className="flex flex-col gap-3.5 border-r border-[#F0F0F0] p-6">
-              <span className="font-mono text-[11px] tracking-[0.08em] text-muted">{smp[k].head}</span>
-              <p className="m-0 font-serif text-[22px] leading-[1.45]">{smp[k].story}</p>
+              <span className="font-mono text-xs tracking-[0.08em] text-muted">{smp[k].head}</span>
+              <p className="m-0 font-serif text-2xl leading-[1.45]">{smp[k].story}</p>
               <div className="flex flex-col gap-2 text-sm leading-relaxed text-[#3A3A3A]">
                 {smp[k].ac.map((a) => <span key={a} className="rounded-lg bg-mist px-3 py-2.5">{a}</span>)}
               </div>
@@ -143,17 +143,17 @@ export function TranslationSamples() {
         </div>
         {smp.terms.length > 0 && (
           <div className="flex flex-col gap-3 border-t border-line px-6 py-5">
-            <span className="font-mono text-[11px] tracking-[0.08em] text-muted">THUẬT NGỮ TRONG ĐOẠN NÀY</span>
+            <span className="font-mono text-xs tracking-[0.08em] text-muted">THUẬT NGỮ TRONG ĐOẠN NÀY</span>
             <div className="flex flex-wrap gap-2">
               {smp.terms.map(([en, vi, zh]) => (
-                <span key={en} className="inline-flex items-center gap-2.5 rounded-[10px] border border-line px-3 py-2 text-[13px]">
+                <span key={en} className="inline-flex items-center gap-2.5 rounded-[10px] border border-line px-3 py-2 text-sm">
                   <b className="font-semibold">{en}</b><span className="text-muted">{vi}</span><span lang="zh">{zh}</span>
                 </span>
               ))}
             </div>
           </div>
         )}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line bg-[#FAFAFA] px-6 py-3.5 text-[13px] text-muted">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line bg-[#FAFAFA] px-6 py-3.5 text-sm text-muted">
           <span>{smp.note}</span>
           <Link href="/bai-viet/" className="font-semibold">Đọc bài phân tích cách dịch →</Link>
         </div>

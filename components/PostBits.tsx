@@ -31,7 +31,7 @@ export function PostToolbar({
   };
   return (
     <div className="flex items-center gap-2">
-      <div role="group" aria-label="Đọc bằng ngôn ngữ" className="flex items-center gap-1.5 text-[13px] text-muted">
+      <div role="group" aria-label="Đọc bằng ngôn ngữ" className="flex items-center gap-1.5 text-sm text-muted">
         Đọc bằng
         <span className="flex rounded-[10px] border border-line p-0.5 font-mono text-xs">
           {langs.map((l) => {

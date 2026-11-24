@@ -7,7 +7,7 @@ import { renderMarkdown } from "@/lib/markdown";
 import { cms, slugify } from "@/lib/cms";
 import { Loading, StatusBadge, TagInput, friendly } from "@/components/admin/ui";
 import { useToast } from "@/components/Toast";
-import { LOCALE_LABEL, readingMinutes, type Locale, type PostDoc, type PostTr } from "@/content/posts";
+import { LOCALE_LABEL, readingMinutes, type Locale, type PostDoc, type PostRef, type PostTr } from "@/content/posts";
 
 const CATS = ["BA", "AI", "DỮ LIỆU", "NGÔN NGỮ"] as const;
 const LOCALES: Locale[] = ["vi", "en", "zh"];
@@ -106,6 +106,11 @@ export default function PostEditor() {
     if (next.status === "published" && !next.date) next.date = today();
     // drop empty translations (title missing)
     next.tr = Object.fromEntries(Object.entries(next.tr).filter(([, t]) => t && t.title.trim())) as PostDoc["tr"];
+    // keep only complete references with an http(s) link
+    const refs = (next.refs ?? []).map((r) => ({ title: r.title.trim(), url: r.url.trim() }));
+    if (refs.some((r) => (r.title || r.url.replace(/^https?:\/\//, "")) && !(r.title && /^https?:\/\/\S+\.\S+/i.test(r.url))))
+      return flash("Mỗi link tham khảo cần có tên và link bắt đầu bằng http(s)://");
+    next.refs = refs.filter((r) => r.title);
     setBusy(true);
     try {
       const all = await cms.posts.list();
@@ -172,9 +177,9 @@ export default function PostEditor() {
             role="tab"
             aria-selected={loc === l}
             onClick={() => setLoc(l)}
-            className={`h-11 cursor-pointer rounded-[10px] border-0 px-4 text-[15px] font-medium ${loc === l ? "bg-white shadow-sm" : "bg-transparent"}`}
+            className={`h-11 cursor-pointer rounded-[10px] border-0 px-4 text-base font-medium ${loc === l ? "bg-white shadow-sm" : "bg-transparent"}`}
           >
-            {LOCALE_LABEL[l]} <span className="text-[13px] font-normal text-muted">{l === post.original ? "gốc" : post.tr[l]?.title ? "đã có" : "chưa có"}</span>
+            {LOCALE_LABEL[l]} <span className="text-sm font-normal text-muted">{l === post.original ? "gốc" : post.tr[l]?.title ? "đã có" : "chưa có"}</span>
           </button>
         ))}
       </div>
@@ -198,7 +203,7 @@ export default function PostEditor() {
           <div className="flex flex-col gap-4 px-6 py-7 sm:px-12">
             {preview ? (
               <>
-                <h1 lang={zh} className="m-0 font-serif text-[44px] leading-tight font-medium">{tr?.title || "(Chưa có tiêu đề)"}</h1>
+                <h1 lang={zh} className="m-0 font-serif text-5xl leading-tight font-medium">{tr?.title || "(Chưa có tiêu đề)"}</h1>
                 <p lang={zh} className="m-0 text-lg text-muted">{tr?.excerpt}</p>
                 <div lang={zh} className="prose-gt border-t border-line pt-6" dangerouslySetInnerHTML={{ __html: renderMarkdown(tr?.body || "_Chưa có nội dung._").html }} />
               </>
@@ -225,7 +230,7 @@ export default function PostEditor() {
                   ref={ta}
                   lang={zh}
                   aria-label="Nội dung"
-                  className="min-h-[460px] w-full resize-y border-0 bg-transparent font-mono text-[15px] leading-[1.8] outline-none placeholder:text-[#BDBDBD]"
+                  className="min-h-[460px] w-full resize-y border-0 bg-transparent font-mono text-base leading-[1.8] outline-none placeholder:text-[#BDBDBD]"
                   placeholder={"Viết nội dung bằng Markdown…\n\n## Bối cảnh\nĐoạn văn…\n\n> Một câu đáng nhớ\n\n- Ý 1\n- Ý 2"}
                   value={tr?.body ?? ""}
                   onChange={(e) => updateTr({ body: e.target.value })}
@@ -247,7 +252,7 @@ export default function PostEditor() {
 
         <div className="flex flex-[1_1_320px] flex-col gap-4">
           <section className="card flex flex-col gap-3 p-5">
-            <h2 className="m-0 text-[17px] font-semibold">Xuất bản</h2>
+            <h2 className="m-0 text-lg font-semibold">Xuất bản</h2>
             <label className="flabel">Ngôn ngữ gốc
               <select className="select" value={post.original} onChange={(e) => update({ original: e.target.value as Locale, tr: { [e.target.value]: emptyTr(), ...post.tr } })}>
                 {LOCALES.map((l) => <option key={l} value={l}>{LOCALE_LABEL[l]}</option>)}
@@ -260,7 +265,7 @@ export default function PostEditor() {
           </section>
 
           <section className="card flex flex-col gap-3 p-5">
-            <h2 className="m-0 text-[17px] font-semibold">Phân loại</h2>
+            <h2 className="m-0 text-lg font-semibold">Phân loại</h2>
             <label className="flabel">Chủ đề
               <select className="select" value={post.cat} onChange={(e) => update({ cat: e.target.value as PostDoc["cat"] })}>
                 {CATS.map((c) => <option key={c}>{c}</option>)}
@@ -272,12 +277,38 @@ export default function PostEditor() {
           </section>
 
           <section className="card flex flex-col gap-3 p-5">
-            <h2 className="m-0 text-[17px] font-semibold">SEO &amp; xem trước trên Google</h2>
+            <div className="flex items-baseline justify-between">
+              <h2 className="m-0 text-lg font-semibold">Tham khảo</h2>
+              <span className="text-xs text-muted">Hiện dưới Mục lục</span>
+            </div>
+            {(post.refs ?? []).map((r, i, all) => {
+              const set = (patch: Partial<PostRef>) => update({ refs: all.map((x, j) => (j === i ? { ...x, ...patch } : x)) });
+              const bad = r.url.trim() !== "" && !/^https?:\/\//i.test(r.url.trim());
+              return (
+                <div key={i} className="flex flex-col gap-2 rounded-[10px] border border-line p-3">
+                  <input className="field" placeholder="Tên tài liệu" value={r.title} onChange={(e) => set({ title: e.target.value })} aria-label={`Tên tài liệu ${i + 1}`} />
+                  <input className="field font-mono !text-sm" placeholder="https://…" value={r.url} onChange={(e) => set({ url: e.target.value })} aria-label={`Link ${i + 1}`} aria-invalid={bad} />
+                  {bad && <span className="text-xs text-[#B42318]">Link cần bắt đầu bằng http:// hoặc https://</span>}
+                  <div className="flex gap-1.5">
+                    <button type="button" className="btn h-9 border-line-strong px-3 text-xs" disabled={i === 0} onClick={() => { const n = [...all]; [n[i - 1], n[i]] = [n[i], n[i - 1]]; update({ refs: n }); }} aria-label="Lên">↑</button>
+                    <button type="button" className="btn h-9 border-line-strong px-3 text-xs" disabled={i === all.length - 1} onClick={() => { const n = [...all]; [n[i + 1], n[i]] = [n[i], n[i + 1]]; update({ refs: n }); }} aria-label="Xuống">↓</button>
+                    <button type="button" className="btn ml-auto h-9 border-line-strong px-3 text-xs" onClick={() => update({ refs: all.filter((_, j) => j !== i) })}>Xoá</button>
+                  </div>
+                </div>
+              );
+            })}
+            <button type="button" className="btn btn-sm border-line-strong" onClick={() => update({ refs: [...(post.refs ?? []), { title: "", url: "https://" }] })}>
+              + Thêm link tham khảo
+            </button>
+          </section>
+
+          <section className="card flex flex-col gap-3 p-5">
+            <h2 className="m-0 text-lg font-semibold">SEO &amp; xem trước trên Google</h2>
             <label className="flabel">Đường dẫn
               <span className="flex overflow-hidden rounded-[10px] border border-line-strong">
                 <span className="flex items-center bg-soft px-2.5 font-mono text-xs">/bai-viet/</span>
                 <input
-                  className="min-w-0 flex-1 border-0 px-2.5 py-2.5 font-mono text-[13px] outline-none"
+                  className="min-w-0 flex-1 border-0 px-2.5 py-2.5 font-mono text-sm outline-none"
                   value={post.slug}
                   onChange={(e) => {
                     setSlugTouched(true);
@@ -287,17 +318,17 @@ export default function PostEditor() {
               </span>
             </label>
             <label className="flabel">
-              <span className="flex justify-between">Tiêu đề SEO ({LOCALE_LABEL[loc]})<span className="font-mono text-[11px]">{seoTitle.length}/60</span></span>
+              <span className="flex justify-between">Tiêu đề SEO ({LOCALE_LABEL[loc]})<span className="font-mono text-xs">{seoTitle.length}/60</span></span>
               <input className="field" value={tr?.seoTitle ?? ""} placeholder={seoTitle} onChange={(e) => updateTr({ seoTitle: e.target.value })} />
             </label>
             <label className="flabel">
-              <span className="flex justify-between">Mô tả SEO<span className="font-mono text-[11px]">{seoDesc.length}/160</span></span>
+              <span className="flex justify-between">Mô tả SEO<span className="font-mono text-xs">{seoDesc.length}/160</span></span>
               <textarea className="field" rows={3} value={tr?.seoDesc ?? ""} placeholder="Mô tả ngắn hiện trên kết quả Google…" onChange={(e) => updateTr({ seoDesc: e.target.value })} />
             </label>
             <div className="flex flex-col gap-1 rounded-xl border border-line p-3.5 font-sans">
               <span className="text-xs text-[#4d5156]">gocthuong.com › bai-viet › {post.slug || "…"}</span>
               <span className="text-lg leading-snug text-[#1a0dab]">{seoTitle || "Tiêu đề bài viết | góc Thương"}</span>
-              <span className="text-[13px] leading-snug text-[#4d5156]">{seoDesc || "Thêm mô tả SEO để Google hiển thị đoạn giới thiệu đúng ý bạn."}</span>
+              <span className="text-sm leading-snug text-[#4d5156]">{seoDesc || "Thêm mô tả SEO để Google hiển thị đoạn giới thiệu đúng ý bạn."}</span>
             </div>
           </section>
         </div>

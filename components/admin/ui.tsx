@@ -7,7 +7,7 @@ export function PageHead({ title, sub, action }: { title: string; sub?: string; 
     <div className="flex flex-wrap items-end justify-between gap-4 pb-6">
       <div className="flex flex-col gap-1.5">
         <h1 className="m-0 font-serif text-[clamp(38px,4vw,48px)] leading-none font-medium">{title}</h1>
-        {sub && <p className="m-0 text-[15px] text-muted">{sub}</p>}
+        {sub && <p className="m-0 text-base text-muted">{sub}</p>}
       </div>
       {action}
     </div>
@@ -18,7 +18,7 @@ export function StatusBadge({ status }: { status?: string }) {
   const pub = status === "published" || status === "approved";
   const label = { published: "Đã xuất bản", draft: "Bản nháp", approved: "Đã duyệt", pending: "Chờ duyệt", rejected: "Đã từ chối" }[status ?? "draft"] ?? status;
   return (
-    <span className={`inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium whitespace-nowrap ${pub ? "bg-ink text-white" : "border border-line-strong bg-white"}`}>
+    <span className={`inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-sm font-medium whitespace-nowrap ${pub ? "bg-ink text-white" : "border border-line-strong bg-white"}`}>
       <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${pub ? "bg-white" : "border border-ink"}`} />
       {label}
     </span>

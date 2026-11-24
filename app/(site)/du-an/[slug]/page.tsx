@@ -62,13 +62,13 @@ export default async function ProjectDetail({ params }: Props) {
         </ol>
       </nav>
 
-      <section className="wrap flex flex-wrap items-end gap-12 pt-14">
+      <section className="wrap flex flex-wrap items-end gap-12 pt-7">
         <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-5">
           <div className="flex flex-wrap items-center gap-2.5 font-mono text-xs text-muted">
             <span className="tag !text-xs">{p.cat}</span>
             <span>{p.kind} · {p.year}</span>
           </div>
-          <h1 className="m-0 font-serif text-[clamp(44px,6.5vw,76px)] leading-[1.02] font-medium">{p.title}</h1>
+          <h1 className="m-0 font-serif text-[clamp(28px,5.2vw,61px)] leading-[1.02] font-medium">{p.title}</h1>
           <p className="m-0 max-w-[48ch] text-xl leading-relaxed text-muted">{p.lead}</p>
           <ProjectActions />
         </div>
@@ -80,12 +80,12 @@ export default async function ProjectDetail({ params }: Props) {
             ["LĨNH VỰC", p.meta.domain],
           ].map(([k, v]) => (
             <div key={k} className="flex flex-col gap-1.5">
-              <dt className="font-mono text-[11px] tracking-[0.08em] text-muted">{k}</dt>
-              <dd className="m-0 text-[15px] font-medium">{v}</dd>
+              <dt className="font-mono text-xs tracking-[0.08em] text-muted">{k}</dt>
+              <dd className="m-0 text-base font-medium">{v}</dd>
             </div>
           ))}
           <div className="col-span-2 flex flex-col gap-2">
-            <dt className="font-mono text-[11px] tracking-[0.08em] text-muted">CÔNG CỤ</dt>
+            <dt className="font-mono text-xs tracking-[0.08em] text-muted">CÔNG CỤ</dt>
             <dd className="m-0 flex flex-wrap gap-1.5">{p.meta.tools.map((t) => <span key={t} className="chip">{t}</span>)}</dd>
           </div>
         </dl>
@@ -101,8 +101,8 @@ export default async function ProjectDetail({ params }: Props) {
             const dark = k === p.results.length - 1;
             return (
               <div key={k} className={`flex flex-[1_1_260px] flex-col gap-1.5 rounded-2xl p-6 ${dark ? "bg-ink text-white" : "border border-line"}`}>
-                <span className="font-serif text-[56px] leading-none font-medium">{r.value}</span>
-                <span className={`text-[15px] ${dark ? "text-on-dark" : "text-muted"}`}>{r.label}</span>
+                <span className="font-serif text-5xl sm:text-6xl leading-none font-medium">{r.value}</span>
+                <span className={`text-base ${dark ? "text-on-dark" : "text-muted"}`}>{r.label}</span>
               </div>
             );
           })}
@@ -110,7 +110,7 @@ export default async function ProjectDetail({ params }: Props) {
       </section>
 
       <div className="wrap flex flex-wrap items-start gap-14 pt-[72px]">
-        <aside className="flex-[0_0_210px] max-md:hidden">
+        <aside className="flex-[0_0_210px] self-stretch max-md:hidden">
           <Toc title="Trên trang này" items={toc} numbered />
         </aside>
         <div className="flex min-w-0 flex-[1_1_640px] flex-col gap-[72px]">
@@ -120,8 +120,8 @@ export default async function ProjectDetail({ params }: Props) {
           <Section id="van-de" num="02" title="Vấn đề">
             <ol className="m-0 list-none border-t border-line p-0">
               {p.problems.map((x, k) => (
-                <li key={k} className="flex gap-6 border-b border-line py-5 text-[17px]">
-                  <span className="min-w-10 font-serif text-[28px]">{k + 1}</span>
+                <li key={k} className="flex gap-6 border-b border-line py-5 text-lg">
+                  <span className="min-w-10 font-serif text-3xl">{k + 1}</span>
                   <span className="pt-1.5">{x}</span>
                 </li>
               ))}
@@ -134,7 +134,7 @@ export default async function ProjectDetail({ params }: Props) {
                 return (
                   <li key={s.title} className={`flex flex-col gap-2.5 rounded-[14px] p-[22px] ${dark ? "bg-ink text-white" : "border border-line"}`}>
                     <span className={`font-mono text-xs ${dark ? "text-dim" : "text-muted"}`}>BƯỚC {k + 1}</span>
-                    <span className="font-serif text-[26px] font-medium">{s.title}</span>
+                    <span className="font-serif text-2xl font-medium">{s.title}</span>
                     <span className={`text-sm leading-relaxed ${dark ? "text-on-dark" : "text-muted"}`}>{s.text}</span>
                   </li>
                 );
@@ -151,12 +151,12 @@ export default async function ProjectDetail({ params }: Props) {
                 <span className="rounded bg-ink px-2 py-0.5 text-white">ƯU TIÊN: {p.story.priority}</span>
               </div>
               <div className="flex flex-col gap-5 px-5 py-6">
-                <p className="m-0 font-serif text-[26px] leading-[1.4]">
+                <p className="m-0 font-serif text-2xl leading-[1.4]">
                   Là <b className="font-semibold">{p.story.role}</b>, tôi muốn <b className="font-semibold">{p.story.action}</b> để <b className="font-semibold">{p.story.value}</b>.
                 </p>
                 <div className="flex flex-col gap-2.5">
                   <span className="label">ACCEPTANCE CRITERIA</span>
-                  <ul className="m-0 flex list-none flex-col gap-2 p-0 font-mono text-[13px] leading-relaxed">
+                  <ul className="m-0 flex list-none flex-col gap-2 p-0 font-mono text-sm leading-relaxed">
                     <li className="rounded-lg bg-mist px-3.5 py-3"><b>CHO TRƯỚC</b> {p.story.given}</li>
                     <li className="rounded-lg bg-mist px-3.5 py-3"><b>KHI</b> {p.story.when}</li>
                     <li className="rounded-lg bg-mist px-3.5 py-3"><b>THÌ</b> {p.story.then}</li>
@@ -185,14 +185,14 @@ export default async function ProjectDetail({ params }: Props) {
 
       <section className="wrap flex flex-wrap gap-4 pt-[88px]">
         <Link href={`/du-an/${next.slug}/`} className="card flex flex-[1_1_420px] items-center gap-5 p-4 no-underline">
-          <span className="placeholder h-[110px] flex-[0_0_160px] rounded-[10px] bg-soft text-[11px] text-muted max-sm:flex-[0_0_110px]">{next.img}</span>
+          <span className="placeholder h-[110px] flex-[0_0_160px] rounded-[10px] bg-soft text-xs text-muted max-sm:flex-[0_0_110px]">{next.img}</span>
           <span className="flex flex-col gap-1.5">
             <span className="font-mono text-xs text-muted">DỰ ÁN TIẾP THEO →</span>
-            <span className="font-serif text-[28px] font-medium">{next.title} · {next.kind.toLowerCase()}</span>
+            <span className="font-serif text-3xl font-medium">{next.title} · {next.kind.toLowerCase()}</span>
           </span>
         </Link>
         <div className="flex flex-[1_1_420px] flex-wrap items-center justify-between gap-4 rounded-2xl bg-ink p-7 text-white">
-          <span className="max-w-[16ch] font-serif text-[30px] leading-[1.2]">Cần một BA cho dự án tương tự?</span>
+          <span className="max-w-[16ch] font-serif text-3xl leading-[1.2]">Cần một BA cho dự án tương tự?</span>
           <Link href="/#lien-he" className="btn btn-light btn-sm font-semibold">Liên hệ</Link>
         </div>
       </section>

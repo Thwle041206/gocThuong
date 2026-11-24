@@ -66,19 +66,19 @@ function Login() {
     <div className="flex min-h-screen items-center justify-center bg-[#FAFAFA] px-4">
       <div className="card flex w-full max-w-[420px] flex-col gap-5 p-8">
         <div className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-ink font-serif text-[22px] font-semibold text-white">gT</span>
+          <span className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-ink font-serif text-2xl font-semibold text-white">gT</span>
           <span className="text-lg font-semibold">góc Thương</span>
-          <span className="rounded border border-ink px-1.5 font-mono text-[10px]">CMS</span>
+          <span className="rounded border border-ink px-1.5 font-mono text-xs">CMS</span>
         </div>
         <div className="flex flex-col gap-1">
-          <h1 className="m-0 font-serif text-[40px] font-medium">Đăng nhập</h1>
+          <h1 className="m-0 font-serif text-5xl font-medium">Đăng nhập</h1>
           <p className="m-0 text-sm text-muted">Chỉ tài khoản quản trị mới vào được.</p>
         </div>
         <button type="button" disabled={busy} onClick={() => run(() => signInWithPopup(fb().auth, new GoogleAuthProvider()))} className="btn btn-dark h-12 w-full">
           <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
           Đăng nhập bằng Google
         </button>
-        <div className="flex items-center gap-3 font-mono text-[11px] text-muted"><span className="h-px flex-1 bg-line" />HOẶC TÀI KHOẢN THỬ<span className="h-px flex-1 bg-line" /></div>
+        <div className="flex items-center gap-3 font-mono text-xs text-muted"><span className="h-px flex-1 bg-line" />HOẶC TÀI KHOẢN THỬ<span className="h-px flex-1 bg-line" /></div>
         <form
           className="flex flex-col gap-3"
           onSubmit={(e) => {
@@ -101,8 +101,8 @@ function NoAccess({ user }: { user: User }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#FAFAFA] px-4">
       <div className="card flex max-w-[480px] flex-col gap-4 p-8">
-        <h1 className="m-0 font-serif text-[36px] font-medium">Chưa có quyền quản trị</h1>
-        <p className="m-0 text-[15px] leading-relaxed text-muted">
+        <h1 className="m-0 font-serif text-4xl font-medium">Chưa có quyền quản trị</h1>
+        <p className="m-0 text-base leading-relaxed text-muted">
           Bạn đã đăng nhập bằng <b className="text-ink">{user.email}</b>, nhưng tài khoản này chưa được cấp quyền. Nếu đây là email quản trị, hãy chạy lại{" "}
           <a href={REPO_ACTIONS} target="_blank" rel="noopener">workflow Deploy</a> (nó cấp quyền cho email trong secret <code>ADMIN_EMAILS</code>), rồi bấm “Thử lại”.
         </p>
@@ -133,8 +133,8 @@ export default function AdminShell({ children }: { children: ReactNode }) {
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
         <div className="card max-w-[460px] p-8">
-          <h1 className="m-0 font-serif text-[34px] font-medium">CMS chưa được kết nối</h1>
-          <p className="text-[15px] text-muted">Cấu hình Firebase sẽ được thêm tự động khi site được deploy từ GitHub. Hãy mở trang này trên gocthuong.web.app.</p>
+          <h1 className="m-0 font-serif text-4xl font-medium">CMS chưa được kết nối</h1>
+          <p className="text-base text-muted">Cấu hình Firebase sẽ được thêm tự động khi site được deploy từ GitHub. Hãy mở trang này trên gocthuong.web.app.</p>
         </div>
       </div>
     );
@@ -146,7 +146,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
   const link = (it: (typeof nav)[number]) => {
     const on = it.match(path);
     return (
-      <Link key={it.href} href={it.href} className={`flex h-11 shrink-0 items-center gap-3 rounded-full px-4 text-[15px] no-underline ${on ? "bg-ink !text-white" : "hover:bg-soft"}`}>
+      <Link key={it.href} href={it.href} className={`flex h-11 shrink-0 items-center gap-3 rounded-full px-4 text-base no-underline ${on ? "bg-ink !text-white" : "hover:bg-soft"}`}>
         <Icon name={it.icon} /> {it.label}
       </Link>
     );
@@ -158,8 +158,8 @@ export default function AdminShell({ children }: { children: ReactNode }) {
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-line bg-white px-4 sm:px-5">
           <Link href="/admin/" className="flex items-center gap-2.5 no-underline">
             <span className="flex h-9 w-9 items-center justify-center rounded-[9px] bg-ink font-serif text-xl font-semibold text-white">gT</span>
-            <span className="text-[17px] font-semibold max-sm:hidden">góc Thương</span>
-            <span className="rounded border border-ink px-1.5 font-mono text-[10px]">CMS</span>
+            <span className="text-lg font-semibold max-sm:hidden">góc Thương</span>
+            <span className="rounded border border-ink px-1.5 font-mono text-xs">CMS</span>
           </Link>
           <div className="flex items-center gap-2">
             <a href="/" target="_blank" className="px-3 text-sm no-underline max-sm:hidden">Xem trang ↗</a>

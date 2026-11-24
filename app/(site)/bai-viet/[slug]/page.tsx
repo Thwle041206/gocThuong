@@ -26,7 +26,7 @@ const toc = [
   { id: "bai-hoc", label: "Bài học" },
 ];
 
-const h2 = "mt-4 mb-0 scroll-mt-6 font-serif text-4xl leading-[1.2] font-medium";
+const h2 = "mt-4 mb-0 scroll-mt-6 font-serif text-3xl sm:text-4xl leading-[1.2] font-medium";
 
 export default async function PostDetail({ params }: Props) {
   const { slug } = await params;
@@ -61,6 +61,7 @@ export default async function PostDetail({ params }: Props) {
           original={p.original}
           versions={versions}
           placeholderToc={toc}
+          refs={p.refs}
           meta={
             <div className="flex flex-wrap items-center justify-center gap-2.5 font-mono text-xs text-muted">
               <span className="tag !text-xs">{p.cat}</span>
@@ -69,19 +70,19 @@ export default async function PostDetail({ params }: Props) {
           }
           author={
             <div className="flex items-center gap-3">
-              <span aria-hidden="true" className="flex h-11 w-11 items-center justify-center rounded-full bg-ink font-serif text-[22px] text-white">T</span>
+              <span aria-hidden="true" className="flex h-11 w-11 items-center justify-center rounded-full bg-ink font-serif text-2xl text-white">T</span>
               <span className="flex flex-col leading-[1.35]">
                 <span className="font-semibold">{site.author}</span>
-                <span className="text-[13px] text-muted">{site.role}</span>
+                <span className="text-sm text-muted">{site.role}</span>
               </span>
             </div>
           }
           placeholder={
             <>
-              <p className="m-0 text-[21px] leading-[1.7]">[Đoạn mở: nêu vấn đề hoặc câu hỏi chính trong 2–3 câu, để người đọc biết vì sao nên đọc tiếp.]</p>
+              <p className="m-0 text-xl leading-[1.7]">[Đoạn mở: nêu vấn đề hoặc câu hỏi chính trong 2–3 câu, để người đọc biết vì sao nên đọc tiếp.]</p>
               <h2 id="boi-canh" className={h2}>Bối cảnh</h2>
               <p className="m-0">[Tình huống thực tế: dự án, nhóm, công cụ AI đang dùng. Viết ngắn, cụ thể.]</p>
-              <blockquote className="mx-0 my-2 border-y border-ink py-7 text-center font-serif text-[30px] leading-[1.35] italic">[Một câu đáng nhớ nhất của bài — câu người đọc sẽ chia sẻ lại.]</blockquote>
+              <blockquote className="mx-0 my-2 border-y border-ink py-7 text-center font-serif text-3xl leading-[1.35] italic">[Một câu đáng nhớ nhất của bài — câu người đọc sẽ chia sẻ lại.]</blockquote>
               <h2 id="van-de" className={h2}>Vấn đề</h2>
               <ul className="m-0 flex flex-col gap-2 pl-[22px]">
                 <li>[Ý 1: chi phí / thời gian khi hỏi AI không rõ ràng]</li>
@@ -106,10 +107,10 @@ export default async function PostDetail({ params }: Props) {
             </div>
             <Feedback />
             <div className="flex flex-wrap gap-5 rounded-2xl bg-ink p-7 text-white">
-              <span aria-hidden="true" className="flex h-16 w-16 flex-none items-center justify-center rounded-full bg-white font-serif text-[30px] text-ink">T</span>
-              <div className="flex flex-[1_1_300px] flex-col gap-2 text-[15px] leading-relaxed">
+              <span aria-hidden="true" className="flex h-16 w-16 flex-none items-center justify-center rounded-full bg-white font-serif text-3xl text-ink">T</span>
+              <div className="flex flex-[1_1_300px] flex-col gap-2 text-base leading-relaxed">
                 <span className="label !text-dim">TÁC GIẢ</span>
-                <span className="font-serif text-[26px]">{site.author}</span>
+                <span className="font-serif text-2xl">{site.author}</span>
                 <span className="text-on-dark">{site.bio}</span>
                 <Link href="/#lien-he" className="font-semibold !text-white underline-offset-4">Kết nối với mình →</Link>
               </div>
@@ -120,27 +121,27 @@ export default async function PostDetail({ params }: Props) {
           {prev && (
             <Link href={`/bai-viet/${prev.slug}/`} className="flex flex-[1_1_320px] flex-col gap-2 rounded-[14px] border border-line p-6 no-underline">
               <span className="font-mono text-xs text-muted">← BÀI TRƯỚC</span>
-              <span className="font-serif text-[26px] font-medium">{prev.title}</span>
+              <span className="font-serif text-2xl font-medium">{prev.title}</span>
             </Link>
           )}
           {next && (
             <Link href={`/bai-viet/${next.slug}/`} className="flex flex-[1_1_320px] flex-col items-end gap-2 rounded-[14px] border border-line p-6 text-right no-underline">
               <span className="font-mono text-xs text-muted">BÀI SAU →</span>
-              <span className="font-serif text-[26px] font-medium">{next.title}</span>
+              <span className="font-serif text-2xl font-medium">{next.title}</span>
             </Link>
           )}
         </nav>
 
         <section aria-labelledby="h-lienquan" className="mx-auto flex max-w-[1104px] flex-col gap-6 px-4 pt-[72px] sm:px-8">
           <div className="flex items-baseline justify-between gap-3">
-            <h2 id="h-lienquan" className="m-0 font-serif text-[40px] font-medium">Bài viết liên quan</h2>
-            <Link href="/bai-viet/" className="text-[13px] font-semibold tracking-[0.04em]">XEM TẤT CẢ ↗</Link>
+            <h2 id="h-lienquan" className="m-0 font-serif text-4xl sm:text-5xl font-medium">Bài viết liên quan</h2>
+            <Link href="/bai-viet/" className="text-sm font-semibold tracking-[0.04em]">XEM TẤT CẢ ↗</Link>
           </div>
           <div className="grid grid-cols-[repeat(auto-fill,minmax(min(280px,100%),1fr))] gap-5">
             {related.map((r) => (
               <Link key={r.slug} href={`/bai-viet/${r.slug}/`} className="card flex flex-col gap-3 p-3 pb-5 no-underline">
                 <div className="flex aspect-[16/10] items-center justify-center rounded-[10px] bg-panel p-4 text-center font-serif text-xl text-white">{r.title}</div>
-                <div className="flex items-center gap-2 px-2 font-mono text-[11px] text-muted">
+                <div className="flex items-center gap-2 px-2 font-mono text-xs text-muted">
                   <span className="tag">{r.cat}</span>{r.lang} · {r.date ? r.read.toUpperCase() : "GỢI Ý"}
                 </div>
                 <span className="px-2 font-serif text-2xl leading-[1.2] font-medium">{r.title}</span>

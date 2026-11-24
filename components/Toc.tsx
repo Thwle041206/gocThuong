@@ -20,11 +20,11 @@ export default function Toc({ title, items, numbered = false }: { title: string;
   }, [items]);
 
   return (
-    <nav aria-label={title} className="flex flex-col gap-1.5 md:sticky md:top-6">
+    <nav aria-label={title} className="flex flex-col gap-1.5 md:sticky md:top-28">
       <span className="label pb-2">{title.toUpperCase()}</span>
       {items.map((t, i) => (
         <a key={t.id} href={`#${t.id}`} className="toc-link" aria-current={t.id === active ? "location" : undefined} onClick={() => setActive(t.id)}>
-          {numbered && <span className="font-mono text-[11px]">{String(i + 1).padStart(2, "0")}</span>}
+          {numbered && <span className="font-mono text-xs">{String(i + 1).padStart(2, "0")}</span>}
           {t.label}
         </a>
       ))}

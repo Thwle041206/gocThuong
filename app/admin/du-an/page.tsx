@@ -34,7 +34,7 @@ function Lines({ value, onChange, placeholder }: { value: string[]; onChange: (v
           <button type="button" aria-label="Xoá dòng" onClick={() => onChange(value.filter((_, k) => k !== i))} className="h-11 w-11 shrink-0 cursor-pointer rounded-[10px] border border-line bg-white">×</button>
         </div>
       ))}
-      <button type="button" onClick={() => onChange([...value, ""])} className="self-start rounded-full border border-dashed border-[#BDBDBD] bg-white px-3 py-1.5 text-[13px]">+ Thêm dòng</button>
+      <button type="button" onClick={() => onChange([...value, ""])} className="self-start rounded-full border border-dashed border-[#BDBDBD] bg-white px-3 py-1.5 text-sm">+ Thêm dòng</button>
     </div>
   );
 }
@@ -105,7 +105,7 @@ export default function AdminProjects() {
           <div className="card min-w-0 flex-[1_1_480px]">
             <div className="flex justify-between border-b border-line px-4 py-3 text-sm text-muted">
               <span>{sorted.length} dự án · {sorted.filter((p) => p.featured).length} nổi bật trên Trang chủ</span>
-              <span className="font-mono text-[11px]">↑↓ ĐỂ SẮP XẾP</span>
+              <span className="font-mono text-xs">↑↓ ĐỂ SẮP XẾP</span>
             </div>
             <ul className="m-0 flex list-none flex-col gap-1 p-2">
               {sorted.map((p, i) => (
@@ -117,12 +117,12 @@ export default function AdminProjects() {
                   <button type="button" onClick={() => { setEdit({ ...p }); setTab("info"); }} className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 border-0 bg-transparent p-0 text-left">
                     <span className={`h-12 w-16 flex-none rounded-lg ${p.featured ? "bg-panel" : "bg-soft"}`} />
                     <span className="flex min-w-0 flex-col">
-                      <span className="truncate text-[16px] font-semibold">{p.title || "(Chưa đặt tên)"}</span>
-                      <span className="truncate font-mono text-[11px] text-muted">{p.cat} · {p.kind} · {p.year}</span>
+                      <span className="truncate text-base font-semibold">{p.title || "(Chưa đặt tên)"}</span>
+                      <span className="truncate font-mono text-xs text-muted">{p.cat} · {p.kind} · {p.year}</span>
                     </span>
                   </button>
                   {p.featured && <span className="tag max-sm:hidden">NỔI BẬT</span>}
-                  <span className="w-24 text-right text-[13px] text-muted">{(p.status ?? "published") === "published" ? "Đã xuất bản" : "Bản nháp"}</span>
+                  <span className="w-24 text-right text-sm text-muted">{(p.status ?? "published") === "published" ? "Đã xuất bản" : "Bản nháp"}</span>
                 </li>
               ))}
             </ul>
@@ -132,7 +132,7 @@ export default function AdminProjects() {
             <div className="card sticky top-20 flex max-h-[calc(100vh-100px)] min-w-0 flex-[1_1_440px] flex-col overflow-hidden">
               <div className="flex items-start justify-between gap-3 px-5 pt-5">
                 <div className="flex flex-col">
-                  <span className="font-mono text-[11px] tracking-[0.08em] text-muted">{edit.id ? "SỬA" : "THÊM"} DỰ ÁN · {edit.cat}</span>
+                  <span className="font-mono text-xs tracking-[0.08em] text-muted">{edit.id ? "SỬA" : "THÊM"} DỰ ÁN · {edit.cat}</span>
                   <span className="text-xl font-semibold">{edit.title || "Dự án mới"}</span>
                 </div>
                 <div className="flex gap-1">
@@ -148,7 +148,7 @@ export default function AdminProjects() {
                     ["docs", "Tài liệu BA"],
                   ] as const
                 ).map(([k, l]) => (
-                  <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`h-12 cursor-pointer border-0 border-b-2 bg-transparent px-3 text-[15px] ${tab === k ? "border-ink font-semibold" : "border-transparent text-muted"}`}>{l}</button>
+                  <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`h-12 cursor-pointer border-0 border-b-2 bg-transparent px-3 text-base ${tab === k ? "border-ink font-semibold" : "border-transparent text-muted"}`}>{l}</button>
                 ))}
               </div>
               <div className="flex flex-col gap-3.5 overflow-y-auto p-5">
@@ -161,7 +161,7 @@ export default function AdminProjects() {
                       <label className="flabel">Chủ đề<select className="select" value={edit.cat} onChange={(e) => set({ cat: e.target.value as Project["cat"] })}>{CATS.map((c) => <option key={c}>{c}</option>)}</select></label>
                       <label className="flabel">Năm<input className="field" type="number" value={edit.year} onChange={(e) => set({ year: Number(e.target.value) })} /></label>
                       <label className="flabel">Loại dự án<input className="field" value={edit.kind} placeholder="VD: TÍNH NĂNG AI" onChange={(e) => set({ kind: e.target.value.toUpperCase() })} /></label>
-                      <label className="flabel">Đường dẫn<input className="field font-mono text-[13px]" value={edit.slug} onChange={(e) => set({ slug: slugify(e.target.value) })} /></label>
+                      <label className="flabel">Đường dẫn<input className="field font-mono text-sm" value={edit.slug} onChange={(e) => set({ slug: slugify(e.target.value) })} /></label>
                       <label className="flabel">Vai trò<input className="field" value={edit.meta.role} onChange={(e) => setMeta({ role: e.target.value })} /></label>
                       <label className="flabel">Thời gian<input className="field" value={edit.meta.duration} placeholder="VD: 4 tháng" onChange={(e) => setMeta({ duration: e.target.value })} /></label>
                       <label className="flabel">Nhóm<input className="field" value={edit.meta.team} onChange={(e) => setMeta({ team: e.target.value })} /></label>
@@ -178,7 +178,7 @@ export default function AdminProjects() {
                       ))}
                     </div>
                     <div className="flex items-center justify-between gap-3 rounded-xl bg-soft p-4">
-                      <span className="flex flex-col"><span className="font-semibold">Nổi bật trên Trang chủ</span><span className="text-[13px] text-muted">Tối đa 3 dự án</span></span>
+                      <span className="flex flex-col"><span className="font-semibold">Nổi bật trên Trang chủ</span><span className="text-sm text-muted">Tối đa 3 dự án</span></span>
                       <Switch checked={!!edit.featured} onChange={(featured) => set({ featured })} label="Nổi bật trên Trang chủ" />
                     </div>
                   </>
@@ -215,7 +215,7 @@ export default function AdminProjects() {
                         <input className="field" value={d.caption} placeholder="Chú thích" onChange={(e) => set({ docs: edit.docs.map((x, k) => (k === i ? { ...x, caption: e.target.value } : x)) })} />
                       </div>
                     ))}
-                    <button type="button" onClick={() => set({ docs: [...edit.docs, { name: "", img: "", caption: "" }] })} className="self-start rounded-full border border-dashed border-[#BDBDBD] bg-white px-3 py-1.5 text-[13px]">+ Thêm tài liệu</button>
+                    <button type="button" onClick={() => set({ docs: [...edit.docs, { name: "", img: "", caption: "" }] })} className="self-start rounded-full border border-dashed border-[#BDBDBD] bg-white px-3 py-1.5 text-sm">+ Thêm tài liệu</button>
                   </>
                 )}
               </div>

@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react";
 import Toc from "./Toc";
 import { PostToolbar } from "./PostBits";
 import type { Heading } from "@/lib/markdown";
+import type { PostRef } from "@/content/posts";
 
 export type ReaderVersion = { id: string; label: string; title: string; excerpt: string; html?: string; headings: Heading[] };
 
@@ -16,6 +17,7 @@ export default function PostReader({
   author,
   placeholder,
   placeholderToc,
+  refs = [],
   children,
 }: {
   slug: string;
@@ -25,6 +27,7 @@ export default function PostReader({
   author: ReactNode;
   placeholder: ReactNode;
   placeholderToc: Heading[];
+  refs?: PostRef[];
   children: ReactNode;
 }) {
   const [cur, setCur] = useState(original);
@@ -40,9 +43,9 @@ export default function PostReader({
 
   return (
     <>
-      <header className="mx-auto flex max-w-[820px] flex-col items-center gap-5 px-4 pt-14 text-center sm:px-8">
+      <header className="mx-auto flex max-w-[820px] flex-col items-center gap-5 px-4 pt-7 text-center sm:px-8">
         {meta}
-        <h1 lang={zh} className="m-0 font-serif text-[clamp(42px,6vw,68px)] leading-[1.05] font-medium">{v.title}</h1>
+        <h1 lang={zh} className="m-0 font-serif text-[clamp(28px,4.8vw,54px)] leading-[1.05] font-medium">{v.title}</h1>
         <p lang={zh} className="m-0 max-w-[46ch] text-xl leading-relaxed text-muted">{v.excerpt}</p>
       </header>
 
@@ -58,16 +61,39 @@ export default function PostReader({
       </figure>
 
       <div className="mx-auto flex max-w-[1104px] flex-wrap items-start gap-12 px-4 pt-14 sm:px-8">
-        {toc.length > 0 && (
-          <aside className="flex-[0_0_200px] max-md:hidden">
-            <Toc key={v.id} title="Mục lục" items={toc} />
+        {(toc.length > 0 || refs.length > 0) && (
+          <aside className="flex-[0_0_200px] self-stretch max-md:hidden">
+            {/* Stays in view while the article scrolls. */}
+            <div className="flex flex-col gap-6 md:sticky md:top-28">
+              {toc.length > 0 && <Toc key={v.id} title="Mục lục" items={toc} />}
+              {refs.length > 0 && <References refs={refs} className="border-t border-line pt-5" />}
+            </div>
           </aside>
         )}
         <div className="flex min-w-0 max-w-[700px] flex-[1_1_560px] flex-col gap-6 text-lg leading-[1.8]">
           {v.html ? <div lang={zh} className="prose-gt" dangerouslySetInnerHTML={{ __html: v.html }} /> : placeholder}
+          {refs.length > 0 && <References refs={refs} className="border-t border-line pt-6 md:hidden" />}
           {children}
         </div>
       </div>
     </>
+  );
+}
+
+function References({ refs, className = "" }: { refs: PostRef[]; className?: string }) {
+  return (
+    <nav aria-label="Tham khảo" className={`flex flex-col gap-1.5 ${className}`}>
+      <span className="label pb-2">THAM KHẢO</span>
+      <ol className="m-0 flex list-none flex-col gap-2 p-0">
+        {refs.map((r, i) => (
+          <li key={r.url + i} className="flex gap-2.5 text-sm leading-snug">
+            <span className="pt-0.5 font-mono text-xs text-muted">{String(i + 1).padStart(2, "0")}</span>
+            <a href={r.url} target="_blank" rel="noopener nofollow" className="break-words text-ink underline-offset-4 hover:underline">
+              {r.title}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
   );
 }

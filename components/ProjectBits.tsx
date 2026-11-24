@@ -34,7 +34,7 @@ export function DocGallery({ docs }: { docs: Project["docs"] }) {
     <>
       <figure className="m-0 flex flex-col gap-2.5">
         <div className="flex aspect-video flex-col items-center justify-center gap-2.5 rounded-[14px] bg-panel text-white">
-          <span className="font-serif text-[34px]">{doc.name}</span>
+          <span className="font-serif text-3xl sm:text-4xl">{doc.name}</span>
           <span className="font-mono text-xs text-dim">[ẢNH {doc.img}]</span>
         </div>
         <figcaption className="flex justify-between gap-3 text-sm text-muted">
@@ -52,7 +52,7 @@ export function DocGallery({ docs }: { docs: Project["docs"] }) {
             className={`flex cursor-pointer flex-col gap-2 rounded-xl border-2 bg-white p-2 pb-3 text-left ${k === i ? "border-ink" : "border-line"}`}
           >
             <span className={`aspect-[4/3] w-full rounded-lg ${k === i ? "bg-panel" : "bg-soft"}`} />
-            <span className={`px-1 text-[13px] ${k === i ? "font-semibold" : "text-muted"}`}>{d.name}</span>
+            <span className={`px-1 text-sm ${k === i ? "font-semibold" : "text-muted"}`}>{d.name}</span>
           </button>
         ))}
       </div>

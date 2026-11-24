@@ -33,8 +33,8 @@ export default function ShareResourceDialog({ open, onClose, onDone }: { open: b
     <Dialog open={open} onClose={onClose} label="Chia sẻ tài liệu">
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-1.5">
-          <h2 className="m-0 font-serif text-[32px] font-medium leading-tight">Chia sẻ tài liệu</h2>
-          <p className="m-0 text-[15px] leading-relaxed text-muted">Tài liệu sẽ hiện trên trang sau khi Thương duyệt.</p>
+          <h2 className="m-0 font-serif text-3xl sm:text-4xl font-medium leading-tight">Chia sẻ tài liệu</h2>
+          <p className="m-0 text-base leading-relaxed text-muted">Tài liệu sẽ hiện trên trang sau khi Thương duyệt.</p>
         </div>
         <button type="button" onClick={onClose} aria-label="Đóng" className="h-10 w-10 shrink-0 cursor-pointer rounded-lg border-0 bg-soft text-lg">×</button>
       </div>

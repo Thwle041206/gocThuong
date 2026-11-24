@@ -8,15 +8,15 @@ export default function HomeHero() {
   const { t, lang } = useLang();
   const h = t.hero;
   return (
-    <section className="wrap flex flex-col gap-7 pt-20 pb-[72px] sm:pt-28">
-      <p className="m-0 font-mono text-[13px] tracking-[0.08em]">{h.eyebrow}</p>
+    <section className="wrap flex flex-col gap-7 pt-7 pb-[72px]">
+      <p className="m-0 font-mono text-sm tracking-[0.08em]">{h.eyebrow}</p>
       <h1
         lang={lang === "zh" ? "zh" : undefined}
-        className="m-0 max-w-[15ch] font-serif text-[clamp(48px,8vw,84px)] leading-[1.02] font-medium tracking-[-0.01em]"
+        className="m-0 max-w-[15ch] font-serif text-[clamp(30px,6.4vw,67px)] leading-[1.02] font-medium tracking-[-0.01em]"
       >
         {h.headline}
       </h1>
-      <p className="m-0 max-w-[52ch] text-[19px] leading-[1.65] text-muted">{h.sub}</p>
+      <p className="m-0 max-w-[52ch] text-xl leading-[1.65] text-muted">{h.sub}</p>
       <div className="flex flex-wrap gap-3 pt-2">
         <Link href="/du-an/" className="btn btn-dark">
           {h.cta1} <ArrowRight />

@@ -4,6 +4,7 @@ import type { Category } from "./projects";
 import remote from "./remote.json";
 
 export type Locale = "vi" | "en" | "zh";
+export type PostRef = { title: string; url: string };
 export type PostTr = { title: string; excerpt: string; body?: string; seoTitle?: string; seoDesc?: string };
 
 /** Shape stored in Firestore (posts/{slug}). */
@@ -14,6 +15,8 @@ export type PostDoc = {
   status: "draft" | "published";
   date: string; // YYYY-MM-DD, publish date
   tags: string[];
+  /** "Tham khảo" links shown under the table of contents. */
+  refs?: PostRef[];
   tr: Partial<Record<Locale, PostTr>>;
   updatedAt?: number; // ms
 };
@@ -30,6 +33,7 @@ export type Post = {
   title: string;
   excerpt: string;
   tags: string[];
+  refs: PostRef[];
   tr: Partial<Record<Locale, PostTr>>;
 };
 
@@ -37,7 +41,7 @@ export const LOCALE_LABEL: Record<Locale, "VI" | "EN" | "中文"> = { vi: "VI", 
 
 export const seedPosts: PostDoc[] = [
   { slug: "ai-design-hoi-cung-co-gia", cat: "AI", original: "vi", status: "published", date: "2026-10-06", tags: ["AI", "PROMPT", "BA"], tr: { vi: { title: "AI design – Hỏi cũng có giá", excerpt: "[Tóm tắt 1–2 câu: bài viết giúp người đọc hiểu điều gì]" } } },
-  { slug: "north-star-metric", cat: "BA", original: "vi", status: "published", date: "2026-10-06", tags: ["BA", "METRIC"], tr: { vi: { title: "North Star Metric – chỉ số dẫn đường", excerpt: "North Star Metric là chỉ số quan trọng nhất mà công ty dùng để đo lường giá trị cốt lõi mang lại cho khách hàng." } } },
+  { slug: "north-star-metric", cat: "BA", original: "vi", status: "published", date: "2026-10-06", tags: ["BA", "METRIC"], refs: [{ title: "Amplitude – The North Star Playbook", url: "https://amplitude.com/books/north-star" }], tr: { vi: { title: "North Star Metric – chỉ số dẫn đường", excerpt: "North Star Metric là chỉ số quan trọng nhất mà công ty dùng để đo lường giá trị cốt lõi mang lại cho khách hàng." } } },
   { slug: "retention-cohorts", cat: "DỮ LIỆU", original: "en", status: "published", date: "2026-09-24", tags: ["DATA", "RETENTION"], tr: { en: { title: "Retention cohorts", excerpt: "[Tóm tắt 1–2 câu]" } } },
   { slug: "user-story-tinh-nang-ai", cat: "BA", original: "vi", status: "draft", date: "", tags: ["BA", "AI"], tr: { vi: { title: "Viết user story cho một tính năng AI", excerpt: "Chủ đề gợi ý — thể hiện kỹ năng BA cốt lõi." } } },
   { slug: "it-zhongwen-cihui", cat: "NGÔN NGỮ", original: "zh", status: "draft", date: "", tags: ["中文", "BA"], tr: { zh: { title: "BA 常用的 IT 中文词汇", excerpt: "Chủ đề gợi ý — chứng minh tiếng Trung chuyên ngành." } } },
@@ -63,6 +67,7 @@ export function toPublicPost(d: PostDoc): Post {
     title: main.title,
     excerpt: main.excerpt,
     tags: d.tags,
+    refs: (d.refs ?? []).filter((r) => r.title && /^https?:\/\//i.test(r.url)),
     tr: d.tr,
   };
 }
