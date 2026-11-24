@@ -138,6 +138,14 @@ async function main() {
   } catch (e) {
     warn("Firestore (create the Firestore database in Firebase console?)", e);
   }
+  // Public copies for builds that can't reach Firestore (Cloudflare, see scripts/pull-live.mjs).
+  try {
+    mkdirSync("public/_build", { recursive: true });
+    writeFileSync("public/_build/firebase-config.json", readFileSync("lib/firebase-config.json", "utf8"));
+    writeFileSync("public/_build/remote.json", readFileSync("content/remote.json", "utf8"));
+  } catch (e) {
+    warn("Public build files", e);
+  }
   // For scheduled runs: only rebuild when content changed since the live deploy.
   let live = "";
   try {

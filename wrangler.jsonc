@@ -1,0 +1,12 @@
+// Cloudflare Workers: serve the static export in out/ (built by `npm run build`).
+// Having this file stops `wrangler deploy` from converting the project to OpenNext.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gocthuong-web",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./out",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}
