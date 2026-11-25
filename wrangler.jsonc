@@ -2,7 +2,7 @@
 // Having this file stops `wrangler deploy` from converting the project to OpenNext.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "gocthuong-web",
+  "name": "gocthuong",
   "compatibility_date": "2026-11-01",
   "assets": {
     "directory": "./out",
